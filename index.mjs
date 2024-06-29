@@ -87,6 +87,7 @@ class _QueueFIFO {
 		this.IR = false;
 	};
 }
+
 const helper = new (class {
 	/**
 	 * @type {null|(()=>Promise<void>)}
