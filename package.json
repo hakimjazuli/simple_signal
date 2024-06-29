@@ -1,0 +1,28 @@
+{
+	"name": "@html_first/simple_signal",
+	"version": "0.8.0",
+	"description": "simple signal for client side js",
+	"type": "module",
+	"main": "index.mjs",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "rollup -c",
+		"watch": "rollup -c -w"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hakimjazuli/simple_signal.git"
+	},
+	"keywords": [
+		"signal"
+	],
+	"author": "hakim_jazuli",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/hakimjazuli/simple_signal/issues"
+	},
+	"homepage": "https://github.com/hakimjazuli/simple_signal#readme",
+	"devDependencies": {
+		"@html_first/atla-as_builder": "^1.0.0"
+	}
+}
