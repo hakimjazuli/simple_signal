@@ -106,7 +106,7 @@ const helper = new (class {
 })();
 
 /**
- * @template V
+ * @template {number|string|boolean|symbol|bigint|[]} V
  */
 export class Let {
 	/**
@@ -169,7 +169,7 @@ export class $ {
 	 */
 	constructor(asyncCallback) {
 		helper.S = asyncCallback;
-		asyncCallback();
+		helper.QH.A(new _QueueObjectFIFO(asyncCallback, helper.D));
 		helper.S = null;
 	}
 }
