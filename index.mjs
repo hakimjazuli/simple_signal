@@ -11,12 +11,16 @@ const queue_handler = new _QueueFIFO();
  *   get value(): V,
  *   set value(newValue: V)
  * }} let_type_returns
+ */
+/**
  * @callback let_type
- * @param {V} value
- * @returns {let_type_returns} An object containing getter and setter for the value.
+ * @param {V} value -
+ * @returns {let_type_returns<V>}
+ */
+/**
  * @type {let_type}
  */
-window['let_'] = (value) => {
+const signal = (value) => {
 	/**
 	 * @type {(()=>Promise<void>)[]}
 	 */
@@ -52,24 +56,29 @@ window['let_'] = (value) => {
 
 /**
  * @param {()=>Promise<void>} fn
- * @returns {void}
+ * @returns {Promise<void>}
  */
-window['$'] = (fn) => {
+const $ = async (fn) => {
 	subscriber = fn;
-	fn();
+	await fn();
 	subscriber = null;
 };
 
 /**
  * @callback derived_type
- * @param {()=>any} fn
+ * @param {()=>Promise<void>} fn
  * @returns {let_type_returns}
+ */
+/**
  * @type {derived_type}
  */
-window['derived'] = (fn) => {
-	const computed_ = let_();
-	$_(() => {
-		computed_.value = fn();
+const derived = (fn) => {
+	const computed_ = signal();
+	$(async () => {
+		computed_.value = await fn();
 	});
 	return computed_;
 };
+window['signal'] = signal;
+window['$'] = $;
+window['derived'] = derived;
