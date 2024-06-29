@@ -157,7 +157,7 @@ export class Let {
 				).catch((error) => {
 					console.error('Promise.all failed:', error);
 				});
-			}, false)
+			}, helper.D)
 		);
 	}
 }
