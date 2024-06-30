@@ -1,7 +1,7 @@
 {
 	"name": "@html_first/simple_signal",
 	"version": "0.9.0",
-	"description": "simple signal for client side js",
+	"description": "simple asynchronous signal",
 	"type": "module",
 	"main": "index.mjs",
 	"scripts": {
