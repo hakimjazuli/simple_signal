@@ -168,9 +168,13 @@ export class $ {
 	 * @param {()=>Promise<void>} asyncCallback
 	 */
 	constructor(asyncCallback) {
-		helper.S = asyncCallback;
-		helper.QH.A(new _QueueObjectFIFO(asyncCallback, helper.D));
-		helper.S = null;
+		helper.QH.A(
+			new _QueueObjectFIFO(async () => {
+				helper.S = asyncCallback;
+				await asyncCallback();
+				helper.S = null;
+			}, helper.D)
+		);
 	}
 }
 
