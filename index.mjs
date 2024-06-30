@@ -140,6 +140,9 @@ export class Let {
 	 * @param {V} newValue
 	 */
 	set value(newValue) {
+		if (this.V_ === newValue) {
+			return;
+		}
 		this.V_ = newValue;
 		if (!this.S) {
 			return;
