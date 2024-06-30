@@ -106,7 +106,7 @@ const helper = new (class {
 })();
 
 /**
- * @template {number|string|boolean|symbol|bigint} V
+ * @template V
  */
 export class Let {
 	/**
