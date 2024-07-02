@@ -191,7 +191,16 @@ export class Derived extends Let {
 	constructor(asyncCallback) {
 		super('');
 		new $(async () => {
-			this.value = await asyncCallback();
+			super.value = await asyncCallback();
 		});
+	}
+	get value() {
+		return super.value;
+	}
+	/**
+	 * @private
+	 */
+	set value(v) {
+		console.log('you are not allowed to change derived value manually');
 	}
 }
