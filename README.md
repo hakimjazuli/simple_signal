@@ -51,7 +51,7 @@ we have very little api to remember so you can just slap our prebundled on head 
 
 ## IF you are comfortable with typehinting and you wanted to make it modular
 
--   install using `npm i "@html_first/simple_signal`
+-   install using `npm i @html_first/simple_signal`
 
 ```js
 // @ts-check
