@@ -106,6 +106,33 @@ const helper = new (class {
 })();
 
 /**
+ * @param {any} val
+ * @param {string} attributeName
+ * @returns {void}
+ */
+const setDomReflector = (val, attributeName) => {
+	const elements = document.querySelectorAll(`[${attributeName}]`);
+	if (!elements) {
+		return;
+	}
+	elements.forEach((element) => {
+		val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
+		const targets = (element.getAttribute(attributeName) ?? '').split(';');
+		for (let o = 0; o < targets.length; o++) {
+			const target = targets[o];
+			try {
+				if (!(target in element)) {
+					throw '';
+				}
+				element[target] = val;
+			} catch (error) {
+				element.setAttribute(target, val);
+			}
+		}
+	});
+};
+
+/**
  * @template V
  */
 export class Let {
@@ -123,9 +150,15 @@ export class Let {
 	V_;
 	/**
 	 * @param {V} value
+	 * @param {string} [attributeName]
 	 */
-	constructor(value) {
+	constructor(value, attributeName = undefined) {
 		this.V_ = value;
+		if (attributeName) {
+			new $(async () => {
+				setDomReflector(this.value, attributeName);
+			});
+		}
 	}
 	/**
 	 * @returns {V}
@@ -187,9 +220,10 @@ export class $ {
 export class Derived extends Let {
 	/**
 	 * @param {()=>Promise<V>} asyncCallback
+	 * @param {string} [attributeName]
 	 */
-	constructor(asyncCallback) {
-		super('');
+	constructor(asyncCallback, attributeName = undefined) {
+		super('', attributeName);
 		new $(async () => {
 			super.value = await asyncCallback();
 		});
