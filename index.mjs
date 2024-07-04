@@ -108,10 +108,11 @@ const helper = new (class {
 /**
  * @param {any} val
  * @param {string} attributeName
+ * @param {Document|HTMLElement} documentScope
  * @returns {void}
  */
-const setDomReflector = (val, attributeName) => {
-	const elements = document.querySelectorAll(`[${attributeName}]`);
+const setDomReflector = (val, attributeName, documentScope) => {
+	const elements = documentScope.querySelectorAll(`[${attributeName}]`);
 	if (!elements) {
 		return;
 	}
@@ -151,12 +152,13 @@ export class Let {
 	/**
 	 * @param {V} value
 	 * @param {string} [attributeName]
+	 * @param {Document|HTMLElement} [documentScope]
 	 */
-	constructor(value, attributeName = undefined) {
+	constructor(value, attributeName = undefined, documentScope = document) {
 		this.V_ = value;
 		if (attributeName) {
 			new $(async () => {
-				setDomReflector(this.value, attributeName);
+				setDomReflector(this.value, attributeName, documentScope);
 			});
 		}
 	}
@@ -221,9 +223,10 @@ export class Derived extends Let {
 	/**
 	 * @param {()=>Promise<V>} asyncCallback
 	 * @param {string} [attributeName]
+	 * @param {Document|HTMLElement} [documentScope]
 	 */
-	constructor(asyncCallback, attributeName = undefined) {
-		super('', attributeName);
+	constructor(asyncCallback, attributeName = undefined, documentScope = document) {
+		super('', attributeName, documentScope);
 		new $(async () => {
 			super.value = await asyncCallback();
 		});
