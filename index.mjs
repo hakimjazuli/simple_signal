@@ -174,7 +174,7 @@ export class Let {
 	 * @returns {V}
 	 */
 	get value() {
-		if (helper.S) {
+		if (helper.S && !this.S.some((f) => f === helper.S)) {
 			this.S.push(helper.S);
 		}
 		return this.V_;
