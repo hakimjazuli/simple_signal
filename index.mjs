@@ -88,30 +88,32 @@ class _QueueFIFO {
 	};
 }
 
-const helper = new (class {
+const helper = {
 	/**
+	 * subscriber
 	 * @type {null|(()=>Promise<void>)}
 	 */
-	S = null;
-	QH;
-	D;
+	S: null,
+	QH: new _QueueFIFO(),
 	/**
-	 * Description
-	 * @param {number|false} debounce
+	 * debounce
+	 * @type {number|false}
 	 */
-	constructor(debounce = false) {
-		this.D = debounce;
-		this.QH = new _QueueFIFO();
-	}
-})();
+	D: false,
+	/**
+	 * attribute helper for binded inputs
+	 */
+	B: 'binded:with:let',
+};
 
 /**
  * @param {any} val
  * @param {string} attributeName
- * @param {Document|HTMLElement} documentScope
+ * @param {Document|HTMLElement|ShadowRoot} documentScope
+ * @param {Let} letObject
  * @returns {void}
  */
-const setDomReflector = (val, attributeName, documentScope) => {
+const setDomReflector = (val, attributeName, documentScope, letObject) => {
 	const elements = documentScope.querySelectorAll(`[${attributeName}]`);
 	if (!elements) {
 		return;
@@ -119,13 +121,19 @@ const setDomReflector = (val, attributeName, documentScope) => {
 	elements.forEach((element) => {
 		val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
 		const targets = (element.getAttribute(attributeName) ?? '').split(';');
-		for (let o = 0; o < targets.length; o++) {
-			const target = targets[o];
+		for (let i = 0; i < targets.length; i++) {
+			const target = targets[i];
 			try {
 				if (!(target in element)) {
 					throw '';
 				}
 				element[target] = val;
+				if (target === 'value' && 'value' in element && !element.hasAttribute(helper.B)) {
+					element.setAttribute(helper.B, '');
+					element.addEventListener('input', () => {
+						letObject.value = element.value;
+					});
+				}
 			} catch (error) {
 				element.setAttribute(target, val);
 			}
@@ -152,13 +160,13 @@ export class Let {
 	/**
 	 * @param {V} value
 	 * @param {string} [attributeName]
-	 * @param {Document|HTMLElement} [documentScope]
+	 * @param {Document|HTMLElement|ShadowRoot} [documentScope]
 	 */
 	constructor(value, attributeName = undefined, documentScope = document) {
 		this.V_ = value;
 		if (attributeName) {
 			new $(async () => {
-				setDomReflector(this.value, attributeName, documentScope);
+				setDomReflector(this.value, attributeName, documentScope, this);
 			});
 		}
 	}
@@ -223,7 +231,7 @@ export class Derived extends Let {
 	/**
 	 * @param {()=>Promise<V>} asyncCallback
 	 * @param {string} [attributeName]
-	 * @param {Document|HTMLElement} [documentScope]
+	 * @param {Document|HTMLElement|ShadowRoot} [documentScope]
 	 */
 	constructor(asyncCallback, attributeName = undefined, documentScope = document) {
 		super('', attributeName, documentScope);

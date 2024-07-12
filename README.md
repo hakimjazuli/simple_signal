@@ -5,9 +5,12 @@ we have several way of installing this library to your app, depending on how you
 ## classes api
 
 -   `Let`:
-    > -   params `(value:VType, attributeName?:string)`;
+    > -   params
+    >     `(value:VType, attributeName?:string, documentScope?: document|HTMLELement|ShadowRoot)`;
     >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
     >     >     `...(attributeName|propertyValue);`;
+    >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
+    >     >     webcomponent;
     > -   returns:
     >     > -   `get value(): VType`
     >     > -   `set value(newValue:VType): void`
@@ -17,10 +20,17 @@ we have several way of installing this library to your app, depending on how you
     >     > -   `const a = new Let('example', 'param-a');`
     >     > -   `<div param-a="innerText;data-a"></div>` will reflect to DOM
     >     >     `<div param-a="innerText;data-a" data-a="example">example</div>`
+    > -   note:
+    >     > -   adding `value` to the html attribute like = `attributeName="...;value;..."`, will
+    >     >     bind the js variable value to the element value, only works on element that have
+    >     >     valid `oninput` attribute
 -   `Derived`:
-    > -   params `(async_function:()=>Promise<VType>, attributeName?:string)`;
+    > -   params
+    >     `(async_function:()=>Promise<VType>, attributeName?:string, documentScope?: document|HTMLELement|ShadowRoot)`;
     >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
     >     >     `...(attributeName|propertyValue);`;
+    >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
+    >     >     webcomponent;
     > -   returns:
     >     > -   `get value(): VType`
     > -   example1:
