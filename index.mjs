@@ -103,8 +103,42 @@ const helper = {
 	/**
 	 * attribute helper for binded inputs
 	 */
-	B: 'binded:with:let',
+	B: 'hf_ss:binded_value',
 };
+
+export class Lifecycle {
+	/**
+	 * @param {HTMLElement|Element|ShadowRoot|Document} element
+	 * @param {()=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
+	 */
+	constructor(element, lifecycleCallback) {
+		helper.QH.A(
+			new _QueueObjectFIFO(async () => {
+				if (!element.parentNode) {
+					return;
+				}
+				const on_dismount = await lifecycleCallback();
+				new MutationObserver((mutationsList, observer) => {
+					for (let mutation of mutationsList) {
+						if (mutation.type === 'childList') {
+							for (let removedNode of mutation.removedNodes) {
+								if (removedNode === element) {
+									helper.QH.A(
+										new _QueueObjectFIFO(async () => {
+											await on_dismount();
+											observer.disconnect();
+										})
+									);
+									return;
+								}
+							}
+						}
+					}
+				}).observe(element.parentNode, { childList: true });
+			})
+		);
+	}
+}
 
 /**
  * @param {any} val
@@ -118,7 +152,8 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 	if (!elements) {
 		return;
 	}
-	elements.forEach((element) => {
+	for (let i = 0; i < elements.length; i++) {
+		const element = elements[i];
 		val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
 		const targets = (element.getAttribute(attributeName) ?? '').split(';');
 		for (let i = 0; i < targets.length; i++) {
@@ -130,15 +165,21 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 				element[target] = val;
 				if (target === 'value' && 'value' in element && !element.hasAttribute(helper.B)) {
 					element.setAttribute(helper.B, '');
-					element.addEventListener('input', () => {
+					const updater = () => {
 						letObject.value = element.value;
+					};
+					new Lifecycle(element, async () => {
+						element.addEventListener('input', updater);
+						return async () => {
+							element.removeEventListener('input', updater);
+						};
 					});
 				}
 			} catch (error) {
 				element.setAttribute(target, val);
 			}
 		}
-	});
+	}
 };
 
 /**
