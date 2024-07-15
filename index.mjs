@@ -104,46 +104,77 @@ const helper = {
 	 * attribute helper for binded inputs
 	 */
 	B: 'hf_ss:binded_value',
+	E: 'hf_ss:binded_event',
 };
+
+/**
+ * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
+ */
 
 export class Lifecycle {
 	/**
-	 * @param {HTMLElement|Element|ShadowRoot|Document} element
-	 * @param {()=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
+	 * @param {string} attributeName
+	 * @param {(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
+	 * async function that returns async dismountCallback function;
+	 * @param {documentScope} [documentScope]
 	 */
-	constructor(element, lifecycleCallback) {
-		helper.QH.A(
-			new _QueueObjectFIFO(async () => {
-				if (!element.parentNode) {
-					return;
-				}
-				const on_dismount = await lifecycleCallback();
-				new MutationObserver((mutationsList, observer) => {
-					for (let mutation of mutationsList) {
-						if (mutation.type === 'childList') {
-							for (let removedNode of mutation.removedNodes) {
-								if (removedNode === element) {
-									helper.QH.A(
-										new _QueueObjectFIFO(async () => {
-											await on_dismount();
-											observer.disconnect();
-										})
-									);
-									return;
-								}
-							}
-						}
+	constructor(attributeName, lifecycleCallback, documentScope = document) {
+		const selector = `[${attributeName}]`;
+		const checkForElement = () => {
+			const elements = documentScope.querySelectorAll(selector);
+			if (elements) {
+				elements.forEach((element) => {
+					if (element.hasAttribute(helper.E)) {
+						return;
 					}
-				}).observe(element.parentNode, { childList: true });
-			})
-		);
+					element.setAttribute(helper.E, '');
+					helper.QH.A(
+						new _QueueObjectFIFO(async () => {
+							if (!element.parentNode) {
+								return;
+							}
+							// @ts-ignore
+							const dismountCallback = await lifecycleCallback(element);
+							new MutationObserver((mutationsList, observer) => {
+								for (let mutation of mutationsList) {
+									if (mutation.type === 'childList') {
+										for (let removedNode of mutation.removedNodes) {
+											if (removedNode === element) {
+												helper.QH.A(
+													new _QueueObjectFIFO(async () => {
+														await dismountCallback();
+														observer.disconnect();
+													})
+												);
+												return;
+											}
+										}
+									}
+								}
+							}).observe(element.parentNode, { childList: true });
+						})
+					);
+				});
+			}
+		};
+		new MutationObserver((mutationsList, observer) => {
+			for (let mutation of mutationsList) {
+				if (mutation.type === 'childList') {
+					checkForElement();
+				}
+			}
+		}).observe(documentScope, {
+			childList: true,
+			subtree: true,
+		});
+		checkForElement();
 	}
 }
 
 /**
  * @param {any} val
  * @param {string} attributeName
- * @param {Document|HTMLElement|ShadowRoot} documentScope
+ * @param {documentScope} documentScope
  * @param {Let} letObject
  * @returns {void}
  */
@@ -163,17 +194,30 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 					throw '';
 				}
 				element[target] = val;
-				if (target === 'value' && 'value' in element && !element.hasAttribute(helper.B)) {
+				if (
+					target === 'value' &&
+					'value' in element &&
+					element.parentNode &&
+					!element.hasAttribute(helper.B)
+				) {
 					element.setAttribute(helper.B, '');
 					const updater = () => {
 						letObject.value = element.value;
 					};
-					new Lifecycle(element, async () => {
-						element.addEventListener('input', updater);
-						return async () => {
-							element.removeEventListener('input', updater);
-						};
-					});
+					element.addEventListener('input', updater);
+					new MutationObserver((mutationsList, observer) => {
+						for (let mutation of mutationsList) {
+							if (mutation.type === 'childList') {
+								for (let removedNode of mutation.removedNodes) {
+									if (removedNode === element) {
+										element.removeEventListener('input', updater);
+										observer.disconnect();
+										return;
+									}
+								}
+							}
+						}
+					}).observe(element.parentNode, { childList: true });
 				}
 			} catch (error) {
 				element.setAttribute(target, val);
@@ -201,7 +245,7 @@ export class Let {
 	/**
 	 * @param {V} value
 	 * @param {string} [attributeName]
-	 * @param {Document|HTMLElement|ShadowRoot} [documentScope]
+	 * @param {documentScope} [documentScope]
 	 */
 	constructor(value, attributeName = undefined, documentScope = document) {
 		this.V_ = value;

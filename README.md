@@ -1,14 +1,17 @@
-﻿# how to setup
+﻿## about @html_first/simple_signal
 
-we have several way of installing this library to your app, depending on how you want to use it
+all of our classes designed to works in asynchronous context using Queues, so you can use it for api
+calls reactively without too much of mental overheads; we use attributeName to target elements on
+the DOM so it can be used as declaratively as possible despite minified;non-gzipped version of this
+library is less then 5kB;
 
 ## classes api
 
 -   `Let`:
     > -   params
-    >     `(value:VType, attributeName?:string, documentScope?: document|HTMLELement|ShadowRoot)`;
+    >     `(value:VType, attributeName?:string, documentScope?: HTMLElement|Element|ShadowRoot|Document)`;
     >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
-    >     >     `...(attributeName|propertyValue);`;
+    >     >     `...(attributeName|propertyName);`;
     >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
     >     >     webcomponent;
     > -   returns:
@@ -26,9 +29,9 @@ we have several way of installing this library to your app, depending on how you
     >     >     valid `oninput` attribute
 -   `Derived`:
     > -   params
-    >     `(async_function:()=>Promise<VType>, attributeName?:string, documentScope?: document|HTMLELement|ShadowRoot)`;
+    >     `(async_function:()=>Promise<VType>, attributeName?:string, documentScope?: HTMLElement|Element|ShadowRoot|Document)`;
     >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
-    >     >     `...(attributeName|propertyValue);`;
+    >     >     `...(attributeName|propertyName);`;
     >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
     >     >     webcomponent;
     > -   returns:
@@ -43,6 +46,21 @@ we have several way of installing this library to your app, depending on how you
     > -   params `(async_function:()=>Promise<void>)`;
     > -   example:
     >     > -   `new $( async () => { document.querySelector('p')?.setAttribute('text', b.value) });`
+-   `Lifecycle`:
+    > -   usefull for adding event listeners;
+    > -   params:
+    >     `(attributeName:string, lifecycleCallback:(element:HTMLElement)=>(Promise<()=>(Promise<void>)>), documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
+    > -   example:
+    >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
+    >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
+    >     > -   `<buttton elem-event>click me</button>`
+    >     > -   which will fire anytime new element with `elem-event` is created on the
+    >     >     documentScope and the returned async function will be fired when element is removed
+    >     >     from the documentScope
+
+## how to setup
+
+we have several way of installing this library to your app, depending on how you want to use it
 
 ## IF you have no need of typehinting
 
@@ -59,6 +77,9 @@ we have very little api to remember so you can just slap our prebundled on head 
 </head>
 ```
 
+-   we put it in a `.mjs` and `type="module"` so the `variables` doesn't bleed out without add
+    additional closures, or function calls in the libs
+
 ## IF you are comfortable with typehinting and you wanted to make it modular
 
 -   install using `npm i @html_first/simple_signal`
@@ -71,6 +92,7 @@ import { Let, $, Derived } from '@html_first/simple_signal';
 
 ## IF you are comfortable with typehinting but you don't want to be bothered to install using npm
 
-copy the index.mjs on github code and slap before your own js code
+copy the [index.mjs](https://github.com/hakimjazuli/simple_signal/blob/main/index.mjs) on
+[our github](https://github.com/hakimjazuli/simple_signal/) code and slap before your own js code
 
--   delete the `export` statement on all three class;
+-   delete the `export` statement on all classes;
