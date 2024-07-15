@@ -87,7 +87,7 @@ we have very little api to remember so you can just slap our prebundled on head 
 ```js
 // @ts-check
 
-import { Let, $, Derived } from '@html_first/simple_signal';
+import { Let, $, Derived, Lifecycle } from '@html_first/simple_signal';
 ```
 
 ## IF you are comfortable with typehinting but you don't want to be bothered to install using npm
