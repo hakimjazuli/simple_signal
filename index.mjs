@@ -130,9 +130,10 @@ export class Lifecycle {
 				elements.push(documentScope);
 			}
 			if (elements) {
-				elements.forEach((element) => {
+				for (let i = 0; i < elements.length; i++) {
+					const element = elements[i];
 					if (element.hasAttribute(helper.E)) {
-						return;
+						continue;
 					}
 					element.setAttribute(helper.E, '');
 					helper.QH.A(
@@ -160,7 +161,7 @@ export class Lifecycle {
 							}).observe(element.parentNode, { childList: true });
 						})
 					);
-				});
+				}
 			}
 		};
 		new MutationObserver((mutationsList, observer) => {
