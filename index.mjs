@@ -101,7 +101,7 @@ const helper = {
 	 */
 	D: false,
 	/**
-	 * attribute helper for binded inputs
+	 * attribute helper for binded
 	 */
 	B: 'hf_ss:binded_value',
 	E: 'hf_ss:binded_event',
@@ -114,7 +114,7 @@ const helper = {
 export class Lifecycle {
 	/**
 	 * @param {string} attributeName
-	 * @param {(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
+	 * @param {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
 	 * async function that returns async dismountCallback function;
 	 * @param {documentScope} [documentScope]
 	 */
@@ -133,7 +133,6 @@ export class Lifecycle {
 							if (!element.parentNode) {
 								return;
 							}
-							// @ts-ignore
 							const dismountCallback = await lifecycleCallback(element);
 							new MutationObserver((mutationsList, observer) => {
 								for (let mutation of mutationsList) {
@@ -179,7 +178,14 @@ export class Lifecycle {
  * @returns {void}
  */
 const setDomReflector = (val, attributeName, documentScope, letObject) => {
-	const elements = documentScope.querySelectorAll(`[${attributeName}]`);
+	const elements = Array.from(documentScope.querySelectorAll(`[${attributeName}]`));
+	if (
+		!(documentScope instanceof ShadowRoot) &&
+		!(documentScope instanceof Document) &&
+		documentScope.hasAttribute(attributeName)
+	) {
+		elements.push(documentScope);
+	}
 	if (!elements) {
 		return;
 	}
