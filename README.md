@@ -2,7 +2,7 @@
 
 all of our classes designed to works in asynchronous context using Queues, so you can use it for api
 calls reactively without too much of mental overheads; we use attributeName to target elements on
-the DOM so it can be used as declaratively as possible despite minified;non-gzipped version of this
+the DOM so it can be used as declaratively as possible despite minified; non-gzipped version of this
 library is less then 5kB;
 
 ## classes api
