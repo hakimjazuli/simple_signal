@@ -121,7 +121,14 @@ export class Lifecycle {
 	constructor(attributeName, lifecycleCallback, documentScope = document) {
 		const selector = `[${attributeName}]`;
 		const checkForElement = () => {
-			const elements = documentScope.querySelectorAll(selector);
+			const elements = Array.from(documentScope.querySelectorAll(selector));
+			if (
+				!(documentScope instanceof ShadowRoot) &&
+				!(documentScope instanceof Document) &&
+				documentScope.hasAttribute(attributeName)
+			) {
+				elements.push(documentScope);
+			}
 			if (elements) {
 				elements.forEach((element) => {
 					if (element.hasAttribute(helper.E)) {
