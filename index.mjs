@@ -179,6 +179,46 @@ export class Lifecycle {
 }
 
 /**
+ * @param {(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>} OnViewCallback
+ */
+const Observer = (OnViewCallback) => {
+	let onExitingViewport = null;
+	const observer = new IntersectionObserver(
+		(elements) => {
+			const unObserve = () => observer.disconnect();
+			elements.forEach(async (element) => {
+				if (element.isIntersecting) {
+					onExitingViewport = await OnViewCallback(element, unObserve);
+				} else if (!element.isIntersecting && typeof onExitingViewport === 'function') {
+					await onExitingViewport();
+				}
+			});
+		},
+		{ threshold: [0, 1] }
+	);
+	return observer;
+};
+
+export class OnViewPort {
+	/**
+	 * @param {string} attributeName
+	 * @param {(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>} OnViewCallback
+	 * @param {documentScope} [documentScope]
+	 */
+	constructor(attributeName, OnViewCallback, documentScope = document) {
+		this.OnViewCallback = OnViewCallback;
+		const selector = `[${attributeName}]`;
+		const elements = documentScope.querySelectorAll(selector);
+		if (!elements) {
+			return;
+		}
+		elements.forEach((element) => {
+			Observer(OnViewCallback).observe(element);
+		});
+	}
+}
+
+/**
  * @param {any} val
  * @param {string} attributeName
  * @param {documentScope} documentScope
