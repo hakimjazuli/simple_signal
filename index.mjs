@@ -103,9 +103,48 @@ const helper = {
 	/**
 	 * attribute helper for binded
 	 */
-	B: 'hf_ss:binded_value',
-	E: 'hf_ss:binded_event',
+	P: 'hf_ss:binded_viewport',
+	PX: 'hf_ss:binded_viewport_on_exit',
+	V: 'hf_ss:binded_value',
+	C: 'hf_ss:binded_lifecycle',
 };
+
+export class OnViewPort {
+	/**
+	 * @param {string} attributeName
+	 * @param {(element:IntersectionObserverEntry['target'])=>Promise<void>} OnViewCallback
+	 * @param {(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>} onExitingViewport
+	 * @param {documentScope} [documentScope]
+	 */
+	constructor(attributeName, OnViewCallback, onExitingViewport, documentScope = document) {
+		const elements = documentScope.querySelectorAll(`[${attributeName}]`);
+		if (!elements) {
+			return;
+		}
+		const observer = new IntersectionObserver(
+			async (elements, observer) => {
+				for (let i = 0; i < elements.length; i++) {
+					const element = elements[i].target;
+					if (elements[i].isIntersecting) {
+						element.setAttribute(helper.PX, '');
+						await OnViewCallback(element);
+					} else if (element.hasAttribute(helper.PX)) {
+						await onExitingViewport(element, () => observer.disconnect());
+					}
+				}
+			},
+			{ threshold: [0, 1] }
+		);
+		for (let i = 0; i < elements.length; i++) {
+			const element = elements[i];
+			if (element.hasAttribute(helper.P)) {
+				return;
+			}
+			element.setAttribute(helper.P, '');
+			observer.observe(element);
+		}
+	}
+}
 
 /**
  * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
@@ -179,52 +218,6 @@ export class Lifecycle {
 }
 
 /**
- * @param {(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>} OnViewCallback
- */
-const Observer = (OnViewCallback) => {
-	let onExitingViewport = null;
-	const observer = new IntersectionObserver(
-		(elements) => {
-			const unObserve = () => observer.disconnect();
-			helper.QH.A(
-				new _QueueObjectFIFO(async () => {
-					for (let i = 0; i < elements.length; i++) {
-						const element = elements[i];
-						if (element.isIntersecting) {
-							onExitingViewport = await OnViewCallback(element, unObserve);
-						} else if (onExitingViewport) {
-							await onExitingViewport();
-							onExitingViewport = null;
-						}
-					}
-				})
-			);
-		},
-		{ threshold: [0, 1] }
-	);
-	return observer;
-};
-
-export class OnViewPort {
-	/**
-	 * @param {string} attributeName
-	 * @param {(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>} OnViewCallback
-	 * @param {documentScope} [documentScope]
-	 */
-	constructor(attributeName, OnViewCallback, documentScope = document) {
-		this.OnViewCallback = OnViewCallback;
-		const selector = `[${attributeName}]`;
-		const elements = documentScope.querySelectorAll(selector);
-		if (!elements) {
-			return;
-		}
-		elements.forEach((element) => {
-			Observer(OnViewCallback).observe(element);
-		});
-	}
-}
-
-/**
  * @param {any} val
  * @param {string} attributeName
  * @param {documentScope} documentScope
@@ -258,9 +251,9 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 					target === 'value' &&
 					'value' in element &&
 					element.parentNode &&
-					!element.hasAttribute(helper.B)
+					!element.hasAttribute(helper.V)
 				) {
-					element.setAttribute(helper.B, '');
+					element.setAttribute(helper.V, '');
 					const updater = () => {
 						letObject.value = element.value;
 					};

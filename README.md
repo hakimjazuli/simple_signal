@@ -11,8 +11,10 @@ library is less then 5kB;
     > -   usefull for:
     >     > -   adding event listeners;
     >     > -   track lifecycle of created element;
-    > -   params
-    >     `(attributeName:string, lifecycleCallback:(element:HTMLElement)=>(Promise<()=>(Promise<void>)>), documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
+    > -   params:
+    >     > -   `attributeName`: `string`
+    >     > -   `lifecycleCallback`: `(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)`
+    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
     > -   example:
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
     >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
@@ -21,12 +23,13 @@ library is less then 5kB;
     >     >     documentScope and the returned async function whcih will be fired when element is
     >     >     removed from the documentScope
 -   `Let`:
-    > -   params
-    >     `(value:VType, attributeName?:string, documentScope?: HTMLElement|Element|ShadowRoot|Document)`;
-    >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
-    >     >     `...(attributeName|propertyName);`;
-    >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
-    >     >     webcomponent;
+    > -   params:
+    >     > -   `value`: `VType`
+    >     > -   `attributeName?`: `string`
+    >     >     > -   allow to reflect the value to dom, by targeting the value of
+    >     >     >     `...(attributeName|propertyName);`;
+    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
+    >     >     > -   scope of the dom reflector;
     > -   returns:
     >     > -   `get value(): VType`
     >     > -   `set value(newValue:VType): void`
@@ -42,11 +45,12 @@ library is less then 5kB;
     >     >     valid `oninput` attribute
 -   `Derived`:
     > -   params
-    >     `(async_function:()=>Promise<VType>, attributeName?:string, documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
-    >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
-    >     >     `...(attributeName|propertyName);`;
-    >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
-    >     >     webcomponent;
+    >     > -   `asyncCallback`: `()=>Promise<VType>`
+    >     > -   `attributeName?`: `string`
+    >     >     > -   allow to reflect the value to dom, by targeting the value of
+    >     >     >     `...(attributeName|propertyName);`;
+    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
+    >     >     > -   scope of the dom reflector;
     > -   returns:
     >     > -   `get value(): VType`
     > -   example1:
@@ -56,20 +60,24 @@ library is less then 5kB;
     >     > -   `<div param-a="innerText;data-a"></div>` will reflect to DOM
     >     >     `<div param-a="innerText;data-a" data-a="value of a">value of a</div>`
 -   `$`:
-    > -   params `(async_function:()=>Promise<void>)`;
+    > -   params:
+    >     > -   `asyncCallback`: `()=>Promise<VType>`
     > -   example:
     >     > -   `new $( async () => { document.querySelector('p')?.setAttribute('text', b.value) });`
 -   `OnViewPort`:
     > -   tips: coupled with `Lifecycle` it can be helpfull for complex client side
     >     routing/rendering;
-    > -   params
-    >     `(attributeName:string, OnViewCallback:(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>, documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
-    >     > -   `attributeName`: identifier using html attribute name;
-    >     > -   `OnViewCallback`: asyc callback that fires when elemennt enter view port that take
-    >     >     `(element, unObserveCallback)` as params, which returns asyc callback which fires
-    >     >     when element is exitting view port;
-    >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
-    >     >     webcomponent;
+    > -   params:
+    >     > -   `attributeName`: `string`
+    >     >     > -   allow to reflect the value to dom, by targeting the value of
+    >     >     >     `...(attributeName|propertyName);`;
+    >     > -   `OnViewCallback`: `(element:IntersectionObserverEntry['target'])=>Promise<void>`
+    >     >     > -   fires when element is entering viewport;
+    >     > -   `onExitingViewport`:
+    >     >     `(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>`
+    >     >     > -   fires when element is exiting viewport;
+    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
+    >     >     > -   scope of the dom reflector;
     > -   example:
     >     > -   `new OnViewPort('lazy-test', async (element, unobserve) => { console.log({element, message:'lazy is on viewport'}); return async () => { console.log({element, message:'lazy is leavinng viewport'}); unobserve() }; });`
     >     > -   `<p lazy-test>lazy test on view port</p>`
