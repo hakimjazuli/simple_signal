@@ -14,14 +14,15 @@ library is less then 5kB;
     > -   params:
     >     > -   `attributeName`: `string`
     >     > -   `lifecycleCallback`: `(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)`
+    >     >     > -   fires when element is created/exist in the initial document;
+    >     >     > -   returns callback which then fires when element no longer on documentScope
+    >     >     > -   param `element` is the curent element which is created/exist in the initial
+    >     >     >     document;
     >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
     > -   example:
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
     >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
     >     > -   `<buttton elem-event>click me</button>`
-    >     > -   which will fire anytime new element with `elem-event` is created on the
-    >     >     documentScope and the returned async function whcih will be fired when element is
-    >     >     removed from the documentScope
 -   `Let`:
     > -   params:
     >     > -   `value`: `VType`
