@@ -186,13 +186,19 @@ const Observer = (OnViewCallback) => {
 	const observer = new IntersectionObserver(
 		(elements) => {
 			const unObserve = () => observer.disconnect();
-			elements.forEach(async (element) => {
-				if (element.isIntersecting) {
-					onExitingViewport = await OnViewCallback(element, unObserve);
-				} else if (onExitingViewport) {
-					await onExitingViewport();
-				}
-			});
+			helper.QH.A(
+				new _QueueObjectFIFO(async () => {
+					for (let i = 0; i < elements.length; i++) {
+						const element = elements[i];
+						if (element.isIntersecting) {
+							onExitingViewport = await OnViewCallback(element, unObserve);
+						} else if (onExitingViewport) {
+							await onExitingViewport();
+							onExitingViewport = null;
+						}
+					}
+				})
+			);
 		},
 		{ threshold: [0, 1] }
 	);
