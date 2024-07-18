@@ -189,7 +189,7 @@ const Observer = (OnViewCallback) => {
 			elements.forEach(async (element) => {
 				if (element.isIntersecting) {
 					onExitingViewport = await OnViewCallback(element, unObserve);
-				} else if (!element.isIntersecting && typeof onExitingViewport === 'function') {
+				} else if (onExitingViewport) {
 					await onExitingViewport();
 				}
 			});

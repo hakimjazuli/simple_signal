@@ -11,7 +11,7 @@ library is less then 5kB;
     > -   usefull for:
     >     > -   adding event listeners;
     >     > -   track lifecycle of created element;
-    > -   params:
+    > -   params
     >     `(attributeName:string, lifecycleCallback:(element:HTMLElement)=>(Promise<()=>(Promise<void>)>), documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
     > -   example:
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
@@ -62,7 +62,7 @@ library is less then 5kB;
 -   `OnViewPort`:
     > -   tips: coupled with `Lifecycle` it can be helpfull for complex client side
     >     routing/rendering;
-    > -   params:
+    > -   params
     >     `(attributeName:string, OnViewCallback:(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>, documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
     >     > -   `attributeName`: identifier using html attribute name;
     >     > -   `OnViewCallback`: asyc callback that fires when elemennt enter view port that take
@@ -71,7 +71,8 @@ library is less then 5kB;
     >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
     >     >     webcomponent;
     > -   example:
-    >     > -   `new OnViewPort('lazy', async (element, unobserve) => { console.log({element, message:'lazy is on viewport'}); return async () => { console.log({element, message:'lazy is leavinng viewport'}); unobserve() }; });`
+    >     > -   `new OnViewPort('lazy-test', async (element, unobserve) => { console.log({element, message:'lazy is on viewport'}); return async () => { console.log({element, message:'lazy is leavinng viewport'}); unobserve() }; });`
+    >     > -   `<p lazy-test>lazy test on view port</p>`
 
 ## how to setup
 
