@@ -33,9 +33,9 @@ library is less then 5kB;
     > -   example1:
     >     > -   `const a = new Let('a');`
     > -   example2:
-    >     > -   `const a = new Let('example', 'param-a');`
-    >     > -   `<div param-a="innerText;data-a"></div>` will reflect to DOM
-    >     >     `<div param-a="innerText;data-a" data-a="example">example</div>`
+    >     > -   `const a = new Let('example', 'param-b');`
+    >     > -   `<div param-b="innerText;data-a"></div>` will reflect to DOM
+    >     >     `<div param-b="innerText;data-a" data-a="example">example</div>`
     > -   note:
     >     > -   adding `value` to the html attribute like = `attributeName="...;value;..."`, will
     >     >     bind the js variable value to the element value, only works on element that have
@@ -76,7 +76,7 @@ library is less then 5kB;
 
 ## how to setup
 
-we have several way of installing this library to your app, depending on how you want to use it
+we have several way of installing this library to your app, depending on how do you want to use it
 
 ## IF you have no need of typehinting
 
@@ -103,7 +103,7 @@ we have very little api to remember so you can just slap our prebundled on head 
 ```js
 // @ts-check
 
-import { Let, $, Derived, Lifecycle } from '@html_first/simple_signal';
+import { Let, $, Derived, Lifecycle, OnViewPort } from '@html_first/simple_signal';
 ```
 
 ## IF you are comfortable with typehinting but you don't want to be bothered to install using npm
