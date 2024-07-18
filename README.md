@@ -7,6 +7,19 @@ library is less then 5kB;
 
 ## classes api
 
+-   `Lifecycle`:
+    > -   usefull for:
+    >     > -   adding event listeners;
+    >     > -   track lifecycle of created element;
+    > -   params:
+    >     `(attributeName:string, lifecycleCallback:(element:HTMLElement)=>(Promise<()=>(Promise<void>)>), documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
+    > -   example:
+    >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
+    >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
+    >     > -   `<buttton elem-event>click me</button>`
+    >     > -   which will fire anytime new element with `elem-event` is created on the
+    >     >     documentScope and the returned async function whcih will be fired when element is
+    >     >     removed from the documentScope
 -   `Let`:
     > -   params
     >     `(value:VType, attributeName?:string, documentScope?: HTMLElement|Element|ShadowRoot|Document)`;
@@ -29,7 +42,7 @@ library is less then 5kB;
     >     >     valid `oninput` attribute
 -   `Derived`:
     > -   params
-    >     `(async_function:()=>Promise<VType>, attributeName?:string, documentScope?: HTMLElement|Element|ShadowRoot|Document)`;
+    >     `(async_function:()=>Promise<VType>, attributeName?:string, documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
     >     > -   `attributeName`: allow to reflect the value to dom, by targeting the value of
     >     >     `...(attributeName|propertyName);`;
     >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
@@ -46,17 +59,19 @@ library is less then 5kB;
     > -   params `(async_function:()=>Promise<void>)`;
     > -   example:
     >     > -   `new $( async () => { document.querySelector('p')?.setAttribute('text', b.value) });`
--   `Lifecycle`:
-    > -   usefull for adding event listeners;
+-   `OnViewPort`:
+    > -   tips: coupled with `Lifecycle` it can be helpfull for complex client side
+    >     routing/rendering;
     > -   params:
-    >     `(attributeName:string, lifecycleCallback:(element:HTMLElement)=>(Promise<()=>(Promise<void>)>), documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
+    >     `(attributeName:string, OnViewCallback:(element:IntersectionObserverEntry, unObserve:()=>void)=>Promise<()=>Promise<void>>, documentScope?:HTMLElement|Element|ShadowRoot|Document)`;
+    >     > -   `attributeName`: identifier using html attribute name;
+    >     > -   `OnViewCallback`: asyc callback that fires when elemennt enter view port that take
+    >     >     `(element, unObserveCallback)` as params, which returns asyc callback which fires
+    >     >     when element is exitting view port;
+    >     > -   `documentScope`: scope of the real dom reflector, can be really usefull for
+    >     >     webcomponent;
     > -   example:
-    >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
-    >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
-    >     > -   `<buttton elem-event>click me</button>`
-    >     > -   which will fire anytime new element with `elem-event` is created on the
-    >     >     documentScope and the returned async function will be fired when element is removed
-    >     >     from the documentScope
+    >     > -   `new OnViewPort('lazy', async (element, unobserve) => { console.log({element, message:'lazy is on viewport'}); return async () => { console.log({element, message:'lazy is leavinng viewport'}); unobserve() }; });`
 
 ## how to setup
 
