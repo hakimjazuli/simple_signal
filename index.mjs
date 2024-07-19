@@ -122,16 +122,20 @@ export class OnViewPort {
 			return;
 		}
 		const observer = new IntersectionObserver(
-			async (elements, observer) => {
-				for (let i = 0; i < elements.length; i++) {
-					const element = elements[i].target;
-					if (elements[i].isIntersecting) {
-						element.setAttribute(helper.PX, '');
-						await OnViewCallback(element);
-					} else if (element.hasAttribute(helper.PX)) {
-						await onExitingViewport(element, () => observer.disconnect());
-					}
-				}
+			(elements, observer) => {
+				helper.QH.A(
+					new _QueueObjectFIFO(async () => {
+						for (let i = 0; i < elements.length; i++) {
+							const element = elements[i].target;
+							if (elements[i].isIntersecting) {
+								element.setAttribute(helper.PX, '');
+								await OnViewCallback(element);
+							} else if (element.hasAttribute(helper.PX)) {
+								await onExitingViewport(element, () => observer.disconnect());
+							}
+						}
+					})
+				);
 			},
 			{ threshold: [0, 1] }
 		);
