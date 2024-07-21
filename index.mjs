@@ -107,9 +107,21 @@ const helper = new (class {
 	/**
 	 * attribute helper for binded
 	 */
+	/**
+	 * @readonly
+	 */
 	P = 'hf_ss:binded_viewport';
+	/**
+	 * @readonly
+	 */
 	PX = 'hf_ss:binded_viewport_on_exit';
+	/**
+	 * @readonly
+	 */
 	V = 'hf_ss:binded_value';
+	/**
+	 * @readonly
+	 */
 	C = 'hf_ss:binded_lifecycle';
 })();
 
