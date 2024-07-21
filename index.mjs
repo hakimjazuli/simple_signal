@@ -412,6 +412,6 @@ export class Derived extends Let {
 	 * @private
 	 */
 	set value(v) {
-		console.log('you are not allowed to change derived value manually');
+		console.log('you are not allowed to change Derived value manually');
 	}
 }
