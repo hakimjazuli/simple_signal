@@ -153,7 +153,7 @@ export class OnViewPort {
 					}, helper.D)
 				);
 			},
-			{ threshold: [0, 1] }
+			{ threshold: [0, 0] }
 		);
 		for (let i = 0; i < elements.length; i++) {
 			const element = elements[i];
