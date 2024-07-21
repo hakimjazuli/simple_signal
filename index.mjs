@@ -88,26 +88,30 @@ class _QueueFIFO {
 	};
 }
 
-const helper = {
+/**
+ * uses generic class instance instead of const, to track whether there are
+ * unnamed property being accessed
+ */
+const helper = new (class {
 	/**
 	 * subscriber
 	 * @type {null|(()=>Promise<void>)}
 	 */
-	S: null,
-	QH: new _QueueFIFO(),
+	S = null;
+	QH = new _QueueFIFO();
 	/**
 	 * debounce
 	 * @type {number|false}
 	 */
-	D: false,
+	D = false;
 	/**
 	 * attribute helper for binded
 	 */
-	P: 'hf_ss:binded_viewport',
-	PX: 'hf_ss:binded_viewport_on_exit',
-	V: 'hf_ss:binded_value',
-	C: 'hf_ss:binded_lifecycle',
-};
+	P = 'hf_ss:binded_viewport';
+	PX = 'hf_ss:binded_viewport_on_exit';
+	V = 'hf_ss:binded_value';
+	C = 'hf_ss:binded_lifecycle';
+})();
 
 export class OnViewPort {
 	/**
@@ -134,7 +138,7 @@ export class OnViewPort {
 								await onExitingViewport(element, () => observer.disconnect());
 							}
 						}
-					})
+					}, helper.D)
 				);
 			},
 			{ threshold: [0, 1] }
@@ -175,10 +179,10 @@ export class Lifecycle {
 			if (elements) {
 				for (let i = 0; i < elements.length; i++) {
 					const element = elements[i];
-					if (element.hasAttribute(helper.E)) {
+					if (element.hasAttribute(helper.C)) {
 						continue;
 					}
-					element.setAttribute(helper.E, '');
+					element.setAttribute(helper.C, '');
 					helper.QH.A(
 						new _QueueObjectFIFO(async () => {
 							if (!element.parentNode) {
@@ -194,7 +198,7 @@ export class Lifecycle {
 													new _QueueObjectFIFO(async () => {
 														await dismountCallback();
 														observer.disconnect();
-													})
+													}, helper.D)
 												);
 												return;
 											}
@@ -202,7 +206,7 @@ export class Lifecycle {
 									}
 								}
 							}).observe(element.parentNode, { childList: true });
-						})
+						}, helper.D)
 					);
 				}
 			}
