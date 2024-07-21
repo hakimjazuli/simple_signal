@@ -74,9 +74,10 @@ library is less then 5kB;
     >     >     >     `...(attributeName|propertyName);`;
     >     > -   `OnViewCallback`: `(element:IntersectionObserverEntry['target'])=>Promise<void>`
     >     >     > -   fires when element is entering viewport;
-    >     > -   `onExitingViewport`:
+    >     > -   `onExitingViewport?`:
     >     >     `(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>`
     >     >     > -   fires when element is exiting viewport;
+    >     >     > -   when `undefined`: will automatically unObserve the elements;
     >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
     >     >     > -   scope of the dom reflector;
     > -   example:

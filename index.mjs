@@ -129,10 +129,18 @@ export class OnViewPort {
 	/**
 	 * @param {string} attributeName
 	 * @param {(element:IntersectionObserverEntry['target'])=>Promise<void>} OnViewCallback
-	 * @param {(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>} onExitingViewport
+	 * @param {(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>} [onExitingViewport]
+	 * undefined: will automatically fires unObserve callback;
 	 * @param {documentScope} [documentScope]
 	 */
-	constructor(attributeName, OnViewCallback, onExitingViewport, documentScope = document) {
+	constructor(
+		attributeName,
+		OnViewCallback,
+		onExitingViewport = async (e, u) => {
+			u();
+		},
+		documentScope = document
+	) {
 		const elements = documentScope.querySelectorAll(`[${attributeName}]`);
 		if (!elements) {
 			return;
