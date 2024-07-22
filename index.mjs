@@ -186,63 +186,66 @@ export class Lifecycle {
 	 * @param {documentScope} [documentScope]
 	 */
 	constructor(attributeName, lifecycleCallback, documentScope = document) {
-		const selector = `[${attributeName}]`;
-		const checkForElement = () => {
-			const elements = Array.from(documentScope.querySelectorAll(selector));
-			if (
-				!(documentScope instanceof ShadowRoot) &&
-				!(documentScope instanceof Document) &&
-				documentScope.hasAttribute(attributeName)
-			) {
-				elements.push(documentScope);
-			}
-			if (elements) {
-				for (let i = 0; i < elements.length; i++) {
-					const element = elements[i];
-					if (element.hasAttribute(helper.C)) {
-						continue;
-					}
-					element.setAttribute(helper.C, '');
-					helper.QH.A(
-						new _QueueObjectFIFO(async () => {
-							if (!element.parentNode) {
-								return;
-							}
-							const dismountCallback = await lifecycleCallback(element);
-							new MutationObserver((mutationsList, observer) => {
-								for (let mutation of mutationsList) {
-									if (mutation.type === 'childList') {
-										for (let removedNode of mutation.removedNodes) {
-											if (removedNode === element) {
-												helper.QH.A(
-													new _QueueObjectFIFO(async () => {
-														await dismountCallback();
-														observer.disconnect();
-													}, helper.D)
-												);
-												return;
-											}
-										}
-									}
-								}
-							}).observe(element.parentNode, { childList: true });
-						}, helper.D)
-					);
-				}
-			}
-		};
 		new MutationObserver((mutationsList, observer) => {
 			for (let mutation of mutationsList) {
 				if (mutation.type === 'childList') {
-					checkForElement();
+					this.CE(attributeName, lifecycleCallback, documentScope);
 				}
 			}
 		}).observe(documentScope, {
 			childList: true,
 			subtree: true,
 		});
-		checkForElement();
+		this.CE(attributeName, lifecycleCallback, documentScope);
 	}
+	/**
+	 * checkForElement
+	 * @private
+	 * @param {string} attributeName
+	 * @param {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
+	 * async function that returns async dismountCallback function;
+	 * @param {documentScope} [documentScope]
+	 */
+	CE = (attributeName, lifecycleCallback, documentScope = document) => {
+		const selector = `[${attributeName}]`;
+		const elements = Array.from(documentScope.querySelectorAll(selector));
+		if (
+			!(documentScope instanceof ShadowRoot) &&
+			!(documentScope instanceof Document) &&
+			documentScope.hasAttribute(attributeName)
+		) {
+			elements.push(documentScope);
+		}
+		if (!elements) {
+			return;
+		}
+		for (let i = 0; i < elements.length; i++) {
+			const element = elements[i];
+			if (element.hasAttribute(helper.C)) {
+				continue;
+			}
+			element.setAttribute(helper.C, '');
+			helper.QH.A(
+				new _QueueObjectFIFO(async () => {
+					if (!element.parentNode) {
+						return;
+					}
+					const dismountCallback = await lifecycleCallback(element);
+					new MutationObserver((mutationsList, observer) => {
+						if (!documentScope.contains(element)) {
+							helper.QH.A(
+								new _QueueObjectFIFO(async () => {
+									await dismountCallback();
+									observer.disconnect();
+								}, helper.D)
+							);
+							return;
+						}
+					}).observe(documentScope, { childList: true, subtree: true });
+				}, helper.D)
+			);
+		}
+	};
 }
 
 /**
