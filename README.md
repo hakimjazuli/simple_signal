@@ -8,6 +8,7 @@ library is less then 5kB;
 ## classes api
 
 -   `Lifecycle`:
+
     > -   usefull for:
     >     > -   adding event listeners;
     >     > -   track lifecycle of created element;
@@ -26,7 +27,13 @@ library is less then 5kB;
     > -   returns:
     >     > -   `unObserve:()=>void`: will un-observe the `MutationObserver` for the
     >     >     `documentScope`, except `documentScope == undefined || documentScope == document`
+    > -   note:
+    >     > -   observer options are set to `{childList: true, subtree: true}`, for performance
+    >     >     purposes, therefore on creating new `Element` OR adding it as `inner/outerHTML` must
+    >     >     contains the `attributeName` to be observed;
+
 -   `Let`:
+
     > -   params:
     >     > -   `value`: `VType`
     >     > -   `attributeName?`: `string`
@@ -47,7 +54,9 @@ library is less then 5kB;
     >     > -   adding `value` to the html attribute like = `attributeName="...;value;..."`, will
     >     >     bind the js variable value to the element value, only works on element that have
     >     >     valid `oninput` attribute
+
 -   `Derived`:
+
     > -   params
     >     > -   `asyncCallback`: `()=>Promise<VType>`
     >     > -   `attributeName?`: `string`
@@ -63,12 +72,16 @@ library is less then 5kB;
     >     > -   "const b = new Derived(async()=>\`derived from ${a.value}\`, 'param-a');"
     >     > -   `<div param-a="innerText;data-a"></div>` will reflect to DOM
     >     >     `<div param-a="innerText;data-a" data-a="value of a">value of a</div>`
+
 -   `$`:
+
     > -   params:
     >     > -   `asyncCallback`: `()=>Promise<VType>`
     > -   example:
     >     > -   `new $( async () => { document.querySelector('p')?.setAttribute('text', b.value) });`
+
 -   `OnViewPort`:
+
     > -   tips: coupled with `Lifecycle` it can be helpfull for complex client side
     >     routing/rendering;
     > -   params:

@@ -182,6 +182,7 @@ export class OnViewPort {
  * @type {(()=>void)[]}
  */
 const documentObserverFunctions = [];
+
 /**
  * @param {() => void} fn
  */
