@@ -178,7 +178,61 @@ export class OnViewPort {
  * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
  */
 
+/**
+ * @type {(()=>void)[]}
+ */
+const documentObserverFunctions = [];
+/**
+ * @param {() => void} fn
+ */
+const addToDocumentObserverFunctions = (fn) => {
+	const exists = documentObserverFunctions.some((existingFn) => existingFn === fn);
+	if (!exists) {
+		documentObserverFunctions.push(fn);
+	}
+};
+
+new MutationObserver((mutationsList, observer) => {
+	for (let mutation of mutationsList) {
+		if (mutation.type === 'childList') {
+			for (let i = 0; i < documentObserverFunctions.length; i++) {
+				documentObserverFunctions[i]();
+			}
+		}
+	}
+}).observe(document, {
+	childList: true,
+	subtree: true,
+});
+
 export class Lifecycle {
+	/**
+	 * @private
+	 * @type {string}
+	 */
+	AN;
+	/**
+	 * @private
+	 * @type {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)}
+	 */
+	LC;
+	/**
+	 * @private
+	 * @type {documentScope}
+	 */
+	DS;
+	/**
+	 * @private
+	 * @type {undefined|MutationObserver}
+	 */
+	O;
+	unObserve = () => {
+		if (!this.O) {
+			console.warn('you are not allowed to un-observe from MainObserver');
+			return;
+		}
+		this.O.disconnect();
+	};
 	/**
 	 * @param {string} attributeName
 	 * @param {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
@@ -186,35 +240,38 @@ export class Lifecycle {
 	 * @param {documentScope} [documentScope]
 	 */
 	constructor(attributeName, lifecycleCallback, documentScope = document) {
-		new MutationObserver((mutationsList, observer) => {
-			for (let mutation of mutationsList) {
-				if (mutation.type === 'childList') {
-					this.CE(attributeName, lifecycleCallback, documentScope);
+		this.AN = attributeName;
+		this.LC = lifecycleCallback;
+		this.DS = documentScope;
+		if (documentScope == document) {
+			addToDocumentObserverFunctions(this.CE);
+		} else {
+			this.O = new MutationObserver((mutationsList, observer) => {
+				for (let mutation of mutationsList) {
+					if (mutation.type === 'childList') {
+						this.CE();
+					}
 				}
-			}
-		}).observe(documentScope, {
-			childList: true,
-			subtree: true,
-		});
-		this.CE(attributeName, lifecycleCallback, documentScope);
+			});
+			this.O.observe(documentScope, {
+				childList: true,
+				subtree: true,
+			});
+		}
+		this.CE();
 	}
 	/**
-	 * checkForElement
 	 * @private
-	 * @param {string} attributeName
-	 * @param {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
-	 * async function that returns async dismountCallback function;
-	 * @param {documentScope} [documentScope]
 	 */
-	CE = (attributeName, lifecycleCallback, documentScope = document) => {
-		const selector = `[${attributeName}]`;
-		const elements = Array.from(documentScope.querySelectorAll(selector));
+	CE = () => {
+		const selector = `[${this.AN}]`;
+		const elements = Array.from(this.DS.querySelectorAll(selector));
 		if (
-			!(documentScope instanceof ShadowRoot) &&
-			!(documentScope instanceof Document) &&
-			documentScope.hasAttribute(attributeName)
+			!(this.DS instanceof ShadowRoot) &&
+			!(this.DS instanceof Document) &&
+			this.DS.hasAttribute(this.AN)
 		) {
-			elements.push(documentScope);
+			elements.push(this.DS);
 		}
 		if (!elements) {
 			return;
@@ -230,9 +287,9 @@ export class Lifecycle {
 					if (!element.parentNode) {
 						return;
 					}
-					const dismountCallback = await lifecycleCallback(element);
+					const dismountCallback = await this.LC(element);
 					new MutationObserver((mutationsList, observer) => {
-						if (!documentScope.contains(element)) {
+						if (!this.DS.contains(element)) {
 							helper.QH.A(
 								new _QueueObjectFIFO(async () => {
 									await dismountCallback();
@@ -241,7 +298,7 @@ export class Lifecycle {
 							);
 							return;
 						}
-					}).observe(documentScope, { childList: true, subtree: true });
+					}).observe(this.DS, { childList: true, subtree: true });
 				}, helper.D)
 			);
 		}
@@ -415,6 +472,6 @@ export class Derived extends Let {
 	 * @private
 	 */
 	set value(v) {
-		console.log('you are not allowed to change Derived value manually');
+		console.warn('you are not allowed to change Derived value manually');
 	}
 }

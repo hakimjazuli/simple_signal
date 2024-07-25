@@ -23,6 +23,9 @@ library is less then 5kB;
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
     >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
     >     > -   `<buttton elem-event>click me</button>`
+    > -   returns:
+    >     > -   `unObserve:()=>void`: will un-observe the `MutationObserver` for the
+    >     >     `documentScope`, except `documentScope == undefined || documentScope == document`
 -   `Let`:
     > -   params:
     >     > -   `value`: `VType`
