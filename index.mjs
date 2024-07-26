@@ -327,7 +327,6 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 	}
 	for (let i = 0; i < elements.length; i++) {
 		const element = elements[i];
-		val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
 		const targets = (element.getAttribute(attributeName) ?? '').split(';');
 		for (let i = 0; i < targets.length; i++) {
 			const target = targets[i];
@@ -362,6 +361,7 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 					}).observe(element.parentNode, { childList: true });
 				}
 			} catch (error) {
+				val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
 				element.setAttribute(target, val);
 			}
 		}
