@@ -478,3 +478,27 @@ export class Derived extends Let {
 		console.warn('you are not allowed to change Derived value manually');
 	}
 }
+
+export class Ping extends Let {
+	/**
+	 * @param {boolean} initial
+	 */
+	constructor(initial) {
+		super(initial);
+	}
+	get value() {
+		return super.value;
+	}
+	/**
+	 * @private
+	 */
+	set value(v) {
+		console.warn('you are not allowed to change Ping value manually');
+	}
+	/**
+	 * notify all effects registered to this instance
+	 */
+	ping = () => {
+		super.value = !super.value;
+	};
+}

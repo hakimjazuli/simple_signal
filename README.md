@@ -75,6 +75,15 @@ library is less then 5kB;
     >     > -   `<div param-a="innerText;data-a"></div>` will reflect to DOM
     >     >     `<div param-a="innerText;data-a" data-a="value of a">value of a</div>`
 
+-   `Ping`:
+
+    > -   params:
+    >     > -   `intial`: `boolean`
+    > -   returns:
+    >     > -   `get value: boolean`
+    >     > -   `ping:()=>void`
+    >     >     > -   notify instance for `$`
+
 -   `$`:
 
     > -   params:
