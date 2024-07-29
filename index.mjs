@@ -251,6 +251,11 @@ export class Lifecycle {
 				subtree: true,
 			});
 		}
+		/**
+		 * initial check;
+		 * without this, individual observer will not be called when no mutation is there;
+		 */
+		this.CE();
 	}
 	/**
 	 * @private
