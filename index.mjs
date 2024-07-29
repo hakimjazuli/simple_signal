@@ -193,7 +193,7 @@ const addToDocumentObserverFunctions = (fn) => {
 	}
 };
 
-new MutationObserver((mutationsList, observer) => {
+const mainDocumentObserver = new MutationObserver((mutationsList, observer) => {
 	for (let mutation of mutationsList) {
 		if (mutation.type === 'childList') {
 			for (let i = 0; i < documentObserverFunctions.length; i++) {
@@ -201,7 +201,8 @@ new MutationObserver((mutationsList, observer) => {
 			}
 		}
 	}
-}).observe(document, {
+});
+mainDocumentObserver.observe(document, {
 	childList: true,
 	subtree: true,
 });
@@ -209,40 +210,31 @@ new MutationObserver((mutationsList, observer) => {
 export class Lifecycle {
 	/**
 	 * @private
-	 * @type {string}
 	 */
-	AN;
+	AL;
 	/**
 	 * @private
-	 * @type {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)}
-	 */
-	LC;
-	/**
-	 * @private
-	 * @type {documentScope}
 	 */
 	DS;
 	/**
 	 * @private
-	 * @type {undefined|MutationObserver}
 	 */
 	O;
 	unObserve = () => {
 		if (!this.O) {
-			console.warn('you are not allowed to un-observe from MainObserver');
+			console.warn('you are not allowed to un-observe from main document observer');
 			return;
 		}
 		this.O.disconnect();
 	};
 	/**
-	 * @param {string} attributeName
-	 * @param {(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)} lifecycleCallback
-	 * async function that returns async dismountCallback function;
-	 * @param {documentScope} [documentScope]
+	 * @param {documentScope} documentScope
+	 * @param {{
+	 * [attributeName:string]:(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)
+	 * }} attrLifecycleCallbacks
 	 */
-	constructor(attributeName, lifecycleCallback, documentScope = document) {
-		this.AN = attributeName;
-		this.LC = lifecycleCallback;
+	constructor(documentScope, attrLifecycleCallbacks) {
+		this.AL = attrLifecycleCallbacks;
 		this.DS = documentScope;
 		if (documentScope == document) {
 			addToDocumentObserverFunctions(this.CE);
@@ -259,50 +251,55 @@ export class Lifecycle {
 				subtree: true,
 			});
 		}
-		this.CE();
 	}
 	/**
 	 * @private
 	 */
 	CE = () => {
-		const selector = `[${this.AN}]`;
-		const elements = Array.from(this.DS.querySelectorAll(selector));
-		if (
-			!(this.DS instanceof ShadowRoot) &&
-			!(this.DS instanceof Document) &&
-			this.DS.hasAttribute(this.AN)
-		) {
-			elements.push(this.DS);
-		}
-		if (!elements) {
-			return;
-		}
-		for (let i = 0; i < elements.length; i++) {
-			const element = elements[i];
-			if (element.hasAttribute(helper.C)) {
-				continue;
+		for (let attributeName in this.AL) {
+			const lifecycleCallback = this.AL[attributeName];
+			const elements = Array.from(this.DS.querySelectorAll(`[${attributeName}]`));
+			if (
+				!(this.DS instanceof ShadowRoot) &&
+				!(this.DS instanceof Document) &&
+				this.DS.hasAttribute(attributeName)
+			) {
+				elements.push(this.DS);
 			}
-			element.setAttribute(helper.C, '');
-			helper.QH.A(
-				new _QueueObjectFIFO(async () => {
-					if (!element.parentNode) {
-						return;
-					}
-					const dismountCallback = await this.LC(element);
-					new MutationObserver((mutationsList, observer) => {
-						if (!this.DS.contains(element)) {
-							helper.QH.A(
-								new _QueueObjectFIFO(async () => {
-									await dismountCallback();
-									observer.disconnect();
-								}, helper.D)
-							);
+			if (!elements) {
+				return;
+			}
+			for (let j = 0; j < elements.length; j++) {
+				const element = elements[j];
+				if (element.hasAttribute(helper.C)) {
+					continue;
+				}
+				element.setAttribute(helper.C, '');
+				helper.QH.A(
+					new _QueueObjectFIFO(async () => {
+						if (!element.parentNode) {
 							return;
 						}
-					}).observe(this.DS, { childList: true, subtree: true });
-				}, helper.D)
-			);
+						const dismountCallback = await lifecycleCallback(element);
+						new MutationObserver((mutationsList, observer) => {
+							if (!this.DS.contains(element)) {
+								helper.QH.A(
+									new _QueueObjectFIFO(async () => {
+										await dismountCallback();
+										observer.disconnect();
+									}, helper.D)
+								);
+								return;
+							}
+						}).observe(this.DS, { childList: true, subtree: true });
+					}, helper.D)
+				);
+			}
 		}
+		// for (let i = 0; i < this.AL.length; i++) {
+		// 	const [attributeName, lifecycleCallback] = this.AL[i];
+
+		// }
 	};
 }
 

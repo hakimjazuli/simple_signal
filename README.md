@@ -13,13 +13,15 @@ library is less then 5kB;
     >     > -   adding event listeners;
     >     > -   track lifecycle of created element;
     > -   params:
-    >     > -   `attributeName`: `string`
-    >     > -   `lifecycleCallback`: `(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)`
-    >     >     > -   fires when element is created/exist in the initial document;
-    >     >     > -   returns callback which then fires when element no longer on documentScope
-    >     >     > -   param `element` is the curent element which is created/exist in the initial
-    >     >     >     document;
-    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
+    >     > -   `documentScope`: `HTMLElement|Element|ShadowRoot|Document`
+    >     > -   `attrLifecycleCallback: { [attributeName:string] : lifecycleCallback }`
+    >     >     > -   `attributeName`: `string`
+    >     >     > -   `lifecycleCallback`: `(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)`
+    >     >     >     > -   fires when element is created/exist in the initial document;
+    >     >     >     > -   returns callback which then fires when element no longer on
+    >     >     >     >     documentScope
+    >     >     >     > -   param `element` is the curent element which is created/exist in the
+    >     >     >     >     initial document;
     > -   example:
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
     >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
