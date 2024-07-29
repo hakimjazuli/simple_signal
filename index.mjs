@@ -228,12 +228,12 @@ export class Lifecycle {
 		this.O.disconnect();
 	};
 	/**
-	 * @param {documentScope} documentScope
 	 * @param {{
 	 * [attributeName:string]:(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)
 	 * }} attrLifecycleCallbacks
+	 * @param {documentScope} [documentScope]
 	 */
-	constructor(documentScope, attrLifecycleCallbacks) {
+	constructor(attrLifecycleCallbacks, documentScope = document) {
 		this.AL = attrLifecycleCallbacks;
 		this.DS = documentScope;
 		if (documentScope == document) {
