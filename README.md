@@ -78,7 +78,9 @@ library is less then 5kB;
 -   `Ping`:
 
     > -   params:
-    >     > -   `intial`: `boolean`
+    >     > -   `asyncCallbackWhenPinged`: `()=>Promise<void>`
+    >     > -   `runCallbackAtInitialization?`: `boolean`
+    >     >     > -   `default` = `false`
     > -   returns:
     >     > -   `get value: boolean`
     >     > -   `ping:()=>void`

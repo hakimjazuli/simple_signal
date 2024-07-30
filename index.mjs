@@ -512,10 +512,26 @@ export class Derived extends Let {
 
 export class Ping extends Let {
 	/**
-	 * @param {boolean} initial
+	 * is initializating
+	 * @private
 	 */
-	constructor(initial) {
-		super(initial);
+	I = true;
+	/**
+	 * @param {()=>Promise<void>} asyncCallbackWhenPinged
+	 * @param {boolean} [runCallbackAtInitialization]
+	 */
+	constructor(asyncCallbackWhenPinged, runCallbackAtInitialization = false) {
+		super(true);
+		if (runCallbackAtInitialization) {
+			this.I = false;
+		}
+		new $(async () => {
+			if (this.I) {
+				this.I = false;
+				return;
+			}
+			await asyncCallbackWhenPinged();
+		});
 	}
 	get value() {
 		return super.value;
