@@ -88,9 +88,9 @@ library is less then 5kB;
 -   `$`:
 
     > -   params:
-    >     > -   `asyncCallback`: `()=>Promise<VType>`
+    >     > -   `asyncCallback`: `(isAtInitialization:boolean)=>Promise<VType>`
     > -   example:
-    >     > -   `new $( async () => { document.querySelector('p')?.setAttribute('text', b.value) });`
+    >     > -   `new $( async (isAtInitialization) => { document.querySelector('p')?.setAttribute('text', b.value) });`
 
 -   `OnViewPort`:
 

@@ -126,7 +126,7 @@ class _QueueFIFO {
 const helper = new (class {
 	/**
 	 * subscriber
-	 * @type {null|(()=>Promise<void>)}
+	 * @type {null|((isAtInitialization:boolean)=>Promise<void>)}
 	 */
 	S = null;
 	QH = new _QueueFIFO();
@@ -408,7 +408,7 @@ export class Let {
 	/**
 	 * subscription
 	 * @private
-	 * @type {(()=>Promise<void>)[]}
+	 * @type {((isAtInitialization:boolean)=>Promise<void>)[]}
 	 */
 	S = [];
 	/**
@@ -455,7 +455,7 @@ export class Let {
 				await Promise.all(
 					this.S.map(async (callback) => {
 						try {
-							return await callback();
+							return await callback(false);
 						} catch (error) {
 							console.error('Error in callback:', error);
 							throw error;
@@ -471,13 +471,13 @@ export class Let {
 
 export class $ {
 	/**
-	 * @param {()=>Promise<void>} asyncCallback
+	 * @param {(isAtInitialization:boolean)=>Promise<void>} asyncCallback
 	 */
 	constructor(asyncCallback) {
 		helper.QH.A(
 			new _QueueObjectFIFO(async () => {
 				helper.S = asyncCallback;
-				await asyncCallback();
+				await asyncCallback(true);
 				helper.S = null;
 			}, helper.D)
 		);
@@ -502,9 +502,6 @@ export class Derived extends Let {
 	get value() {
 		return super.value;
 	}
-	/**
-	 * @private
-	 */
 	set value(v) {
 		console.warn('you are not allowed to change Derived value manually');
 	}
@@ -533,11 +530,8 @@ export class Ping extends Let {
 	}
 	get value() {
 		console.warn('you are not allowed to lookup Ping value manually');
-		return false;
+		return super.value;
 	}
-	/**
-	 * @private
-	 */
 	set value(v) {
 		console.warn('you are not allowed to change Ping value manually');
 	}
