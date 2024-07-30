@@ -111,6 +111,15 @@ library is less then 5kB;
     >     > -   `new OnViewPort('lazy-test', async (element, unobserve) => { console.log({element, message:'lazy is on viewport'}); return async () => { console.log({element, message:'lazy is leavinng viewport'}); unobserve() }; });`
     >     > -   `<p lazy-test>lazy test on view port</p>`
 
+## function api
+
+-   `attrHelper`
+    > -   params:
+    >     > -   `attrHelpers:Record.<key:string<Vtype>,''>`
+    > -   returns:
+    >     > -   `Record.<key:string<Vtype>,string>`
+    >     >     > -   validated attribute name;
+
 ## how to setup
 
 we have several way of installing this library to your app, depending on how do you want to use it
