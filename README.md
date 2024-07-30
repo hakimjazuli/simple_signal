@@ -82,9 +82,8 @@ library is less then 5kB;
     >     > -   `runCallbackAtInitialization?`: `boolean`
     >     >     > -   `default` = `false`
     > -   returns:
-    >     > -   `get value: boolean`
     >     > -   `ping:()=>void`
-    >     >     > -   notify instance for `$`
+    >     >     > -   notify instance for `effect/$`
 
 -   `$`:
 

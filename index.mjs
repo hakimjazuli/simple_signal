@@ -422,11 +422,11 @@ export class Let {
 	 * @param {string} [attributeName]
 	 * @param {documentScope} [documentScope]
 	 */
-	constructor(value, attributeName = undefined, documentScope = document) {
+	constructor(value, attributeName = undefined, documentScope = undefined) {
 		this.V_ = value;
 		if (attributeName) {
 			new $(async () => {
-				setDomReflector(this.value, attributeName, documentScope, this);
+				setDomReflector(this.value, attributeName, documentScope ?? document, this);
 			});
 		}
 	}
@@ -493,7 +493,7 @@ export class Derived extends Let {
 	 * @param {string} [attributeName]
 	 * @param {Document|HTMLElement|ShadowRoot} [documentScope]
 	 */
-	constructor(asyncCallback, attributeName = undefined, documentScope = document) {
+	constructor(asyncCallback, attributeName = undefined, documentScope = undefined) {
 		super('', attributeName, documentScope);
 		new $(async () => {
 			super.value = await asyncCallback();
