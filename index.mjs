@@ -526,6 +526,7 @@ export class Ping extends Let {
 			this.I = false;
 		}
 		new $(async () => {
+			super.value;
 			if (this.I) {
 				this.I = false;
 				return;
