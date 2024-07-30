@@ -512,30 +512,28 @@ export class Derived extends Let {
 
 export class Ping extends Let {
 	/**
-	 * is initializating
-	 * @private
-	 */
-	I = true;
-	/**
 	 * @param {()=>Promise<void>} asyncCallbackWhenPinged
 	 * @param {boolean} [runCallbackAtInitialization]
 	 */
 	constructor(asyncCallbackWhenPinged, runCallbackAtInitialization = false) {
-		super(true);
-		if (runCallbackAtInitialization) {
-			this.I = false;
-		}
+		super(runCallbackAtInitialization);
 		new $(async () => {
-			super.value;
-			if (this.I) {
-				this.I = false;
-				return;
+			switch (super.value) {
+				case true:
+				case false:
+				default:
+					if (!runCallbackAtInitialization) {
+						runCallbackAtInitialization = true;
+						return;
+					}
+					break;
 			}
 			await asyncCallbackWhenPinged();
 		});
 	}
 	get value() {
-		return super.value;
+		console.warn('you are not allowed to lookup Ping value manually');
+		return false;
 	}
 	/**
 	 * @private
