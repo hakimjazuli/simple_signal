@@ -332,10 +332,6 @@ export class Lifecycle {
 				);
 			}
 		}
-		// for (let i = 0; i < this.AL.length; i++) {
-		// 	const [attributeName, lifecycleCallback] = this.AL[i];
-
-		// }
 	};
 }
 
