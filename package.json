@@ -1,6 +1,6 @@
 {
 	"name": "@html_first/simple_signal",
-	"version": "2.3.4",
+	"version": "2.3.5",
 	"description": "simple asynchronous signal",
 	"type": "module",
 	"main": "index.mjs",
