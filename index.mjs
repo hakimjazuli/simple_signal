@@ -391,6 +391,14 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 				}
 			} catch (error) {
 				val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
+				if (target == '') {
+					console.warn({
+						element,
+						attributeName,
+						message: "doesn't have target",
+					});
+					return;
+				}
 				element.setAttribute(target, val);
 			}
 		}
