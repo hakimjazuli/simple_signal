@@ -13,14 +13,12 @@ library is less then 5kB;
     >     > -   adding event listeners;
     >     > -   track lifecycle of created element;
     > -   params:
-    >     > -   `attrLifecycleCallback: { [attributeName:string] : lifecycleCallback }`
-    >     >     > -   `attributeName`: `string`
-    >     >     > -   `lifecycleCallback`: `(element:HTMLElement)=>(Promise<()=>(Promise<void>)>)`
-    >     >     >     > -   fires when element is created/exist in the initial document;
-    >     >     >     > -   returns callback which then fires when element no longer on
-    >     >     >     >     documentScope
-    >     >     >     > -   param `element` is the curent element which is created/exist in the
-    >     >     >     >     initial document;
+    >     > -   `attrLifecycleCallback`:
+    >     >     `{ [attributeName:string]: (element:HTMLElement|Element, observer:MutationObserver)=>(Promise<()=>Promise<void>>) }`
+    >     >     > -   fires when element is created/exist in the initial document;
+    >     >     > -   returns callback which then fires when element no longer o documentScope
+    >     >     > -   param `element` is the curent element which is created/exist in the initial
+    >     >     >     document;
     >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
     > -   example:
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
@@ -46,6 +44,7 @@ library is less then 5kB;
     > -   returns:
     >     > -   `get value(): VType`
     >     > -   `set value(newValue:VType): void`
+    >     > -   `remove$:(effect:$)=>void`
     > -   example1:
     >     > -   `const a = new Let('a');`
     > -   example2:
@@ -77,13 +76,12 @@ library is less then 5kB;
 
 -   `Ping`:
 
+    > -   wrapper for async context using simple_signal internal Queue Handler;
     > -   params:
-    >     > -   `asyncCallbackWhenPinged`: `()=>Promise<void>`
-    >     > -   `runCallbackAtInitialization?`: `boolean`
-    >     >     > -   `default` = `false`
+    >     > -   `asyncCallbackWhenPinged`: `(isAtInitisalization:boolean)=>Promise<void>`
     > -   returns:
-    >     > -   `ping:()=>void`
-    >     >     > -   notify instance for `effect/$`
+    >     > -   `ping:(isAtInitisalization:boolean)=>void`
+    >     >     > -   run `asyncCallbackWhenPinged`;
 
 -   `$`:
 
@@ -91,6 +89,9 @@ library is less then 5kB;
     >     > -   `asyncCallback`: `(isAtInitialization:boolean)=>Promise<VType>`
     > -   example:
     >     > -   `new $( async (isAtInitialization) => { document.querySelector('p')?.setAttribute('text', b.value) });`
+    > -   returns:
+    >     > -   `E:asyncCallback`: `(isAtInitialization:boolean)=>Promise<VType>`
+    >     >     > -   used for lib internal functionality;
 
 -   `OnViewPort`:
 

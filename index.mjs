@@ -141,19 +141,19 @@ const helper = new (class {
 	/**
 	 * @readonly
 	 */
-	P = 'hf_ss:binded_viewport';
+	P = 'hf_ss-binded_viewport';
 	/**
 	 * @readonly
 	 */
-	PX = 'hf_ss:binded_viewport_on_exit';
+	PX = 'hf_ss-binded_viewport_on_exit';
 	/**
 	 * @readonly
 	 */
-	V = 'hf_ss:binded_value';
+	V = 'hf_ss-binded_value';
 	/**
 	 * @readonly
 	 */
-	C = 'hf_ss:binded_lifecycle';
+	LC = 'hf_ss-binded_lifcycle';
 })();
 
 export class OnViewPort {
@@ -210,132 +210,6 @@ export class OnViewPort {
  */
 
 /**
- * @type {(()=>void)[]}
- */
-const documentObserverFunctions = [];
-
-/**
- * @param {() => void} fn
- */
-const addToDocumentObserverFunctions = (fn) => {
-	const exists = documentObserverFunctions.some((existingFn) => existingFn === fn);
-	if (!exists) {
-		documentObserverFunctions.push(fn);
-	}
-};
-
-const mainDocumentObserver = new MutationObserver((mutationsList, observer) => {
-	for (let mutation of mutationsList) {
-		if (mutation.type === 'childList') {
-			for (let i = 0; i < documentObserverFunctions.length; i++) {
-				documentObserverFunctions[i]();
-			}
-		}
-	}
-});
-mainDocumentObserver.observe(document, {
-	childList: true,
-	subtree: true,
-});
-
-export class Lifecycle {
-	/**
-	 * @private
-	 */
-	AL;
-	/**
-	 * @private
-	 */
-	DS;
-	/**
-	 * @private
-	 */
-	O;
-	unObserve = () => {
-		if (!this.O) {
-			console.warn('you are not allowed to un-observe from main document observer');
-			return;
-		}
-		this.O.disconnect();
-	};
-	/**
-	 * @param {{
-	 * [attributeName:string]:(element:HTMLElement|Element)=>(Promise<()=>(Promise<void>)>)
-	 * }} attrLifecycleCallbacks
-	 * @param {documentScope} [documentScope]
-	 */
-	constructor(attrLifecycleCallbacks, documentScope = document) {
-		this.AL = attrLifecycleCallbacks;
-		this.DS = documentScope;
-		if (documentScope == document) {
-			addToDocumentObserverFunctions(this.CE);
-		} else {
-			this.O = new MutationObserver((mutationsList, observer) => {
-				for (let mutation of mutationsList) {
-					if (mutation.type === 'childList') {
-						this.CE();
-					}
-				}
-			});
-			this.O.observe(documentScope, {
-				childList: true,
-				subtree: true,
-			});
-		}
-		/**
-		 * initial check;
-		 * without this, individual observer will not be called when no mutation is there;
-		 */
-		this.CE();
-	}
-	/**
-	 * @private
-	 */
-	CE = () => {
-		for (let attributeName in this.AL) {
-			const lifecycleCallback = this.AL[attributeName];
-			const elements = Array.from(this.DS.querySelectorAll(`[${attributeName}]`));
-			if (
-				!(this.DS instanceof ShadowRoot) &&
-				!(this.DS instanceof Document) &&
-				this.DS.hasAttribute(attributeName)
-			) {
-				elements.push(this.DS);
-			}
-			if (!elements) {
-				return;
-			}
-			for (let j = 0; j < elements.length; j++) {
-				const element = elements[j];
-				if (element.hasAttribute(helper.C)) {
-					continue;
-				}
-				element.setAttribute(helper.C, '');
-				helper.QH.A(
-					new _QueueObjectFIFO(async () => {
-						if (!element.parentNode) {
-							return;
-						}
-						const dismountCallback = await lifecycleCallback(element);
-						new MutationObserver((mutationsList, observer) => {
-							if (!this.DS.contains(element)) {
-								helper.QH.A(
-									new _QueueObjectFIFO(async () => {
-										await dismountCallback();
-										observer.disconnect();
-									}, helper.D)
-								);
-								return;
-							}
-						}).observe(this.DS, { childList: true, subtree: true });
-					}, helper.D)
-				);
-			}
-		}
-	};
-}
-
-/**
  * @param {any} val
  * @param {string} attributeName
  * @param {documentScope} documentScope
@@ -378,8 +252,8 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 					new MutationObserver((mutationsList, observer) => {
 						for (let mutation of mutationsList) {
 							if (mutation.type === 'childList') {
-								for (let removedNode of mutation.removedNodes) {
-									if (removedNode === element) {
+								for (let i = 0; i < mutation.removedNodes.length; i++) {
+									if (mutation.removedNodes[i] === element) {
 										element.removeEventListener('input', updater);
 										observer.disconnect();
 										return;
@@ -409,6 +283,14 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
  * @template V
  */
 export class Let {
+	/**
+	 * remove effect
+	 * @param {$} $
+	 * @return {void}
+	 */
+	remove$ = ($) => {
+		this.S = this.S.filter((S) => $.E !== S);
+	};
 	/**
 	 * subscription
 	 * @private
@@ -474,14 +356,21 @@ export class Let {
 }
 
 export class $ {
+	E;
+	/**
+	 * @private
+	 */
+	first = true;
 	/**
 	 * @param {(isAtInitialization:boolean)=>Promise<void>} asyncCallback
 	 */
 	constructor(asyncCallback) {
+		this.E = asyncCallback;
 		helper.QH.A(
 			new _QueueObjectFIFO(async () => {
 				helper.S = asyncCallback;
-				await asyncCallback(true);
+				await asyncCallback(this.first);
+				this.first = false;
 				helper.S = null;
 			}, helper.D)
 		);
@@ -495,7 +384,7 @@ export class Derived extends Let {
 	/**
 	 * @param {()=>Promise<V>} asyncCallback
 	 * @param {string} [attributeName]
-	 * @param {Document|HTMLElement|ShadowRoot} [documentScope]
+	 * @param {documentScope} [documentScope]
 	 */
 	constructor(asyncCallback, attributeName = undefined, documentScope = undefined) {
 		super('', attributeName, documentScope);
@@ -511,38 +400,168 @@ export class Derived extends Let {
 	}
 }
 
-export class Ping extends Let {
+export class Ping {
 	/**
-	 * @param {()=>Promise<void>} asyncCallbackWhenPinged
-	 * @param {boolean} [runCallbackAtInitialization]
+	 * @param {(isAtInitisalization:boolean)=>Promise<void>} asyncCallbackWhenPinged
 	 */
-	constructor(asyncCallbackWhenPinged, runCallbackAtInitialization = false) {
-		super(runCallbackAtInitialization);
-		new $(async () => {
-			switch (super.value) {
-				case true:
-				case false:
-				default:
-					if (!runCallbackAtInitialization) {
-						runCallbackAtInitialization = true;
-						return;
-					}
-					break;
+	constructor(asyncCallbackWhenPinged) {
+		this.AC = asyncCallbackWhenPinged;
+		this.ping(true);
+	}
+	/**
+	 * @param {boolean} first
+	 */
+	ping = (first = false) => {
+		helper.QH.A(
+			new _QueueObjectFIFO(async () => {
+				await this.AC(first);
+			}, helper.D)
+		);
+	};
+}
+
+const documentMutation_ = new Let('');
+const documentObserver = new MutationObserver((mutationList) => {
+	mutationList.forEach((mutation) => {
+		// @ts-ignore
+		documentMutation_.value = mutation;
+	});
+});
+documentObserver.observe(document, {
+	childList: true,
+	subtree: true,
+});
+
+export class Lifecycle {
+	/**
+	 * @private
+	 * @type {MutationObserver}
+	 */
+	O;
+	/**
+	 * @type {Let<MutationRecord>}
+	 */
+	ML;
+	/**
+	 * @param {{
+	 * [attributeName:string]:
+	 * (element:HTMLElement|Element, observer:MutationObserver)=>(Promise<()=>Promise<void>>)
+	 * }} attrLifecycleCallback
+	 * @param {documentScope} [documentScope]
+	 */
+	constructor(attrLifecycleCallback, documentScope = document) {
+		this.AL = attrLifecycleCallback;
+		this.DS = documentScope;
+		if (documentScope === document) {
+			this.O = documentObserver;
+			// @ts-ignore
+			this.ML = documentMutation_;
+		} else {
+			// @ts-ignore
+			this.ML = new Let('');
+			this.O = new MutationObserver((mutationList) => {
+				mutationList.forEach((mutation) => {
+					this.ML.value = mutation;
+				});
+			});
+			this.O.observe(documentScope, {
+				childList: true,
+				subtree: true,
+			});
+		}
+		this.$ = new $(async (first) => {
+			const mutation = this.ML.value;
+			if (first) {
+				await this.I();
+				return;
 			}
-			await asyncCallbackWhenPinged();
+			await this.CE(mutation);
 		});
 	}
-	get value() {
-		console.warn('you are not allowed to lookup Ping value manually');
-		return super.value;
-	}
-	set value(v) {
-		console.warn('you are not allowed to change Ping value manually');
-	}
 	/**
-	 * notify all effects registered to this instance
+	 * active dom object check
+	 * @private
 	 */
-	ping = () => {
-		super.value = !super.value;
+	I = async () => {
+		for (const attributeName in this.AL) {
+			const lifecycle = this.AL[attributeName];
+			const element = this.DS.querySelector(`[${attributeName}]`);
+			if (!element) {
+				return;
+			}
+			this.DC[attributeName] = await lifecycle(element, this.O);
+		}
+	};
+	/**
+	 * disconnected callbacks
+	 * @private
+	 * @type {{
+	 * [attributeName:string]: ()=>Promise<void>
+	 * }}
+	 */
+	DC = {};
+	/**
+	 * @private
+	 * @param {MutationRecord} mutation
+	 */
+	CE = async (mutation) => {
+		if (mutation.type !== 'childList') {
+			return;
+		}
+		for (const attributeName in this.AL) {
+			const lifecycle = this.AL[attributeName];
+			for (const node of mutation.addedNodes) {
+				if (
+					(node instanceof HTMLElement || node instanceof Element) &&
+					node.hasAttribute(attributeName) &&
+					!this.DC[attributeName]
+				) {
+					this.DC[attributeName] = await lifecycle(node, this.O);
+				}
+			}
+			for (const node of mutation.removedNodes) {
+				if (
+					(node instanceof HTMLElement || node instanceof Element) &&
+					node.hasAttribute(attributeName) &&
+					this.DC[attributeName]
+				) {
+					await this.DC[attributeName]();
+					delete this.DC[attributeName];
+					if (Object.keys(this.DC).length === 0) {
+						this.ML.remove$(this.$);
+					}
+				}
+			}
+		}
+	};
+	unObserve = () => {
+		if (this.DC) {
+			let DCS = [];
+			for (const attributeName in this.DC) {
+				DCS.push(this.DC[attributeName]);
+			}
+			helper.QH.A(
+				new _QueueObjectFIFO(async () => {
+					await Promise.all(
+						DCS.map(async (callback) => {
+							try {
+								return await callback();
+							} catch (error) {
+								console.error('Error in callback:', error);
+								throw error;
+							}
+						})
+					).catch((error) => {
+						console.error('Promise.all failed:', error);
+					});
+				}, helper.D)
+			);
+			this.DC = {};
+		}
+		if (this.DS === document) {
+			this.ML.remove$(this.$);
+			return;
+		}
+		this.O.disconnect();
 	};
 }
