@@ -445,7 +445,7 @@ export class Lifecycle {
 	/**
 	 * @param {{
 	 * [attributeName:string]:
-	 * (element:HTMLElement|Element, observer:MutationObserver)=>(Promise<()=>Promise<void>>)
+	 * (element:HTMLElement|Element, unObserve:()=>void)=>(Promise<()=>Promise<void>>)
 	 * }} attrLifecycleCallback
 	 * @param {documentScope} [documentScope]
 	 */
@@ -489,7 +489,7 @@ export class Lifecycle {
 			if (!element) {
 				return;
 			}
-			this.DC[attributeName] = await lifecycle(element, this.O);
+			this.DC[attributeName] = await lifecycle(element, this.unObserve);
 		}
 	};
 	/**
@@ -517,7 +517,7 @@ export class Lifecycle {
 					node.hasAttribute(attributeName) &&
 					!this.DC[attributeName]
 				) {
-					this.DC[attributeName] = await lifecycle(node, this.O);
+					this.DC[attributeName] = await lifecycle(node, this.unObserve);
 				}
 			}
 			for (const node of mutation.removedNodes) {
