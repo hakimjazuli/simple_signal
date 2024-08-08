@@ -511,7 +511,6 @@ export class Lifecycle {
 		for (const attributeName in this.AL) {
 			const lifecycle = this.AL[attributeName];
 			for (const node of mutation.addedNodes) {
-				console.log('lifecycleCalls');
 				if (
 					(node instanceof HTMLElement || node instanceof Element) &&
 					node.hasAttribute(attributeName) &&
@@ -526,7 +525,6 @@ export class Lifecycle {
 					node.hasAttribute(attributeName) &&
 					this.DC[attributeName]
 				) {
-					console.log('removedNodes');
 					await this.DC[attributeName]();
 					delete this.DC[attributeName];
 					if (Object.keys(this.DC).length === 0) {
