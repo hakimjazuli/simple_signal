@@ -475,6 +475,7 @@ export class Lifecycle {
 				await this.I();
 				return;
 			}
+
 			await this.CE(mutation);
 		});
 	}
@@ -535,13 +536,13 @@ export class Lifecycle {
 		}
 	};
 	unObserve = () => {
-		if (this.DC) {
-			let DCS = [];
-			for (const attributeName in this.DC) {
-				DCS.push(this.DC[attributeName]);
-			}
-			helper.QH.A(
-				new _QueueObjectFIFO(async () => {
+		helper.QH.A(
+			new _QueueObjectFIFO(async () => {
+				if (this.DC) {
+					let DCS = [];
+					for (const attributeName in this.DC) {
+						DCS.push(this.DC[attributeName]);
+					}
 					await Promise.all(
 						DCS.map(async (callback) => {
 							try {
@@ -554,14 +555,14 @@ export class Lifecycle {
 					).catch((error) => {
 						console.error('Promise.all failed:', error);
 					});
-				}, helper.D)
-			);
-			this.DC = {};
-		}
-		this.ML.remove$(this.$);
-		if (this.DS === document) {
-			return;
-		}
-		this.O.disconnect();
+					this.DC = {};
+				}
+				this.ML.remove$(this.$);
+				if (this.DS === document) {
+					return;
+				}
+				this.O.disconnect();
+			}, helper.D)
+		);
 	};
 }
