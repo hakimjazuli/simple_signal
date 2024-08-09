@@ -482,7 +482,6 @@ export class Lifecycle {
 				await this.I();
 				return;
 			}
-
 			await this.CE(mutation);
 		});
 	}
