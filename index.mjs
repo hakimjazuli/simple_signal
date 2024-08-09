@@ -284,6 +284,13 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
  */
 export class Let {
 	/**
+	 * remove all effects
+	 * @return {void}
+	 */
+	removeAll$ = () => {
+		this.S = [];
+	};
+	/**
 	 * remove effect
 	 * @param {$} $
 	 * @return {void}

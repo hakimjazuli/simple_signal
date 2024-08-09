@@ -44,7 +44,9 @@ library is less then 5kB;
     > -   returns:
     >     > -   `get value(): VType`
     >     > -   `set value(newValue:VType): void`
-    >     > -   `remove$:(effect:$)=>void`
+    >     > -   `remove$:(effect:$)=>void`: remove registed effect to this Instance;
+    >     > -   `removeAll$:()=>void`: remove all registered effects to this Instance, including
+    >     >     that is auto recorded using signal to this instance;
     > -   example1:
     >     > -   `const a = new Let('a');`
     > -   example2:
@@ -67,6 +69,8 @@ library is less then 5kB;
     >     >     > -   scope of the dom reflector;
     > -   returns:
     >     > -   `get value(): VType`
+    >     > -   `remove$:(effect:$)=>void`: remove registed effect to this Instance;
+    >     > -   `removeAll$:()=>void`: remove all registered effects to this Instance;
     > -   example1:
     >     > -   "const b = new Derived(async()=>\`derived from ${a.value}\`);"
     > -   example2:
