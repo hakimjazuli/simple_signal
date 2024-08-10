@@ -447,11 +447,33 @@ documentObserver.observe(document, {
 
 export class Lifecycle {
 	/**
+	 * registered effect
+	 * @private
+	 * @type {$}
+	 */
+	$;
+	/**
+	 * attributes lifecycle callbacks
+	 * @private
+	 * @type {{
+	 * [attributeName:string]:
+	 * (element:HTMLElement|Element, unObserve:()=>void)=>(Promise<()=>Promise<void>>)
+	 * }}
+	 */
+	AL;
+	/**
+	 * document scope
+	 * @private
+	 * @type {documentScope}
+	 */
+	DS;
+	/**
 	 * @private
 	 * @type {MutationObserver}
 	 */
 	O;
 	/**
+	 * @private
 	 * @type {Let<MutationRecord>}
 	 */
 	ML;
