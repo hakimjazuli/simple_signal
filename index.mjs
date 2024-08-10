@@ -409,6 +409,12 @@ export class Derived extends Let {
 
 export class Ping {
 	/**
+	 * async callback when pinged
+	 * @private
+	 * @type {(isAtInitisalization:boolean)=>Promise<void>}
+	 */
+	AC;
+	/**
 	 * @param {(isAtInitisalization:boolean)=>Promise<void>} asyncCallbackWhenPinged
 	 */
 	constructor(asyncCallbackWhenPinged) {
