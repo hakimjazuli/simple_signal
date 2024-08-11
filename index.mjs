@@ -153,7 +153,7 @@ const helper = new (class {
 	/**
 	 * @readonly
 	 */
-	LC = 'hf_ss-binded_lifcycle';
+	LC = 'hf_ss-binded_lifecycle';
 })();
 
 export class OnViewPort {
@@ -521,10 +521,11 @@ export class Lifecycle {
 		for (const attributeName in this.AL) {
 			const lifecycle = this.AL[attributeName];
 			const element = this.DS.querySelector(`[${attributeName}]`);
-			if (!element) {
-				return;
+			if (element && !element.hasAttribute(helper.LC)) {
+				element.setAttribute(helper.LC, '');
+				this.DC[`${attributeName}${element.getAttribute(attributeName) ?? ''}`] =
+					await lifecycle(element, this.unObserve);
 			}
-			this.DC[attributeName] = await lifecycle(element, this.unObserve);
 		}
 	};
 	/**
@@ -545,23 +546,50 @@ export class Lifecycle {
 		}
 		for (const attributeName in this.AL) {
 			const lifecycle = this.AL[attributeName];
-			for (const node of mutation.addedNodes) {
+			for (let node of mutation.addedNodes) {
+				if (!(node instanceof HTMLElement) && !(node instanceof Element)) {
+					continue;
+				}
+				if (node.hasAttribute(attributeName)) {
+					// @ts-ignore
+				} else if ((node = node.querySelector(`[${attributeName}]`))) {
+				} else {
+					continue;
+				}
+				let attributeIdentifier = '';
 				if (
 					(node instanceof HTMLElement || node instanceof Element) &&
 					node.hasAttribute(attributeName) &&
-					!this.DC[attributeName]
+					!this.DC[
+						(attributeIdentifier = `${attributeName}${
+							node.getAttribute(attributeName) ?? ''
+						}`)
+					]
 				) {
-					this.DC[attributeName] = await lifecycle(node, this.unObserve);
+					this.DC[attributeIdentifier] = await lifecycle(node, this.unObserve);
 				}
 			}
-			for (const node of mutation.removedNodes) {
+			for (let node of mutation.removedNodes) {
+				if (!(node instanceof HTMLElement) && !(node instanceof Element)) {
+					continue;
+				}
+				if (node.hasAttribute(attributeName)) {
+					// @ts-ignore
+				} else if ((node = node.querySelector(`[${attributeName}]`))) {
+				} else {
+					continue;
+				}
+				let attributeIdentifier = '';
 				if (
 					(node instanceof HTMLElement || node instanceof Element) &&
-					node.hasAttribute(attributeName) &&
-					this.DC[attributeName]
+					this.DC[
+						(attributeIdentifier = `${attributeName}${
+							node.getAttribute(attributeName) ?? ''
+						}`)
+					]
 				) {
-					await this.DC[attributeName]();
-					delete this.DC[attributeName];
+					await this.DC[attributeIdentifier]();
+					delete this.DC[attributeIdentifier];
 					if (Object.keys(this.DC).length === 0) {
 						this.ML.remove$(this.$);
 					}
@@ -574,8 +602,8 @@ export class Lifecycle {
 			new _QueueObjectFIFO(async () => {
 				if (this.DC) {
 					let DCS = [];
-					for (const attributeName in this.DC) {
-						DCS.push(this.DC[attributeName]);
+					for (const attributeIdentifier in this.DC) {
+						DCS.push(this.DC[attributeIdentifier]);
 					}
 					await Promise.all(
 						DCS.map(async (callback) => {

@@ -23,7 +23,13 @@ library is less then 5kB;
     > -   example:
     >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
     >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
-    >     > -   `<buttton elem-event>click me</button>`
+    >     > -   `<buttton elem-event="unique string optional">click me</button>`
+    >     >     > -   you can minimise the number of `MutationObserver` instances on a
+    >     >     >     `documentScope`, by keeping attributeName selector to minimum, then handle
+    >     >     >     inside the `lifecycleCallback` using `element.getAttribute(attributeName)` to
+    >     >     >     conditionally handle element's lifecycle, this is usefull if you are trying to
+    >     >     >     create a library, or just having a pattern to render specific attributeName
+    >     >     >     inside your html;
     > -   returns:
     >     > -   `unObserve:()=>void`: will un-observe the `MutationObserver` for the
     >     >     `documentScope`, except `documentScope == undefined || documentScope == document`
