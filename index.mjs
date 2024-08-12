@@ -433,17 +433,29 @@ export class Ping {
 	};
 }
 
-const documentMutation_ = new Let('');
-const documentObserver = new MutationObserver((mutationList) => {
-	mutationList.forEach((mutation) => {
-		// @ts-ignore
-		documentMutation_.value = mutation;
-	});
-});
-documentObserver.observe(document, {
-	childList: true,
-	subtree: true,
-});
+class MainMutaitonObserver {
+	/**
+	 * @type {MainMutaitonObserver}
+	 */
+	static __;
+	constructor() {
+		if (MainMutaitonObserver.__ instanceof MainMutaitonObserver) {
+			return;
+		}
+		MainMutaitonObserver.__ = this;
+		this.documentMutation_ = new Let('');
+		this.documentObserver = new MutationObserver((mutationList) => {
+			mutationList.forEach((mutation) => {
+				// @ts-ignore
+				documentMutation_.value = mutation;
+			});
+		});
+		this.documentObserver.observe(document, {
+			childList: true,
+			subtree: true,
+		});
+	}
+}
 
 export class Lifecycle {
 	/**
@@ -488,9 +500,13 @@ export class Lifecycle {
 		this.AL = attrLifecycleCallback;
 		this.DS = documentScope;
 		if (documentScope === document) {
-			this.O = documentObserver;
+			if (!(MainMutaitonObserver.__ instanceof MainMutaitonObserver)) {
+				new MainMutaitonObserver();
+			}
 			// @ts-ignore
-			this.ML = documentMutation_;
+			this.O = MainMutaitonObserver.__.documentObserver;
+			// @ts-ignore
+			this.ML = MainMutaitonObserver.__.documentMutation_;
 		} else {
 			// @ts-ignore
 			this.ML = new Let('');
