@@ -447,7 +447,7 @@ class MainMutaitonObserver {
 		this.documentObserver = new MutationObserver((mutationList) => {
 			mutationList.forEach((mutation) => {
 				// @ts-ignore
-				documentMutation_.value = mutation;
+				this.documentMutation_.value = mutation;
 			});
 		});
 		this.documentObserver.observe(document, {
