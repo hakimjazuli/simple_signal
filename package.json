@@ -8,7 +8,9 @@
 		"dev": "bun run watch",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "rollup -c",
-		"watch": "rollup -c -w"
+		"watch": "rollup -c -w",
+		"prepublish": "bun unlink && npm unlink @html_first/simple_signal",
+		"postpublish": "bun link && npm link"
 	},
 	"repository": {
 		"type": "git",
