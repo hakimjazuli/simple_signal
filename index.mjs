@@ -554,9 +554,7 @@ export class Lifecycle {
 					const attributeIdentifier = `${attributeName}="${
 						element.getAttribute(attributeName) ?? ''
 					}"`;
-					if (!this.DC[attributeIdentifier]) {
-						this.DC[attributeIdentifier] = await lifecycle(element, this.unObserve);
-					}
+					this.DC[attributeIdentifier] = await lifecycle(element, this.unObserve);
 				}
 			}
 		}
