@@ -1,6 +1,25 @@
 // @ts-check
 
 /**
+ * @param {((...args)=>Promise<any>)[]} asyncArrayFunctions
+ * @param {any[]} args
+ */
+const handlePromiseAll = async (asyncArrayFunctions, ...args) => {
+	await Promise.all(
+		asyncArrayFunctions.map(async (callback) => {
+			try {
+				return await callback(...args);
+			} catch (error) {
+				console.error('Error in callback:', error);
+				throw error;
+			}
+		})
+	).catch((error) => {
+		console.error('Promise.all failed:', error);
+	});
+};
+
+/**
  * @param {string} string
  * @returns {string}
  */
@@ -345,18 +364,7 @@ export class Let {
 		}
 		helper.QH.A(
 			new _QueueObjectFIFO(async () => {
-				await Promise.all(
-					this.S.map(async (callback) => {
-						try {
-							return await callback(false);
-						} catch (error) {
-							console.error('Error in callback:', error);
-							throw error;
-						}
-					})
-				).catch((error) => {
-					console.error('Promise.all failed:', error);
-				});
+				await handlePromiseAll(this.S, false);
 			}, helper.D)
 		);
 	}
@@ -486,7 +494,7 @@ export class Lifecycle {
 	O;
 	/**
 	 * @private
-	 * @type {Let<MutationRecord>}
+	 * @type {Let<MutationRecord[]>}
 	 */
 	ML;
 	/**
@@ -511,39 +519,18 @@ export class Lifecycle {
 			// @ts-ignore
 			this.ML = new Let('');
 			this.O = new MutationObserver((mutationList) => {
-				mutationList.forEach((mutation) => {
-					this.ML.value = mutation;
-				});
+				this.ML.value = mutationList;
 			});
 			this.O.observe(documentScope, {
 				childList: true,
 				subtree: true,
 			});
 		}
-		this.$ = new $(async (first) => {
-			const mutation = this.ML.value;
-			if (first) {
-				await this.I();
-				return;
-			}
-			await this.CE(mutation);
+		this.$ = new $(async () => {
+			this.ML.value;
+			await this.CE();
 		});
 	}
-	/**
-	 * active dom object check
-	 * @private
-	 */
-	I = async () => {
-		for (const attributeName in this.AL) {
-			const lifecycle = this.AL[attributeName];
-			const element = this.DS.querySelector(`[${attributeName}]`);
-			if (element && !element.hasAttribute(helper.LC)) {
-				element.setAttribute(helper.LC, '');
-				this.DC[`${attributeName}${element.getAttribute(attributeName) ?? ''}`] =
-					await lifecycle(element, this.unObserve);
-			}
-		}
-	};
 	/**
 	 * disconnected callbacks
 	 * @private
@@ -554,61 +541,32 @@ export class Lifecycle {
 	DC = {};
 	/**
 	 * @private
-	 * @param {MutationRecord} mutation
 	 */
-	CE = async (mutation) => {
-		if (mutation.type !== 'childList') {
-			return;
-		}
+	CE = async () => {
 		for (const attributeName in this.AL) {
 			const lifecycle = this.AL[attributeName];
-			for (let node of mutation.addedNodes) {
-				if (!(node instanceof HTMLElement) && !(node instanceof Element)) {
-					continue;
-				}
-				if (node.hasAttribute(attributeName)) {
-					// @ts-ignore
-				} else if ((node = node.querySelector(`[${attributeName}]`))) {
-				} else {
-					continue;
-				}
-				let attributeIdentifier = '';
-				if (
-					(node instanceof HTMLElement || node instanceof Element) &&
-					node.hasAttribute(attributeName) &&
-					!this.DC[
-						(attributeIdentifier = `${attributeName}${
-							node.getAttribute(attributeName) ?? ''
-						}`)
-					]
-				) {
-					this.DC[attributeIdentifier] = await lifecycle(node, this.unObserve);
+			const elements = this.DS.querySelectorAll(`[${attributeName}]`);
+			const batch = [];
+			for (let i = 0; i < elements.length; i++) {
+				const element = elements[i];
+				if (!element.hasAttribute(helper.LC)) {
+					element.setAttribute(helper.LC, '');
+					const attributeIdentifier = `${attributeName}="${
+						element.getAttribute(attributeName) ?? ''
+					}"`;
+					if (!this.DC[attributeIdentifier]) {
+						this.DC[attributeIdentifier] = await lifecycle(element, this.unObserve);
+					}
 				}
 			}
-			for (let node of mutation.removedNodes) {
-				if (!(node instanceof HTMLElement) && !(node instanceof Element)) {
-					continue;
-				}
-				if (node.hasAttribute(attributeName)) {
-					// @ts-ignore
-				} else if ((node = node.querySelector(`[${attributeName}]`))) {
-				} else {
-					continue;
-				}
-				let attributeIdentifier = '';
-				if (
-					(node instanceof HTMLElement || node instanceof Element) &&
-					this.DC[
-						(attributeIdentifier = `${attributeName}${
-							node.getAttribute(attributeName) ?? ''
-						}`)
-					]
-				) {
-					await this.DC[attributeIdentifier]();
-					delete this.DC[attributeIdentifier];
-					if (Object.keys(this.DC).length === 0) {
-						this.ML.remove$(this.$);
-					}
+		}
+		for (const attributeSelector in this.DC) {
+			const disconnectedCallback = this.DC[attributeSelector];
+			if (!this.DS.querySelector(`[${attributeSelector}]`)) {
+				await disconnectedCallback();
+				delete this.DC[attributeSelector];
+				if (Object.keys(this.DC).length === 0) {
+					this.ML.remove$(this.$);
 				}
 			}
 		}
@@ -621,18 +579,7 @@ export class Lifecycle {
 					for (const attributeIdentifier in this.DC) {
 						DCS.push(this.DC[attributeIdentifier]);
 					}
-					await Promise.all(
-						DCS.map(async (callback) => {
-							try {
-								return await callback();
-							} catch (error) {
-								console.error('Error in callback:', error);
-								throw error;
-							}
-						})
-					).catch((error) => {
-						console.error('Promise.all failed:', error);
-					});
+					await handlePromiseAll(DCS);
 					this.DC = {};
 				}
 				this.ML.remove$(this.$);
