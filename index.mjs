@@ -329,6 +329,16 @@ export class Let {
 	 * @type {V}
 	 */
 	V_;
+	call$ = () => {
+		if (!this.S.length) {
+			return;
+		}
+		helper.QH.A(
+			new _QueueObjectFIFO(async () => {
+				await handlePromiseAll(this.S, false);
+			}, helper.D)
+		);
+	};
 	/**
 	 * @param {V} value
 	 * @param {string} [attributeName]
@@ -359,14 +369,7 @@ export class Let {
 			return;
 		}
 		this.V_ = newValue;
-		if (!this.S) {
-			return;
-		}
-		helper.QH.A(
-			new _QueueObjectFIFO(async () => {
-				await handlePromiseAll(this.S, false);
-			}, helper.D)
-		);
+		this.call$();
 	}
 }
 

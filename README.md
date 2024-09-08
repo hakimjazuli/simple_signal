@@ -50,6 +50,7 @@ library is less then 5kB;
     > -   returns:
     >     > -   `get value(): VType`
     >     > -   `set value(newValue:VType): void`
+    >     > -   `call$:()=>void`: manually trigger all registered effects;
     >     > -   `remove$:(effect:$)=>void`: remove registed effect to this Instance;
     >     > -   `removeAll$:()=>void`: remove all registered effects to this Instance, including
     >     >     that is auto recorded using signal to this instance;
