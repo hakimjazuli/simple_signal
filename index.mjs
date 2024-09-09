@@ -261,6 +261,7 @@ const setDomReflector = (val, attributeName, documentScope, letObject) => {
 					target === 'value' &&
 					'value' in element &&
 					element.parentNode &&
+					element instanceof HTMLInputElement &&
 					!element.hasAttribute(helper.V)
 				) {
 					element.setAttribute(helper.V, '');
