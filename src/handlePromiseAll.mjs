@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @param {((...args)=>Promise<any>)[]} asyncArrayFunctions
+ * @param {((...args:any)=>Promise<any>)[]} asyncArrayFunctions
  * @param {any[]} args
  */
 export const handlePromiseAll = async (asyncArrayFunctions, ...args) => {

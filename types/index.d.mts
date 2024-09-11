@@ -1,3 +1,4 @@
+export type documentScope = HTMLElement | Element | ShadowRoot | Document;
 import { $ } from "./src/$.mjs";
 import { Derived } from "./src/Derived.mjs";
 import { Let } from "./src/Let.mjs";

@@ -10,7 +10,7 @@ export class Derived extends Let {
 	/**
 	 * @param {()=>Promise<V>} asyncCallback
 	 * @param {string} [attributeName]
-	 * @param {import("../indexPreBuild.mjs").documentScope} [documentScope]
+	 * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
 	 */
 	constructor(asyncCallback, attributeName = undefined, documentScope = undefined) {
 		super('', attributeName, documentScope);

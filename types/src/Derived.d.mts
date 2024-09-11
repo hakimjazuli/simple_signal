@@ -5,8 +5,8 @@ export class Derived<V> extends Let<any> {
     /**
      * @param {()=>Promise<V>} asyncCallback
      * @param {string} [attributeName]
-     * @param {import("../indexPreBuild.mjs").documentScope} [documentScope]
+     * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
      */
-    constructor(asyncCallback: () => Promise<V>, attributeName?: string, documentScope?: any);
+    constructor(asyncCallback: () => Promise<V>, attributeName?: string, documentScope?: import('./documentScope.types.mjs').documentScope);
 }
 import { Let } from "./Let.mjs";

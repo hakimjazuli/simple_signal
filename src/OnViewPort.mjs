@@ -3,17 +3,13 @@
 import { helper } from './helper.mjs';
 import { queueObjectFIFO } from './queueObjectFIFO.mjs';
 
-/**
- * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
- */
-
 export class OnViewPort {
 	/**
 	 * @param {string} attributeName
 	 * @param {(element:IntersectionObserverEntry['target'])=>Promise<void>} OnViewCallback
 	 * @param {(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>} [onExitingViewport]
 	 * undefined: will automatically fires unObserve callback;
-	 * @param {documentScope} [documentScope]
+	 * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
 	 */
 	constructor(
 		attributeName,

@@ -17,4 +17,8 @@ import { Lifecycle } from './src/Lifecycle.mjs';
 import { OnViewPort } from './src/OnViewPort.mjs';
 import { Ping } from './src/Ping.mjs';
 
+/**
+ * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
+ */
+
 export { $, Derived, Let, Lifecycle, OnViewPort, Ping };
