@@ -165,9 +165,12 @@ we have very little api to remember so you can just slap our prebundled on head 
 import { Let, $, Derived, Lifecycle, OnViewPort } from '@html_first/simple_signal';
 ```
 
+## no longer supported as we try to modularize the exports
+
+<strike>
 ## IF you are comfortable with typehinting but you don't want to be bothered to install using npm
 
 copy the [index.mjs](https://github.com/hakimjazuli/simple_signal/blob/main/index.mjs) on
 [our github](https://github.com/hakimjazuli/simple_signal/) code and slap before your own js code
 
--   delete the `export` statement on all classes;
+-   delete the `export` statement on all classes; </strike>

@@ -4,8 +4,11 @@
 	"description": "simple asynchronous signal",
 	"type": "module",
 	"main": "index.mjs",
+	"types": "./types/index.d.mts",
+	"module": "index.mjs",
 	"scripts": {
-		"dev": "bun run watch",
+		"dev": "concurrently \"bun run watch\" \"bun ./dev/index.mjs\" \"bun gen:type\"",
+		"gen:type": "tsc ./index.mjs --allowJs --declaration --emitDeclarationOnly --outDir ./types --module ESNext --target ES2020 --moduleResolution node --esModuleInterop --skipLibCheck --watch",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "rollup -c",
 		"watch": "rollup -c -w",
@@ -27,6 +30,8 @@
 	},
 	"homepage": "https://github.com/hakimjazuli/simple_signal#readme",
 	"devDependencies": {
-		"@html_first/atla-as_builder": "^1.0.0"
+		"@html_first/atla-as_builder": "^1.0.0",
+		"@html_first/js_lib_template": "link:@html_first/js_lib_template",
+		"concurrently": "^9.0.0"
 	}
 }
