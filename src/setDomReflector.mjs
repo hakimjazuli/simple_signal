@@ -6,7 +6,7 @@ import { Let } from './Let.mjs';
 /**
  * @param {any} val
  * @param {string} attributeName
- * @param {import('./documentScope.types.mjs').documentScope} documentScope
+ * @param {import('./documentScope.type.mjs').documentScope} documentScope
  * @param {Let} letObject
  * @returns {void}
  */

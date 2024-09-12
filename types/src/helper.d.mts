@@ -7,7 +7,7 @@ export const helper: {
      * subscriber
      * @type {null|((isAtInitialization:boolean)=>Promise<void>)}
      */
-    S: (isAtInitialization: boolean) => Promise<void>;
+    S: null | ((isAtInitialization: boolean) => Promise<void>);
     QH: queueFIFO;
     /**
      * debounce
@@ -34,4 +34,4 @@ export const helper: {
      */
     readonly LC: "hf_ss-binded_lifecycle";
 };
-import { queueFIFO } from "./queueFIFO.mjs";
+import { queueFIFO } from './queueFIFO.mjs';

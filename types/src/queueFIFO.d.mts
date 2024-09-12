@@ -29,4 +29,4 @@ export class queueFIFO {
      */
     private R;
 }
-import { queueObjectFIFO } from "./queueObjectFIFO.mjs";
+import { queueObjectFIFO } from './queueObjectFIFO.mjs';

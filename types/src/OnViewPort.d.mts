@@ -4,7 +4,7 @@ export class OnViewPort {
      * @param {(element:IntersectionObserverEntry['target'])=>Promise<void>} OnViewCallback
      * @param {(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>} [onExitingViewport]
      * undefined: will automatically fires unObserve callback;
-     * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
+     * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
      */
-    constructor(attributeName: string, OnViewCallback: (element: IntersectionObserverEntry['target']) => Promise<void>, onExitingViewport?: (element: IntersectionObserverEntry['target'], unObserve: () => void) => Promise<void>, documentScope?: import('./documentScope.types.mjs').documentScope);
+    constructor(attributeName: string, OnViewCallback: (element: IntersectionObserverEntry["target"]) => Promise<void>, onExitingViewport?: (element: IntersectionObserverEntry["target"], unObserve: () => void) => Promise<void>, documentScope?: import("./documentScope.type.mjs").documentScope);
 }

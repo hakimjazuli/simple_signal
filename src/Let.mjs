@@ -50,7 +50,7 @@ export class Let {
 	/**
 	 * @param {V} value
 	 * @param {string} [attributeName]
-	 * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
+	 * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
 	 */
 	constructor(value, attributeName = undefined, documentScope = undefined) {
 		this.V_ = value;

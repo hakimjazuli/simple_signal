@@ -4,11 +4,11 @@ export class Lifecycle {
      * [attributeName:string]:
      * (element:HTMLElement|Element, unObserve:()=>void)=>(Promise<()=>Promise<void>>)
      * }} attrLifecycleCallback
-     * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
+     * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
      */
     constructor(attrLifecycleCallback: {
         [attributeName: string]: (element: HTMLElement | Element, unObserve: () => void) => (Promise<() => Promise<void>>);
-    }, documentScope?: import('./documentScope.types.mjs').documentScope);
+    }, documentScope?: import("./documentScope.type.mjs").documentScope);
     /**
      * registered effect
      * @private
@@ -27,7 +27,7 @@ export class Lifecycle {
     /**
      * document scope
      * @private
-     * @type {import('./documentScope.types.mjs').documentScope}
+     * @type {import('./documentScope.type.mjs').documentScope}
      */
     private DS;
     /**

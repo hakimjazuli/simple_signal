@@ -26,7 +26,7 @@ export class Lifecycle {
 	/**
 	 * document scope
 	 * @private
-	 * @type {import('./documentScope.types.mjs').documentScope}
+	 * @type {import('./documentScope.type.mjs').documentScope}
 	 */
 	DS;
 	/**
@@ -44,7 +44,7 @@ export class Lifecycle {
 	 * [attributeName:string]:
 	 * (element:HTMLElement|Element, unObserve:()=>void)=>(Promise<()=>Promise<void>>)
 	 * }} attrLifecycleCallback
-	 * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
+	 * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
 	 */
 	constructor(attrLifecycleCallback, documentScope = document) {
 		this.AL = attrLifecycleCallback;

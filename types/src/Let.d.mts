@@ -5,9 +5,9 @@ export class Let<V> {
     /**
      * @param {V} value
      * @param {string} [attributeName]
-     * @param {import('./documentScope.types.mjs').documentScope} [documentScope]
+     * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
      */
-    constructor(value: V, attributeName?: string, documentScope?: import('./documentScope.types.mjs').documentScope);
+    constructor(value: V, attributeName?: string, documentScope?: import("./documentScope.type.mjs").documentScope);
     /**
      * remove all effects
      * @return {void}
@@ -35,10 +35,10 @@ export class Let<V> {
     /**
      * @param {V} newValue
      */
-    set value(arg: V);
+    set value(newValue: V);
     /**
      * @returns {V}
      */
     get value(): V;
 }
-import { $ } from "./$.mjs";
+import { $ } from './$.mjs';

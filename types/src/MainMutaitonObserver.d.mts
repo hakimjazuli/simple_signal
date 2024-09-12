@@ -6,4 +6,4 @@ export class mainMutaitonObserver {
     documentMutation_: Let<string>;
     documentObserver: MutationObserver;
 }
-import { Let } from "./Let.mjs";
+import { Let } from './Let.mjs';

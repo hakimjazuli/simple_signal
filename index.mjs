@@ -2,7 +2,7 @@
 
 /**
  * generated using:
- * @see {@link https://www.npmjs.com/package/@html_first/lib_template|@html_first/lib_template}
+ * @see {@link https://www.npmjs.com/package/@html_first/js_lib_template | @html_first/js_lib_template}
  * @copyright:
  * developed and published under MIT license,
  * ;;;
