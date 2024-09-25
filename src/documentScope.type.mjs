@@ -1,5 +1,9 @@
 // @ts-check
 
 /**
- * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
+ * @description
+ * type helper for `documentScope`
+ */
+/**
+ * @typedef {HTMLElement|Element|ShadowRoot|Document|ParentNode} documentScope
  */

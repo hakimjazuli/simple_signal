@@ -1,9 +1,11 @@
 // @ts-check
 
 import { functions } from './functions.mjs';
-import { queueObjectFIFO } from './queueObjectFIFO.mjs';
 
 export class queueFIFO {
+	/**
+	 * @typedef {import('./queueObjectFIFO.mjs').queueObjectFIFO} queueObjectFIFO
+	 */
 	/**
 	 * queue
 	 * @private

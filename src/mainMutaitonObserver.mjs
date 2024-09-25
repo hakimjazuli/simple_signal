@@ -1,7 +1,5 @@
 // @ts-check
 
-import { Let } from './Let.mjs';
-
 export class mainMutaitonObserver {
 	/**
 	 * @type {mainMutaitonObserver}
@@ -12,12 +10,13 @@ export class mainMutaitonObserver {
 			return;
 		}
 		mainMutaitonObserver.__ = this;
-		this.documentMutation_ = new Let('');
+		/**
+		 * @type {import('./Let.mjs').Let<MutationRecord[]>}
+		 */
+		// @ts-ignore
+		this.documentMutations_ = new Let('');
 		this.documentObserver = new MutationObserver((mutationList) => {
-			mutationList.forEach((mutation) => {
-				// @ts-ignore
-				this.documentMutation_.value = mutation;
-			});
+			this.documentMutations_.value = mutationList;
 		});
 		this.documentObserver.observe(document, {
 			childList: true,

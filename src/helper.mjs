@@ -2,39 +2,74 @@
 
 import { queueFIFO } from './queueFIFO.mjs';
 
-/**
- * uses generic class instance instead of const, to track whether there are
- * unnamed property being accessed
- */
-export const helper = new (class {
+export class helper {
 	/**
 	 * subscriber
 	 * @type {null|((isAtInitialization:boolean)=>Promise<void>)}
 	 */
-	S = null;
-	QH = new queueFIFO();
+	static S = null;
+	static QH = new queueFIFO();
 	/**
 	 * debounce
 	 * @type {number|false}
 	 */
-	D = false;
+	static D = false;
 	/**
 	 * attribute helper for binded
 	 */
 	/**
 	 * @readonly
 	 */
-	P = 'hf_ss-binded_viewport';
+	static V = 'hf_ss-binded_value';
 	/**
 	 * @readonly
 	 */
-	PX = 'hf_ss-binded_viewport_on_exit';
+	static LC = 'hf_ss-binded_lifecycle';
 	/**
+	 * storage identifier
 	 * @readonly
 	 */
-	V = 'hf_ss-binded_value';
+	static SI = 'hf_ss-binded_storage';
 	/**
+	 * disconnected callback identifier
+	 */
+	static DCCBI = 'hf_ss-binded_dccb';
+	/**
+	 * attribute change callback identifier
+	 */
+	static ACCBI = 'hf_ss-binded_accb';
+	/**
+	 * onViewCallbackIdentifier
+	 */
+	static VCBI = `hf_ss-onview_cb`;
+	/**
+	 * onExitViewCallbackIdentifier
+	 */
+	static XVCBI = `hf_ss-onexitview_cb`;
+	/**
+	 * ForChildAttributePrefix
 	 * @readonly
 	 */
-	LC = 'hf_ss-binded_lifecycle';
-})();
+	static FCA = `hf_ss-child-`;
+	/**
+	 * ForAttributePrefix
+	 * @readonly
+	 */
+	static FA = `for-`;
+	/**
+	 * childDerivedBinder
+	 * use parent `attributeName`
+	 * - example: `c-parentAttributeName-childAttributeName`
+	 * @readonly
+	 */
+	static CDB = `c-`;
+	/**
+	 * @param {Object} class_
+	 */
+	static warningSingleton = (class_) => {
+		console.warn({
+			class: class_,
+			message: 'is a singleton class, and can only be instantiated once',
+		});
+	};
+}

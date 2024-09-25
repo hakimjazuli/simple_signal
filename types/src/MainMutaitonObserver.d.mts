@@ -3,7 +3,9 @@ export class mainMutaitonObserver {
      * @type {mainMutaitonObserver}
      */
     static __: mainMutaitonObserver;
-    documentMutation_: Let<string>;
+    /**
+     * @type {import('./Let.mjs').Let<MutationRecord[]>}
+     */
+    documentMutations_: import("./Let.mjs").Let<MutationRecord[]>;
     documentObserver: MutationObserver;
 }
-import { Let } from './Let.mjs';

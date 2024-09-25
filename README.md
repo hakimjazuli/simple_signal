@@ -1,176 +1,262 @@
-﻿## about @html_first/simple_signal
-
-all of our classes designed to works in asynchronous context using Queues, so you can use it for api
-calls reactively without too much of mental overheads; we use attributeName to target elements on
-the DOM so it can be used as declaratively as possible despite minified; non-gzipped version of this
-library is less then 5kB;
-
-## classes api
-
--   `Lifecycle`:
-
-    > -   usefull for:
-    >     > -   adding event listeners;
-    >     > -   track lifecycle of created element;
-    > -   params:
-    >     > -   `attrLifecycleCallback`:
-    >     >     `{ [attributeName:string]: (element:HTMLElement|Element, observer:MutationObserver)=>(Promise<()=>Promise<void>>) }`
-    >     >     > -   fires when element is created/exist in the initial document;
-    >     >     > -   returns callback which then fires when element no longer o documentScope
-    >     >     > -   param `element` is the curent element which is created/exist in the initial
-    >     >     >     document;
-    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
-    > -   example:
-    >     > -   `const clickEvent=()=>{ console.log("i've been clicked") }`
-    >     > -   `new Lifecycle('elem-event', async (element) => { element.addEventListener('click', clickEvent); return async () => { element.removeEventListener('click', clickEvent); }; });`
-    >     > -   `<buttton elem-event="unique string optional">click me</button>`
-    >     >     > -   you can minimise the number of `MutationObserver` instances on a
-    >     >     >     `documentScope`, by keeping attributeName selector to minimum, then handle
-    >     >     >     inside the `lifecycleCallback` using `element.getAttribute(attributeName)` to
-    >     >     >     conditionally handle element's lifecycle, this is usefull if you are trying to
-    >     >     >     create a library, or just having a pattern to render specific attributeName
-    >     >     >     inside your html;
-    > -   returns:
-    >     > -   `unObserve:()=>void`: will un-observe the `MutationObserver` for the
-    >     >     `documentScope`, except `documentScope == undefined || documentScope == document`
-    > -   note:
-    >     > -   observer options are set to `{childList: true, subtree: true}`, for performance
-    >     >     purposes, therefore on creating new `Element` OR adding it as `inner/outerHTML` must
-    >     >     contains the `attributeName` to be observed;
-
--   `Let`:
-
-    > -   params:
-    >     > -   `value`: `VType`
-    >     > -   `attributeName?`: `string`
-    >     >     > -   allow to reflect the value to dom, by targeting the value of
-    >     >     >     `...(attributeName|propertyName);`;
-    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
-    >     >     > -   scope of the dom reflector;
-    > -   returns:
-    >     > -   `get value(): VType`
-    >     > -   `set value(newValue:VType): void`
-    >     > -   `call$:()=>void`: manually trigger all registered effects;
-    >     > -   `remove$:(effect:$)=>void`: remove registed effect to this Instance;
-    >     > -   `removeAll$:()=>void`: remove all registered effects to this Instance, including
-    >     >     that is auto recorded using signal to this instance;
-    > -   example1:
-    >     > -   `const a = new Let('a');`
-    > -   example2:
-    >     > -   `const a = new Let('example', 'param-b');`
-    >     > -   `<div param-b="innerText;data-a"></div>` will reflect to DOM
-    >     >     `<div param-b="innerText;data-a" data-a="example">example</div>`
-    > -   note:
-    >     > -   adding `value` to the html attribute like = `attributeName="...;value;..."`, will
-    >     >     bind the js variable value to the element value, only works on element that have
-    >     >     valid `oninput` attribute
-
--   `Derived`:
-
-    > -   params
-    >     > -   `asyncCallback`: `()=>Promise<VType>`
-    >     > -   `attributeName?`: `string`
-    >     >     > -   allow to reflect the value to dom, by targeting the value of
-    >     >     >     `...(attributeName|propertyName);`;
-    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
-    >     >     > -   scope of the dom reflector;
-    > -   returns:
-    >     > -   `get value(): VType`
-    >     > -   `remove$:(effect:$)=>void`: remove registed effect to this Instance;
-    >     > -   `removeAll$:()=>void`: remove all registered effects to this Instance;
-    > -   example1:
-    >     > -   "const b = new Derived(async()=>\`derived from ${a.value}\`);"
-    > -   example2:
-    >     > -   "const b = new Derived(async()=>\`derived from ${a.value}\`, 'param-a');"
-    >     > -   `<div param-a="innerText;data-a"></div>` will reflect to DOM
-    >     >     `<div param-a="innerText;data-a" data-a="value of a">value of a</div>`
-
--   `Ping`:
-
-    > -   wrapper for async context using simple_signal internal Queue Handler;
-    > -   params:
-    >     > -   `asyncCallbackWhenPinged`: `(isAtInitisalization:boolean)=>Promise<void>`
-    > -   returns:
-    >     > -   `ping:(isAtInitisalization:boolean)=>void`
-    >     >     > -   run `asyncCallbackWhenPinged`;
-
--   `$`:
-
-    > -   params:
-    >     > -   `asyncCallback`: `(isAtInitialization:boolean)=>Promise<VType>`
-    > -   example:
-    >     > -   `new $( async (isAtInitialization) => { document.querySelector('p')?.setAttribute('text', b.value) });`
-    > -   returns:
-    >     > -   `E:asyncCallback`: `(isAtInitialization:boolean)=>Promise<VType>`
-    >     >     > -   used for lib internal functionality;
-
--   `OnViewPort`:
-
-    > -   tips: coupled with `Lifecycle` it can be helpfull for complex client side
-    >     routing/rendering;
-    > -   params:
-    >     > -   `attributeName`: `string`
-    >     >     > -   allow to reflect the value to dom, by targeting the value of
-    >     >     >     `...(attributeName|propertyName);`;
-    >     > -   `OnViewCallback`: `(element:IntersectionObserverEntry['target'])=>Promise<void>`
-    >     >     > -   fires when element is entering viewport;
-    >     > -   `onExitingViewport?`:
-    >     >     `(element:IntersectionObserverEntry['target'], unObserve:()=>void)=>Promise<void>`
-    >     >     > -   fires when element is exiting viewport;
-    >     >     > -   when `undefined`: will automatically unObserve the elements;
-    >     > -   `documentScope?`: `HTMLElement|Element|ShadowRoot|Document`
-    >     >     > -   scope of the dom reflector;
-    > -   example:
-    >     > -   `new OnViewPort('lazy-test', async (element, unobserve) => { console.log({element, message:'lazy is on viewport'}); return async () => { console.log({element, message:'lazy is leavinng viewport'}); unobserve() }; });`
-    >     > -   `<p lazy-test>lazy test on view port</p>`
-
-## function api
-
--   `attrHelper`
-    > -   params:
-    >     > -   `attrHelpers:Record.<key:string<Vtype>,''>`
-    > -   returns:
-    >     > -   `Record.<key:string<Vtype>,string>`
-    >     >     > -   validated attribute name;
-
-## how to setup
-
-we have several way of installing this library to your app, depending on how do you want to use it
-
-## IF you have no need of typehinting
-
-we have very little api to remember so you can just slap our prebundled on head tag and use it as is
-
--   download the `prebundled.mjs`;
--   add the script on html `head`;
-
-```html
-<head>
-	...
-	<script src="./path/to/prebundled.mjs" type="module" defer></script>
-	...
-</head>
+## about @html_first/simple_signal v^3.x.x
+`@html_first/simple_signal` is a collections of helper classes/functions to:
+-   create `web app` that are based on `signal` paradigm;
+> -   reactive;
+> -   declarative;
+> -   auto subscribed reactivity;
+> -   true fine grained DOM reflection (that's right, on `v3` there's no catch, it's now truely fine
+>     grained);
+-   create declarative library (using our `Lifecycle`) that are heavily scoped on
+`window.document`, use cases likes:
+> -   for backend centric `HATEOAS` paradigm, by assigning `attributeName` (on the html response
+>     from the server) to be monitored right after the response is connected to the DOM;
+> -   `htmlFirst` approach, by assigning `attributeName` coupled with other `attributeName` and
+>     or `attributeValue`, to control how an element should behave, directly from `html`;
+## how to install
+```sh
+npm i @html_first/simple_signal
 ```
-
--   we put it in a `.mjs` and `type="module"` so the `variables` doesn't bleed out without add
-    additional closures, or function calls in the libs
-
-## IF you are comfortable with typehinting and you wanted to make it modular
-
--   install using `npm i @html_first/simple_signal`
-
 ```js
 // @ts-check
-
-import { Let, $, Derived, Lifecycle, OnViewPort } from '@html_first/simple_signal';
+import {
+...namedExports
+} from '@html_first/simple_signal';
 ```
+## on v^3
+- we ends the support for `prebundled` module in the reason of, most of the insteresting parts of the
+  library are need to be typehinted, and that's almost impossible in the prebundled environtment
+- however it's not not that hard if you want to bundle it your self, as we have documented our APIs, so
+  you can import whichever you like and expose it in the window object
 
-## no longer supported as we try to modularize the exports
 
-<strike>
-## IF you are comfortable with typehinting but you don't want to be bothered to install using npm
+<h2 id="exported-api-and-type-list">exported-api-and-type-list</h2>
 
-copy the [index.mjs](https://github.com/hakimjazuli/simple_signal/blob/main/index.mjs) on
-[our github](https://github.com/hakimjazuli/simple_signal/) code and slap before your own js code
+- [$](#$)
 
--   delete the `export` statement on all classes; </strike>
+- [Animation](#animation)
+
+- [App](#app)
+
+- [DefineQRouter](#defineqrouter)
+
+- [DefineShortCuts](#defineshortcuts)
+
+- [DefineStorage](#definestorage)
+
+- [Derived](#derived)
+
+- [documentScope](#documentscope)
+
+- [Event_](#event_)
+
+- [For](#for)
+
+- [Let](#let)
+
+- [Lifecycle](#lifecycle)
+
+- [lifecycleHandler](#lifecyclehandler)
+
+- [List](#list)
+
+- [OnViewPort](#onviewport)
+
+- [onViewPortHandler](#onviewporthandler)
+
+- [Ping](#ping)
+
+- [ShortCut](#shortcut)
+
+- [WorkerMainThread](#workermainthread)
+
+- [WorkerThread](#workerthread)
+
+- [_](#_)
+
+<h2 id="$">$</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+generate side effect for `signal` based reactivity such as for:- [Let](#let)```jsconst letExample = new Let('')new $(async(first)=>{ const value = test.value; if(first){     return;     // return early if you want to opt out from handling the effect immediately,     // also by doing this you can make the `$` slightly more performance 1) when dealing with `async await` on hydration,     // such as data fetching; }     // handle value})// 1) and when all of the effects is registered, you can call `letExample.call$` to call for effect in parallel;```- [Derived](#derived)```js// bassically the same with `Let` but use `new Derived````
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="animation">Animation</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+collections of static methods helper for animation;static method prefixed with `animation` can be used to generate recuring frame,which in turn can be used in the callback to animate stuffs
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="app">App</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+`App` starter helper for module environtment;the sole purpose is just to auto import the necessary file in your main js file;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="defineqrouter">DefineQRouter</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+allow the usage of search query based router through class instantiation;- register by putting import this instance on your js `main file`
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="defineshortcuts">DefineShortCuts</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+create shortcuts through class instantiation;- register by putting import this instance on your js `main file`
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="definestorage">DefineStorage</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+create named storage (`localStorage` or `sessionStorage`) through class instantiation;- register by putting import this instance on your js `main file`
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="derived">Derived</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+-`signal` based reactivity, wich value are derived from reacting to [`Let<T>.value`](#let) effects that are called in the `asyncCallback` this class instantiation;```js// @ts-checkconst letSingle = new Let(1);const doubleExample = new Derived(async()=>{	const value = letSingle.value; // autoscubscribed to `letSingle` value changes;return value * 2; // returned value are to be derivedValue});```- `dataOnly`:```jsconst dataOnlyExample = Derived.dataOnly(asyncCallback);```> - this will automatically opt you out from `domReflector`;- make sure to check `argument` documentation in your `IDE` `typehint`;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="documentscope">documentScope</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+type helper for `documentScope`
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="event_">Event_</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+`eventListener` helper to create `autoqueued` callback;```js// @ts-checksomeObject.addEventListener('click', Event_.listener( (event) => {// code}))```
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="for">For</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+- assign element to loop through ['List'](#list) as data to render child element using class instantiation;- naming html attribute:> - forAttributeName use `for-` as prefix in html;> - keys form `List` can reflect to DOM by prefixing with `c-${forAttributeNameNoForPrefix}-`- loped childElement:> - must have `HTMLElement` as first children;> - only first children will be used to loop through `List`, all other children will be deleted from the dom on `onConnected` event of parentElement;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="let">Let</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+`signal` based reactivity;assigning newValue to Let insance:```jsconst letSingle = new Let(1, ...args);letSingle.value++; // 2;letSingle.value = 3 // 3;````dataOnly`:```jsconst dataOnlyExample = Let.dataOnly(args0);```- this will automatically opt you out from `domReflector`make sure to check `argument` documentation in your `IDE` `typehint`;- `methods`:> - `call$`: manually triggers `effects` subscribed to `thisInstance`;> - `remove$`: unubscribe `thisInstance` from specific `effect`;> - `removeAll$`: unubscribe `thisInstance` from all of its `effects`;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="lifecycle">Lifecycle</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+helper class to track connected and disconnected of an element, with attribute selector;```jsnew Lifecycle({[attributeName]: async(options)=>{			// command;		}	},	// [documentScope])```
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="lifecyclehandler">lifecycleHandler</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+type helper for `lifecycleHandler` & `attributeChangedLifecycle`
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="list">List</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+- helper class to create list that satisfy`Array<Record<string, Let<string>>>````jsconst listExample = new List([     {key1: new Let("test"), ...keys},     {key1: _.let("test2"), ...keys},     {key1: _.let_("test3"), ...keys},])```- usefull for `loops`;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="onviewport">OnViewPort</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+lifecycle wrapper to observe whether element is in viewport
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="onviewporthandler">onViewPortHandler</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+type helper for `onViewPortHandler`
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="ping">Ping</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+trigger based callback integrated to the internal library  queue handler;can be created using class instantiation;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="shortcut">ShortCut</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+- helper class to create `ShortCut` through class instantiation;- call `thisInstance.ping` to manually trigger action
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="workermainthread">WorkerMainThread</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+helper class for registering and postMessage to webWorker```jsconst worker = new WorkerMainThread(options);worker.postMessage(message);```
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="workerthread">WorkerThread</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+helper class to define web worker thread;```jsnew WorkerThread({	onMessage: ({ event, postMessage }) => {		const message = undefined;		// code to handle the message		postMessage(message);	},});```
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="_">_</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+- syntax sugar for `signal` based reactifity stored in static Method of class `_`,> - `_.let`: for [new Let](#let);> - `_.let_`: for [Let.dataOnly](#let);> - `_.derived`: for [new Derived](#derived);> - `_.derived_`: for [Derived.dataOnly](#derived);> - `_.$`: for [new $](#$);> - `_.list`: for [new List](#list);- it also shortened by at least 2characters, and since most of our APIs are a class,  `treeshaking` will not uglify the method/property of the class, having it shortedned like this is a plus,  especially if you don't plan on gzipping the file;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>

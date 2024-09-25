@@ -1,8 +1,14 @@
+/**
+ * @description
+ * trigger based callback integrated to the internal library  queue handler;
+ * can be created using class instantiation;
+ */
 export class Ping {
     /**
+     * @param {boolean} callsAtFirst
      * @param {(isAtInitisalization:boolean)=>Promise<void>} asyncCallbackWhenPinged
      */
-    constructor(asyncCallbackWhenPinged: (isAtInitisalization: boolean) => Promise<void>);
+    constructor(callsAtFirst: boolean, asyncCallbackWhenPinged: (isAtInitisalization: boolean) => Promise<void>);
     /**
      * async callback when pinged
      * @private

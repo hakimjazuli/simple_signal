@@ -1,14 +1,23 @@
 export class functions {
     /**
      * timeout
-     * @public
      * @param {number} ms
      */
-    public static T: (ms: number) => Promise<any>;
+    static T: (ms: number) => Promise<any>;
     /**
      * is_async
-     * @public
      * @param {CallableFunction} callback
      */
-    public static IA: (callback: CallableFunction) => boolean;
+    static IA: (callback: CallableFunction) => boolean;
+    /**
+     * split with escape string `\`
+     * @param {string} string
+     * @param {string} delimiter
+     */
+    static splitX: (string: string, delimiter: string) => string[];
+    /**
+     * @param {string} attributeName
+     * @returns {string}
+     */
+    static VAS: (attributeName: string) => string;
 }

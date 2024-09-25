@@ -1,7 +1,33 @@
 /**
+ * @description
+ * `signal` based reactivity;
+ * assigning newValue to Let insance:
+ * ```js
+ * const letSingle = new Let(1, ...args);
+ * letSingle.value++; // 2;
+ * letSingle.value = 3 // 3;
+ * ```
+ * `dataOnly`:
+ * ```js
+ * const dataOnlyExample = Let.dataOnly(args0);
+ * ```
+ * - this will automatically opt you out from `domReflector`
+ * make sure to check `argument` documentation in your `IDE` `typehint`;
+ * - `methods`:
+ * > - `call$`: manually triggers `effects` subscribed to `thisInstance`;
+ * > - `remove$`: unubscribe `thisInstance` from specific `effect`;
+ * > - `removeAll$`: unubscribe `thisInstance` from all of its `effects`;
+ */
+/**
  * @template V
  */
 export class Let<V> {
+    /**
+     * @template V
+     * @param {V} data
+     * @returns {Let<V>}
+     */
+    static dataOnly: <V_1>(data: V_1) => Let<V_1>;
     /**
      * @param {V} value
      * @param {string} [attributeName]
@@ -26,11 +52,19 @@ export class Let<V> {
      */
     remove$: ($: $) => void;
     /**
+     * destroy all props
+     */
+    unRef: () => void;
+    /**
      * value placeholder
      * @private
      * @type {V}
      */
     private V_;
+    /**
+     * @type {undefined|string}
+     */
+    attr: undefined | string;
     call$: () => void;
     /**
      * @param {V} newValue

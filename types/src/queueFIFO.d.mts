@@ -1,5 +1,8 @@
 export class queueFIFO {
     /**
+     * @typedef {import('./queueObjectFIFO.mjs').queueObjectFIFO} queueObjectFIFO
+     */
+    /**
      * queue
      * @private
      * @type {queueObjectFIFO['D'][]}
@@ -16,7 +19,7 @@ export class queueFIFO {
      * @public
      * @param {queueObjectFIFO} _queue
      */
-    public A: (_queue: queueObjectFIFO) => void;
+    public A: (_queue: import("./queueObjectFIFO.mjs").queueObjectFIFO) => void;
     /**
      * push
      * @private
@@ -29,4 +32,3 @@ export class queueFIFO {
      */
     private R;
 }
-import { queueObjectFIFO } from './queueObjectFIFO.mjs';

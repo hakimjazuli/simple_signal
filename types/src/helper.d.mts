@@ -1,37 +1,67 @@
-/**
- * uses generic class instance instead of const, to track whether there are
- * unnamed property being accessed
- */
-export const helper: {
+export class helper {
     /**
      * subscriber
      * @type {null|((isAtInitialization:boolean)=>Promise<void>)}
      */
-    S: null | ((isAtInitialization: boolean) => Promise<void>);
-    QH: queueFIFO;
+    static S: null | ((isAtInitialization: boolean) => Promise<void>);
+    static QH: queueFIFO;
     /**
      * debounce
      * @type {number|false}
      */
-    D: number | false;
+    static D: number | false;
     /**
      * attribute helper for binded
      */
     /**
      * @readonly
      */
-    readonly P: "hf_ss-binded_viewport";
+    static readonly V: "hf_ss-binded_value";
     /**
      * @readonly
      */
-    readonly PX: "hf_ss-binded_viewport_on_exit";
+    static readonly LC: "hf_ss-binded_lifecycle";
     /**
+     * storage identifier
      * @readonly
      */
-    readonly V: "hf_ss-binded_value";
+    static readonly SI: "hf_ss-binded_storage";
     /**
+     * disconnected callback identifier
+     */
+    static DCCBI: string;
+    /**
+     * attribute change callback identifier
+     */
+    static ACCBI: string;
+    /**
+     * onViewCallbackIdentifier
+     */
+    static VCBI: string;
+    /**
+     * onExitViewCallbackIdentifier
+     */
+    static XVCBI: string;
+    /**
+     * ForChildAttributePrefix
      * @readonly
      */
-    readonly LC: "hf_ss-binded_lifecycle";
-};
+    static readonly FCA: "hf_ss-child-";
+    /**
+     * ForAttributePrefix
+     * @readonly
+     */
+    static readonly FA: "for-";
+    /**
+     * childDerivedBinder
+     * use parent `attributeName`
+     * - example: `c-parentAttributeName-childAttributeName`
+     * @readonly
+     */
+    static readonly CDB: "c-";
+    /**
+     * @param {Object} class_
+     */
+    static warningSingleton: (class_: any) => void;
+}
 import { queueFIFO } from './queueFIFO.mjs';

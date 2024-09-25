@@ -3,6 +3,11 @@
 import { helper } from './helper.mjs';
 import { queueObjectFIFO } from './queueObjectFIFO.mjs';
 
+/**
+ * @description
+ * trigger based callback integrated to the internal library  queue handler;
+ * can be created using class instantiation;
+ */
 export class Ping {
 	/**
 	 * async callback when pinged
@@ -11,11 +16,14 @@ export class Ping {
 	 */
 	AC;
 	/**
+	 * @param {boolean} callsAtFirst
 	 * @param {(isAtInitisalization:boolean)=>Promise<void>} asyncCallbackWhenPinged
 	 */
-	constructor(asyncCallbackWhenPinged) {
+	constructor(callsAtFirst, asyncCallbackWhenPinged) {
 		this.AC = asyncCallbackWhenPinged;
-		this.ping(true);
+		if (callsAtFirst) {
+			this.ping(true);
+		}
 	}
 	/**
 	 * @param {boolean} first

@@ -7,10 +7,8 @@
 	"types": "./types/index.d.mts",
 	"module": "index.mjs",
 	"scripts": {
-		"dev": "concurrently \"bun run watch\" \"bun ./dev/index.mjs\" \"bun tsc --watch\"",
+		"dev": "concurrently \"bun ./dev/index.mjs\" \"bun tsc --watch\"",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "rollup -c",
-		"watch": "rollup -c -w",
 		"prepublish": "bun unlink && npm unlink @html_first/simple_signal",
 		"postpublish": "bun link && npm link"
 	},
@@ -29,10 +27,9 @@
 	},
 	"homepage": "https://github.com/hakimjazuli/simple_signal#readme",
 	"devDependencies": {
-		"@types/bun": "latest",
-		"typescript": "^5.0.0",
-		"@html_first/atla-as_builder": "^1.0.0",
 		"@html_first/js_lib_template": "link:@html_first/js_lib_template",
-		"concurrently": "^9.0.0"
+		"@types/bun": "latest",
+		"concurrently": "^9.0.0",
+		"typescript": "^5.0.0"
 	}
 }
