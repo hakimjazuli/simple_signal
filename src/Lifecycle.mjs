@@ -76,9 +76,6 @@ export class Lifecycle {
 		this.mObs = mObs;
 		this.mLet = mLet;
 		this.takeRecords = mObs.takeRecords;
-		if (Lifecycle.ID.has(documentScope)) {
-			return;
-		}
 		const registeredAttribute = this.IRM();
 		switch (registeredAttribute) {
 			case 'whole':
