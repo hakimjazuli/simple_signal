@@ -95,10 +95,9 @@ export class Lifecycle {
 				break;
 			default:
 				console.error({
-					attributeName: registeredAttribute,
 					documentScope,
-					message: `${registeredAttribute} already registered in this "documentScope", avoid naming that "registeredAttributes" includes of`,
-					registeredAttributes: Lifecycle.ID.get(documentScope),
+					message: `'${registeredAttribute}' already registered in this 'documentScope'`,
+					registeredAttributes: Object.keys(Lifecycle.ID.get(documentScope)),
 				});
 				break;
 		}
