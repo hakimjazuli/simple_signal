@@ -10,11 +10,6 @@ import { Ping } from './Ping.mjs';
 /**
  * @description
  * - helper class to track connected/disconnected/attributeChanged of an element;
- * - problem with `documentScoping`:
- * > - since most of what's happening is on the `window.document`,
- * >   all of the `attributeName` will be globalized,
- * >   although we also provide `console.error` when that thing happens and listed colided `attributeName` (including with `Let` and it's children),
- * >   unless you use this library for `shadowRoot`ed scope you need to deal with it.
  */
 export class Lifecycle {
 	/**
@@ -157,7 +152,11 @@ export class Lifecycle {
 	 * @param {string} attributeName
 	 */
 	ANH = async (addedNode, attributeName) => {
-		if (!(addedNode instanceof HTMLElement) || !addedNode.hasAttribute(attributeName)) {
+		if (
+			addedNode[helper.SC] !== this.CDS ||
+			!(addedNode instanceof HTMLElement) ||
+			!addedNode.hasAttribute(attributeName)
+		) {
 			return;
 		}
 		this.AL[attributeName]({
