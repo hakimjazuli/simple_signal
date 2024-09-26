@@ -4,67 +4,145 @@ import { $ } from './$.mjs';
 import { functions } from './functions.mjs';
 import { handlePromiseAll } from './handlePromiseAll.mjs';
 import { helper } from './helper.mjs';
-import { mainMutaitonObserver } from './mainMutaitonObserver.mjs';
+import { mutaitonObserver } from './mutaitonObserver.mjs';
 import { Ping } from './Ping.mjs';
 
 /**
  * @description
  * helper class to track connected and disconnected of an element, with attribute selector;
- * ```js
- * new Lifecycle({
- * [attributeName]: async(options)=>{
- *				// command;
- *			}
- *		},
- *		// [documentScope]
- *	)
- * ```
  */
 export class Lifecycle {
 	/**
+	 * @typedef {{
+	 * [attributeName:string]:
+	 * (options:import('./lifecycleHandler.type.mjs').lifecycleHandler)=>void
+	 * }} attributeLifecyclesHandler
 	 * @typedef {import('./documentScope.type.mjs').documentScope} documentScope
-	 * @typedef {import('./Let.mjs').Let<MutationRecord[]>} LetMutationRecords
 	 */
 	/**
-	 * registered effect
+	 * attributeIdentification
+	 * @private
+	 * @type {Map<documentScope,attributeLifecyclesHandler>}
+	 */
+	static ID = new Map();
+	/**
+	 * currentDocumentScope
+	 * @private
+	 * @type {documentScope}
+	 */
+	CDS;
+	disconnect = () => {
+		if (this.$) {
+			this.mLet.remove$(this.$);
+		}
+		const documentScope = this.CDS;
+		if (documentScope !== document) {
+			this.mObs.disconnect();
+			Lifecycle.ID.delete(documentScope);
+		}
+	};
+	/**
+	 * @type {() => MutationRecord[]}
+	 */
+	takeRecords;
+	/**
+	 * @private
+	 * @type {import('./Let.mjs').Let<MutationRecord[]>}
+	 */
+	mLet;
+	/**
+	 * @private
+	 * @type {MutationObserver}
+	 */
+	mObs;
+	/**
 	 * @private
 	 * @type {$}
 	 */
 	$;
 	/**
-	 * @typedef {{
-	 * [attributeName:string]:
-	 * (options:import('./lifecycleHandler.type.mjs').lifecycleHandler)=>Promise<void>
-	 * }} attributeLifecyclesHandler
+	 * @param {attributeLifecyclesHandler} attributeLifecyclesHandler
+	 * @param {documentScope} documentScope
 	 */
+	constructor(attributeLifecyclesHandler, documentScope = document) {
+		this.AL = attributeLifecyclesHandler;
+		this.CDS = documentScope;
+		const [mObs, mLet] = mutaitonObserver.create(documentScope);
+		this.mObs = mObs;
+		this.mLet = mLet;
+		this.takeRecords = mObs.takeRecords;
+		if (Lifecycle.ID.has(documentScope)) {
+			return;
+		}
+		const registeredAttribute = this.IRM();
+		switch (registeredAttribute) {
+			case 'whole':
+				this.$ = new $(async (first) => {
+					const mutationList = mLet.value;
+					if (first) {
+						await this.I();
+						return;
+					}
+					await this.CE(mutationList);
+				});
+				break;
+			case 'partial':
+				new Ping(true, async () => {
+					await this.I();
+				});
+				break;
+			default:
+				console.error({
+					attributeName: registeredAttribute,
+					documentScope,
+					message: `${registeredAttribute} already registered in this "documentScope", avoid naming that "registeredAttributes" includes of`,
+					registeredAttributes: Lifecycle.ID.get(documentScope),
+				});
+				break;
+		}
+	}
 	/**
+	 * isRegisteredMap
 	 * @private
-	 * @type {attributeLifecyclesHandler}
+	 * @return {"partial"|"whole"|string}
 	 */
-	AL;
+	IRM = () => {
+		const attributeLifecyclesHandler = this.AL;
+		const documentScope = this.CDS;
+		if (!Lifecycle.ID.has(documentScope)) {
+			Lifecycle.ID.set(documentScope, attributeLifecyclesHandler);
+			return 'whole';
+		}
+		const scopedAttribute = Lifecycle.ID.get(documentScope);
+		for (const attributeName in attributeLifecyclesHandler) {
+			if (!(attributeName in scopedAttribute)) {
+				scopedAttribute[attributeName] = attributeLifecyclesHandler[attributeName];
+				continue;
+			}
+			return attributeName;
+		}
+		return 'partial';
+	};
 	/**
-	 * document scope
+	 * initiator
 	 * @private
-	 * @type {documentScope}
+	 * @returns {Promise<void>}
 	 */
-	DS;
-	/**
-	 * lifecycleIdentification
-	 * @private
-	 * @type {string[]}
-	 */
-	static ID = [];
-	/**
-	 * observer
-	 * @private
-	 * @type {MutationObserver}
-	 */
-	O;
-	/**
-	 * @private
-	 * @type {LetMutationRecords}
-	 */
-	ML;
+	I = async () => {
+		const attributeLifecyclesHandler = this.AL;
+		const documentScope = this.CDS;
+		for (const attributeName in attributeLifecyclesHandler) {
+			const validAttributeName = functions.VAS(attributeName);
+			const elements = documentScope.querySelectorAll(`[${validAttributeName}]`);
+			for (let i = 0; i < elements.length; i++) {
+				const element = elements[i];
+				if (!(element instanceof HTMLElement)) {
+					continue;
+				}
+				await this.ANH(element, attributeName);
+			}
+		}
+	};
 	/**
 	 * elementConnectedRefed
 	 * @private
@@ -72,119 +150,16 @@ export class Lifecycle {
 	 */
 	elementCMRefed = [];
 	/**
-	 * @param {attributeLifecyclesHandler} attrLifecycleCallback
-	 * @param {documentScope} [documentScope]
-	 */
-	constructor(attrLifecycleCallback, documentScope = document) {
-		this.AL = attrLifecycleCallback;
-		this.DS = documentScope;
-		if (documentScope === document) {
-			if (!(mainMutaitonObserver.__ instanceof mainMutaitonObserver)) {
-				new mainMutaitonObserver();
-			}
-			// @ts-ignore
-			this.O = mainMutaitonObserver.__.documentObserver;
-			// @ts-ignore
-			this.ML = mainMutaitonObserver.__.documentMutations_;
-		} else {
-			/**
-			 * @type {LetMutationRecords}
-			 */
-			// @ts-ignore
-			this.ML = new Let('');
-			this.O = new MutationObserver((mutationList) => {
-				this.ML.value = mutationList;
-			});
-			this.O.observe(documentScope, {
-				childList: true,
-				subtree: true,
-			});
-		}
-		this.takeRecord = this.O.takeRecords;
-		this.$ = new $(async (first) => {
-			const value = this.ML.value;
-			if (first) {
-				await this.I();
-				return;
-			}
-			await this.CE(value);
-		});
-	}
-	/**
-	 * @type {()=>MutationRecord[]}
-	 */
-	takeRecord;
-	/**
-	 * initiator
-	 * @private
-	 */
-	I = async () => {
-		for (const attributeName in this.AL) {
-			if (Lifecycle.ID.includes(attributeName)) {
-				console.error({
-					message: `${attributeName} is already registered on "Lifecycle" observer`,
-					solution: `use different "attributeName" other than [${Lifecycle.ID.join(
-						', '
-					)}], prefixing it with descriptive abbreviation is strongly recommended;`,
-				});
-				continue;
-			}
-			const elements = this.DS.querySelectorAll(`[${functions.VAS(attributeName)}]`);
-			for (let i = 0; i < elements.length; i++) {
-				const element = elements[i];
-				await this.ANC(element, attributeName);
-			}
-		}
-	};
-	/**
-	 * check element
-	 * @private
-	 * @param {MutationRecord[]} mutationList
-	 */
-	CE = async (mutationList) => {
-		for (let i = 0; i < mutationList.length; i++) {
-			const mutation = mutationList[i];
-			if (mutation.addedNodes) {
-				for (let j = 0; j < mutation.addedNodes.length; j++) {
-					const addedNode = mutation.addedNodes[j];
-					for (const attributeName in this.AL) {
-						await this.ANC(addedNode, attributeName);
-					}
-				}
-				await this.callCB();
-			}
-			if (mutation.removedNodes) {
-				for (let j = 0; j < mutation.removedNodes.length; j++) {
-					const removedNode = mutation.removedNodes[j];
-					if (!(removedNode instanceof HTMLElement)) {
-						continue;
-					}
-					await this.CMDC(removedNode);
-				}
-			}
-			if (mutation.type !== 'attributes') {
-				continue;
-			}
-			const target = mutation.target;
-			if (target instanceof HTMLElement && mutation.attributeName) {
-				this.callACCB(target, mutation.attributeName);
-			}
-		}
-	};
-	/**
-	 * addedNodeCheck
+	 * addedNodeHanlder
 	 * @private
 	 * @param {Node} addedNode
 	 * @param {string} attributeName
 	 */
-	ANC = async (addedNode, attributeName) => {
-		if (!(addedNode instanceof HTMLElement)) {
+	ANH = async (addedNode, attributeName) => {
+		if (!(addedNode instanceof HTMLElement) || !addedNode.hasAttribute(attributeName)) {
 			return;
 		}
-		if (!addedNode.hasAttribute(attributeName)) {
-			return;
-		}
-		await this.AL[attributeName]({
+		this.AL[attributeName]({
 			element: addedNode,
 			lifecycleObserver: this,
 			onConnected: (connectedCallback) => {
@@ -202,6 +177,7 @@ export class Lifecycle {
 				Lifecycle.setACCB(addedNode, attributeChangedCallback);
 			},
 		});
+		await this.callCB();
 	};
 	/**
 	 * callConnectedCallback
@@ -209,7 +185,7 @@ export class Lifecycle {
 	 */
 	callCB = async () => {
 		/**
-		 * alrady `autoQueued` using `$` in `this.$`
+		 * already `autoQueued` using `$` in `this.$`
 		 */
 		await handlePromiseAll(this.elementCMRefed);
 	};
@@ -274,37 +250,39 @@ export class Lifecycle {
 		});
 	};
 	/**
-	 * find deeply nested attribute name
 	 * @private
-	 * @param {HTMLElement|Element} node
-	 * @param {string} attributeName
-	 * @param {Node[]} found
-	 * @returns {Node[]}
+	 * @param {MutationRecord[]} mutationList
 	 */
-	static FDN = (node, attributeName, found = []) => {
-		if (node.hasAttribute && node.hasAttribute(attributeName)) {
-			found.push(node);
+	CE = async (mutationList) => {
+		const attributesLifecycle = Lifecycle.ID.get(this.CDS);
+		for (let i = 0; i < mutationList.length; i++) {
+			const mutation = mutationList[i];
+			if (mutation.addedNodes) {
+				for (let j = 0; j < mutation.addedNodes.length; j++) {
+					const addedNode = mutation.addedNodes[j];
+					for (const attributeName in attributesLifecycle) {
+						await this.ANH(addedNode, attributeName);
+					}
+				}
+				await this.callCB();
+			}
+			if (mutation.removedNodes) {
+				for (let j = 0; j < mutation.removedNodes.length; j++) {
+					const removedNode = mutation.removedNodes[j];
+					if (!(removedNode instanceof HTMLElement)) {
+						continue;
+					}
+					await this.CMDC(removedNode);
+				}
+			}
+			if (mutation.type !== 'attributes') {
+				continue;
+			}
+			const target = mutation.target;
+			if (target instanceof HTMLElement && mutation.attributeName) {
+				this.callACCB(target, mutation.attributeName);
+			}
 		}
-		for (let i = 0; i < node.children.length; i++) {
-			Lifecycle.FDN(node.children[i], attributeName, found);
-		}
-		return found;
-	};
-	/**
-	 * find deeply nested registered Disconecceted callbacks
-	 * @private
-	 * @param {HTMLElement|Element} node
-	 * @param {(Node)[]} found
-	 * @returns {(Node)[]}
-	 */
-	static FDNDCR = (node, found = []) => {
-		if (Lifecycle.getDCCB(node)) {
-			found.push(node);
-		}
-		for (let i = 0; i < node.children.length; i++) {
-			Lifecycle.FDNDCR(node.children[i], found);
-		}
-		return found;
 	};
 	/**
 	 * check mutation disconnected
@@ -327,15 +305,19 @@ export class Lifecycle {
 		await handlePromiseAll(disconnectedCallbacks);
 	};
 	/**
-	 * @public
+	 * find deeply nested registered Disconecceted callbacks
+	 * @private
+	 * @param {HTMLElement|Element} node
+	 * @param {(Node)[]} found
+	 * @returns {(Node)[]}
 	 */
-	disconnect = () => {
-		new Ping(true, async () => {
-			this.ML.remove$(this.$);
-			if (this.DS === document) {
-				return;
-			}
-			this.O.disconnect();
-		});
+	static FDNDCR = (node, found = []) => {
+		if (Lifecycle.getDCCB(node)) {
+			found.push(node);
+		}
+		for (let i = 0; i < node.children.length; i++) {
+			Lifecycle.FDNDCR(node.children[i], found);
+		}
+		return found;
 	};
 }

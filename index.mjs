@@ -12,8 +12,7 @@
  * > -   reactive;
  * > -   declarative;
  * > -   auto subscribed reactivity;
- * > -   true fine grained DOM reflection (that's right, on `v3` there's no catch, it's now truely fine
- * >     grained);
+ * > -   true fine grained DOM reflection (that's right, on `v3` there's no catch, it's now truely fine grained);
  * -   create declarative library (using our `Lifecycle`) that are heavily scoped on
  * `window.document`, use cases likes:
  * > -   for backend centric `HATEOAS` paradigm, by assigning `attributeName` (on the html response
@@ -31,10 +30,10 @@
  * } from '@html_first/simple_signal';
  * ```
  * ## on v^3
- * - we ends the support for `prebundled` module in the reason of, most of the insteresting parts of the
+ * - we ends the support for `prebundled` module in the reason of, most of the `insteresting` parts of this
  *   library are need to be typehinted, and that's almost impossible in the prebundled environtment
- * - however it's not not that hard if you want to bundle it your self, as we have documented our APIs, so
- *   you can import whichever you like and expose it in the window object
+ * - however it's not that hard if you want to bundle it your self, as we have documented our APIs, so
+ *   you can import whichever API you want and then expose it in the `window` object
  */
 
 import { $ } from './src/$.mjs';
@@ -47,7 +46,7 @@ import { Derived } from './src/Derived.mjs';
 import { Event_ } from './src/Event_.mjs';
 import { For } from './src/For.mjs';
 import { Let } from './src/Let.mjs';
-import { Lifecycle } from './src/Lifecycle.mjs';
+import { Lifecycle } from './src/Lifecycle_.mjs/index.js';
 import { List } from './src/List.mjs';
 import { OnViewPort } from './src/OnViewPort.mjs';
 import { Ping } from './src/Ping.mjs';
@@ -91,4 +90,23 @@ import { _ } from './src/_.mjs';
  * @property {(options:onViewPortHandlerDisconnector)=>Promise<void>} onViewPortHandler.onDisconnected
  */
 
-export { $, Animation, App, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };
+export {
+	$,
+	Animation,
+	App,
+	DefineQRouter,
+	DefineShortCuts,
+	DefineStorage,
+	Derived,
+	Event_,
+	For,
+	Let,
+	Lifecycle,
+	List,
+	OnViewPort,
+	Ping,
+	ShortCut,
+	WorkerMainThread,
+	WorkerThread,
+	_,
+};

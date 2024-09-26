@@ -122,6 +122,13 @@ export class Lifecycle {
      */
     private I;
     /**
+     * check valid id
+     * @private
+     * @param {string} attributeName
+     * @returns {boolean}
+     */
+    private CVID;
+    /**
      * check element
      * @private
      * @param {MutationRecord[]} mutationList

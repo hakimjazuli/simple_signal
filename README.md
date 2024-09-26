@@ -4,8 +4,7 @@
 > -   reactive;
 > -   declarative;
 > -   auto subscribed reactivity;
-> -   true fine grained DOM reflection (that's right, on `v3` there's no catch, it's now truely fine
->     grained);
+> -   true fine grained DOM reflection (that's right, on `v3` there's no catch, it's now truely fine grained);
 -   create declarative library (using our `Lifecycle`) that are heavily scoped on
 `window.document`, use cases likes:
 > -   for backend centric `HATEOAS` paradigm, by assigning `attributeName` (on the html response
@@ -23,10 +22,10 @@ import {
 } from '@html_first/simple_signal';
 ```
 ## on v^3
-- we ends the support for `prebundled` module in the reason of, most of the insteresting parts of the
+- we ends the support for `prebundled` module in the reason of, most of the `insteresting` parts of this
   library are need to be typehinted, and that's almost impossible in the prebundled environtment
-- however it's not not that hard if you want to bundle it your self, as we have documented our APIs, so
-  you can import whichever you like and expose it in the window object
+- however it's not that hard if you want to bundle it your self, as we have documented our APIs, so
+  you can import whichever API you want and then expose it in the `window` object
 
 
 <h2 id="exported-api-and-type-list">exported-api-and-type-list</h2>

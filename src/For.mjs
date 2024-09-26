@@ -34,6 +34,7 @@ export class For {
 	constructor(listInstance, forAttributeName, childLifeCycleCallback, documentScope = document) {
 		this.listInstance = listInstance;
 		this.attr = forAttributeName;
+		this.DS = documentScope;
 		new Lifecycle(
 			{
 				[`${helper.FA}${forAttributeName}`]: async ({
@@ -96,61 +97,57 @@ export class For {
 	 * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
 	 */
 	CL = (childLifeCycleCallback, onParentDisconnected) => {
-		const childLifecycle = new Lifecycle(
-			{
-				[`${helper.FCA}${this.attr}`]: async ({
-					element: childElement,
-					onConnected,
-					onDisconnected,
-					onAttributeChanged,
-				}) => {
-					onAttributeChanged(async ({ attributeName, newValue }) => {
-						await childLifeCycleCallback.onAttributeChanged({
-							childElement,
-							ForController: this,
-							attributeName,
-							newValue,
-						});
+		const childLifecycle = new Lifecycle({
+			[`${helper.FCA}${this.attr}`]: async ({
+				element: childElement,
+				onConnected,
+				onDisconnected,
+				onAttributeChanged,
+			}) => {
+				onAttributeChanged(async ({ attributeName, newValue }) => {
+					await childLifeCycleCallback.onAttributeChanged({
+						childElement,
+						ForController: this,
+						attributeName,
+						newValue,
 					});
-					onConnected(async () => {
-						const childAttrPrefix = `${helper.CDB}${this.attr}-`;
-						await childLifeCycleCallback.onConnected({
+				});
+				onConnected(async () => {
+					const childAttrPrefix = `${helper.CDB}${this.attr}-`;
+					await childLifeCycleCallback.onConnected({
+						childElement,
+						ForController: this,
+						childAttrPrefix,
+					});
+					const index = this.CI(childElement);
+					/**
+					 * @type {ListValue}
+					 */
+					const data = this.listInstance.value[index];
+					/**
+					 * @type {{[dataName:string]:Derived<string>}}
+					 */
+					// @ts-ignore
+					const derived = {};
+					for (const dataName in data) {
+						derived[dataName] = new Derived(
+							async () => data[dataName].value,
+							`${childAttrPrefix}${dataName}`
+						);
+					}
+					onDisconnected(async () => {
+						await childLifeCycleCallback.onDisconnected({
 							childElement,
 							ForController: this,
-							childAttrPrefix,
 						});
-						const index = this.CI(childElement);
-						/**
-						 * @type {ListValue}
-						 */
-						const data = this.listInstance.value[index];
-						/**
-						 * @type {{[dataName:string]:Derived<string>}}
-						 */
-						// @ts-ignore
-						const derived = {};
 						for (const dataName in data) {
-							derived[dataName] = new Derived(
-								async () => data[dataName].value,
-								`${childAttrPrefix}${dataName}`,
-								childElement
-							);
+							derived[dataName].unRef();
+							derived[dataName] = null;
 						}
-						onDisconnected(async () => {
-							await childLifeCycleCallback.onDisconnected({
-								childElement,
-								ForController: this,
-							});
-							for (const dataName in data) {
-								derived[dataName].unRef();
-								derived[dataName] = null;
-							}
-						});
 					});
-				},
+				});
 			},
-			this.parentElement
-		);
+		});
 		onParentDisconnected(async () => {
 			childLifecycle.disconnect();
 		});

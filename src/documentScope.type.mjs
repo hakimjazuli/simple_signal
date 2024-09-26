@@ -5,5 +5,5 @@
  * type helper for `documentScope`
  */
 /**
- * @typedef {HTMLElement|Element|ShadowRoot|Document|ParentNode} documentScope
+ * @typedef {ShadowRoot|Document} documentScope
  */

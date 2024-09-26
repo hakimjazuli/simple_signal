@@ -38,8 +38,9 @@ export class functions {
 		return result;
 	};
 	/**
+	 * validAttributeNameSelector
 	 * @param {string} attributeName
 	 * @returns {string}
 	 */
-	static VAS = (attributeName) => attributeName.replaceAll(':', '\\:');
+	static VAS = (attributeName) => attributeName.toLowerCase().replaceAll(':', '\\:');
 }
