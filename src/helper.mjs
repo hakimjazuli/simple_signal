@@ -52,11 +52,6 @@ export class helper {
 	 */
 	static FCA = `hf_ss-child-`;
 	/**
-	 * scopedLifecycle
-	 * @readonly
-	 */
-	static SC = `hf_-ss-scoped`;
-	/**
 	 * ForAttributePrefix
 	 * @readonly
 	 */

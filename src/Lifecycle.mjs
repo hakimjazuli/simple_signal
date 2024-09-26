@@ -152,11 +152,7 @@ export class Lifecycle {
 	 * @param {string} attributeName
 	 */
 	ANH = async (addedNode, attributeName) => {
-		if (
-			addedNode[helper.SC] !== this.CDS ||
-			!(addedNode instanceof HTMLElement) ||
-			!addedNode.hasAttribute(attributeName)
-		) {
+		if (!(addedNode instanceof HTMLElement) || !addedNode.hasAttribute(attributeName)) {
 			return;
 		}
 		this.AL[attributeName]({

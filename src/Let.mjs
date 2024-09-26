@@ -94,7 +94,6 @@ export class Let {
 				{
 					[attributeName]: async ({ element, onConnected, onDisconnected }) => {
 						onConnected(async () => {
-							element[helper.SC] = documentScope;
 							const effect = new $(async () => {
 								domReflector(this.value, attributeName, element, this);
 							});

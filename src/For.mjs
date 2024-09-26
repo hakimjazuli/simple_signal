@@ -9,8 +9,12 @@ import { Lifecycle } from './Lifecycle.mjs';
  * @description
  * - assign element to loop through ['List'](#list) as data to render child element using class instantiation;
  * - naming html attribute:
- * > - forAttributeName use `for-` as prefix in html;
- * > - keys form `List` can reflect to DOM by prefixing with `c-${forAttributeNameNoForPrefix}-`
+ * > - `forAttributeName` use `for-` as prefix in html;
+ * > - keys form `List` can reflect to DOM by prefixing with `c-${forAttributeNameNoForPrefix}-`;
+ * > - internal `signal` with `attributeName` argument will mess with `lifecycle` due to naming collision;
+ * > - anything that needs to reflect to dom, is to be added to the List record, for convenient;
+ * > - you can however by prefixing the `attributeName` with `c-${forAttributeNameNoForPrefix}-` with
+ * >   `childAttrPrefix`;
  * - loped childElement:
  * > - must have `HTMLElement` as first children;
  * > - only first children will be used to loop through `List`, all other children will be deleted from the dom on `onConnected` event of parentElement;
@@ -97,57 +101,61 @@ export class For {
 	 * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
 	 */
 	CL = (childLifeCycleCallback, onParentDisconnected) => {
-		const childLifecycle = new Lifecycle({
-			[`${helper.FCA}${this.attr}`]: async ({
-				element: childElement,
-				onConnected,
-				onDisconnected,
-				onAttributeChanged,
-			}) => {
-				onAttributeChanged(async ({ attributeName, newValue }) => {
-					await childLifeCycleCallback.onAttributeChanged({
-						childElement,
-						ForController: this,
-						attributeName,
-						newValue,
-					});
-				});
-				onConnected(async () => {
-					const childAttrPrefix = `${helper.CDB}${this.attr}-`;
-					await childLifeCycleCallback.onConnected({
-						childElement,
-						ForController: this,
-						childAttrPrefix,
-					});
-					const index = this.CI(childElement);
-					/**
-					 * @type {ListValue}
-					 */
-					const data = this.listInstance.value[index];
-					/**
-					 * @type {{[dataName:string]:Derived<string>}}
-					 */
-					// @ts-ignore
-					const derived = {};
-					for (const dataName in data) {
-						derived[dataName] = new Derived(
-							async () => data[dataName].value,
-							`${childAttrPrefix}${dataName}`
-						);
-					}
-					onDisconnected(async () => {
-						await childLifeCycleCallback.onDisconnected({
+		const childLifecycle = new Lifecycle(
+			{
+				[`${helper.FCA}${this.attr}`]: async ({
+					element: childElement,
+					onConnected,
+					onDisconnected,
+					onAttributeChanged,
+				}) => {
+					onAttributeChanged(async ({ attributeName, newValue }) => {
+						await childLifeCycleCallback.onAttributeChanged({
 							childElement,
 							ForController: this,
+							attributeName,
+							newValue,
 						});
-						for (const dataName in data) {
-							derived[dataName].unRef();
-							derived[dataName] = null;
-						}
 					});
-				});
+					onConnected(async () => {
+						const childAttrPrefix = `${helper.CDB}${this.attr}-`;
+						await childLifeCycleCallback.onConnected({
+							childElement,
+							ForController: this,
+							childAttrPrefix,
+						});
+						const index = this.CI(childElement);
+						/**
+						 * @type {ListValue}
+						 */
+						const data = this.listInstance.value[index];
+						/**
+						 * @type {{[dataName:string]:Derived<string>}}
+						 */
+						// @ts-ignore
+						const derived = {};
+						for (const dataName in data) {
+							derived[dataName] = new Derived(
+								async () => data[dataName].value,
+								`${childAttrPrefix}${dataName}`,
+								childElement
+							);
+						}
+						onDisconnected(async () => {
+							await childLifeCycleCallback.onDisconnected({
+								childElement,
+								ForController: this,
+							});
+							for (const dataName in data) {
+								derived[dataName].unRef();
+								derived[dataName] = null;
+							}
+						});
+					});
+				},
 			},
-		});
+			this.parentElement
+		);
 		onParentDisconnected(async () => {
 			childLifecycle.disconnect();
 		});
