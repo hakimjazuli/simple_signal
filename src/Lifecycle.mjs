@@ -9,7 +9,12 @@ import { Ping } from './Ping.mjs';
 
 /**
  * @description
- * helper class to track connected and disconnected of an element, with attribute selector;
+ * - helper class to track connected/disconnected/attributeChanged of an element;
+ * - problem with `documentScoping`:
+ * > - since most of what's happening is on the `window.document`,
+ * >   all of the `attributeName` will be globalized,
+ * >   although we also provide `console.error` when that thing happens and listed colided `attributeName` (including with `Let` and it's children),
+ * >   unless you use this library for `shadowRoot`ed scope you need to deal with it.
  */
 export class Lifecycle {
 	/**

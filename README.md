@@ -85,7 +85,7 @@ generate side effect for `signal` based reactivity such as for:- [Let](#let)``
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-collections of static methods helper for animation;static method prefixed with `animation` can be used to generate recuring frame,which in turn can be used in the callback to animate stuffs
+collections of static methods helper for animation;static method prefixed with `animation` can be used to generate recuring keyframes,which in turn can be used in the callback to animate stuffs
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -175,7 +175,7 @@ type helper for `documentScope`
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-helper class to track connected and disconnected of an element, with attribute selector;```jsnew Lifecycle({[attributeName]: async(options)=>{			// command;		}	},	// [documentScope])```
+- helper class to track connected/disconnected/attributeChanged of an element;- problem with `documentScoping`:> - since most of what's happening is on the `window.document`,>   all of the `attributeName` will be globalized,>   although we also provide `console.error` when that thing happens and listed colided `attributeName` (including with `Let` and it's children),>   unless you use this library for `shadowRoot`ed scope you need to deal with it.
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 

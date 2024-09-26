@@ -46,6 +46,7 @@ export class For {
      * @type {string}
      */
     attr: string;
+    DS: import("./documentScope.type.mjs").documentScope;
     /**
      * onParentConnected
      * @private

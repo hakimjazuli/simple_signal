@@ -1,21 +1,24 @@
 /**
  * @description
- * helper class to track connected and disconnected of an element, with attribute selector;
- * ```js
- * new Lifecycle({
- * [attributeName]: async(options)=>{
- *				// command;
- *			}
- *		},
- *		// [documentScope]
- *	)
- * ```
+ * - helper class to track connected/disconnected/attributeChanged of an element;
+ * - problem with `documentScoping`:
+ * > - since most of what's happening is on the `window.document`,
+ * >   all of the `attributeName` will be globalized,
+ * >   although we also provide `console.error` when that thing happens and listed colided `attributeName` (including with `Let` and it's children),
+ * >   unless you use this library for `shadowRoot`ed scope you need to deal with it.
  */
 export class Lifecycle {
     /**
-     * lifecycleIdentification
+     * @typedef {{
+     * [attributeName:string]:
+     * (options:import('./lifecycleHandler.type.mjs').lifecycleHandler)=>void
+     * }} attributeLifecyclesHandler
+     * @typedef {import('./documentScope.type.mjs').documentScope} documentScope
+     */
+    /**
+     * attributeIdentification
      * @private
-     * @type {string[]}
+     * @type {Map<documentScope,attributeLifecyclesHandler>}
      */
     private static ID;
     /**
@@ -45,15 +48,6 @@ export class Lifecycle {
      */
     private static getACCB;
     /**
-     * find deeply nested attribute name
-     * @private
-     * @param {HTMLElement|Element} node
-     * @param {string} attributeName
-     * @param {Node[]} found
-     * @returns {Node[]}
-     */
-    private static FDN;
-    /**
      * find deeply nested registered Disconecceted callbacks
      * @private
      * @param {HTMLElement|Element} node
@@ -62,50 +56,53 @@ export class Lifecycle {
      */
     private static FDNDCR;
     /**
-     * @param {attributeLifecyclesHandler} attrLifecycleCallback
-     * @param {documentScope} [documentScope]
+     * @param {attributeLifecyclesHandler} attributeLifecyclesHandler
+     * @param {documentScope} documentScope
      */
-    constructor(attrLifecycleCallback: {
-        [attributeName: string]: (options: import("./lifecycleHandler.type.mjs").lifecycleHandler) => Promise<void>;
+    constructor(attributeLifecyclesHandler: {
+        [attributeName: string]: (options: import("./lifecycleHandler.type.mjs").lifecycleHandler) => void;
     }, documentScope?: import("./documentScope.type.mjs").documentScope);
     /**
-     * @typedef {import('./documentScope.type.mjs').documentScope} documentScope
-     * @typedef {import('./Let.mjs').Let<MutationRecord[]>} LetMutationRecords
+     * currentDocumentScope
+     * @private
+     * @type {documentScope}
      */
+    private CDS;
+    disconnect: () => void;
     /**
-     * registered effect
+     * @type {() => MutationRecord[]}
+     */
+    takeRecords: () => MutationRecord[];
+    /**
+     * @private
+     * @type {import('./Let.mjs').Let<MutationRecord[]>}
+     */
+    private mLet;
+    /**
+     * @private
+     * @type {MutationObserver}
+     */
+    private mObs;
+    /**
      * @private
      * @type {$}
      */
     private $;
+    AL: {
+        [attributeName: string]: (options: import("./lifecycleHandler.type.mjs").lifecycleHandler) => void;
+    };
     /**
-     * @typedef {{
-     * [attributeName:string]:
-     * (options:import('./lifecycleHandler.type.mjs').lifecycleHandler)=>Promise<void>
-     * }} attributeLifecyclesHandler
-     */
-    /**
+     * isRegisteredMap
      * @private
-     * @type {attributeLifecyclesHandler}
+     * @return {"partial"|"whole"|string}
      */
-    private AL;
+    private IRM;
     /**
-     * document scope
+     * initiator
      * @private
-     * @type {documentScope}
+     * @returns {Promise<void>}
      */
-    private DS;
-    /**
-     * observer
-     * @private
-     * @type {MutationObserver}
-     */
-    private O;
-    /**
-     * @private
-     * @type {LetMutationRecords}
-     */
-    private ML;
+    private I;
     /**
      * elementConnectedRefed
      * @private
@@ -113,34 +110,12 @@ export class Lifecycle {
      */
     private elementCMRefed;
     /**
-     * @type {()=>MutationRecord[]}
-     */
-    takeRecord: () => MutationRecord[];
-    /**
-     * initiator
-     * @private
-     */
-    private I;
-    /**
-     * check valid id
-     * @private
-     * @param {string} attributeName
-     * @returns {boolean}
-     */
-    private CVID;
-    /**
-     * check element
-     * @private
-     * @param {MutationRecord[]} mutationList
-     */
-    private CE;
-    /**
-     * addedNodeCheck
+     * addedNodeHanlder
      * @private
      * @param {Node} addedNode
      * @param {string} attributeName
      */
-    private ANC;
+    private ANH;
     /**
      * callConnectedCallback
      * @private
@@ -154,13 +129,14 @@ export class Lifecycle {
      */
     private callACCB;
     /**
+     * @private
+     * @param {MutationRecord[]} mutationList
+     */
+    private CE;
+    /**
      * check mutation disconnected
      * @private
      * @param {HTMLElement}removedNode
      */
     private CMDC;
-    /**
-     * @public
-     */
-    public disconnect: () => void;
 }

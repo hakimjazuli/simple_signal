@@ -1,7 +1,7 @@
 /**
  * @description
  * collections of static methods helper for animation;
- * static method prefixed with `animation` can be used to generate recuring frame,
+ * static method prefixed with `animation` can be used to generate recuring keyframes,
  * which in turn can be used in the callback to animate stuffs
  */
 export class Animation {

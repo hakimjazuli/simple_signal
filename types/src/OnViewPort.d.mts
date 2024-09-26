@@ -42,7 +42,7 @@ export class OnViewPort {
      * @see https://developer.mozilla.org/docs/Web/API/IntersectionObserver/disconnect
      */
     disconnect: () => void;
-    root: Element | Document;
+    root: Document | Element;
     rootMargin: string;
     /**
      * @param {Element|HTMLElement} element

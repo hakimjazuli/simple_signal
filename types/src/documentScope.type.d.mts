@@ -1,1 +1,1 @@
-export type documentScope = HTMLElement | Element | ShadowRoot | Document | ParentNode;
+export type documentScope = ShadowRoot | Document;

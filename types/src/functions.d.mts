@@ -16,6 +16,7 @@ export class functions {
      */
     static splitX: (string: string, delimiter: string) => string[];
     /**
+     * validAttributeNameSelector
      * @param {string} attributeName
      * @returns {string}
      */

@@ -46,7 +46,7 @@ import { Derived } from './src/Derived.mjs';
 import { Event_ } from './src/Event_.mjs';
 import { For } from './src/For.mjs';
 import { Let } from './src/Let.mjs';
-import { Lifecycle } from './src/Lifecycle_.mjs/index.js';
+import { Lifecycle } from './src/Lifecycle.mjs';
 import { List } from './src/List.mjs';
 import { OnViewPort } from './src/OnViewPort.mjs';
 import { Ping } from './src/Ping.mjs';
@@ -60,7 +60,7 @@ import { _ } from './src/_.mjs';
  * type helper for `documentScope`
  */
 /**
- * @typedef {HTMLElement|Element|ShadowRoot|Document|ParentNode} documentScope
+ * @typedef {ShadowRoot|Document} documentScope
  */
 /**
  * @description
@@ -90,23 +90,4 @@ import { _ } from './src/_.mjs';
  * @property {(options:onViewPortHandlerDisconnector)=>Promise<void>} onViewPortHandler.onDisconnected
  */
 
-export {
-	$,
-	Animation,
-	App,
-	DefineQRouter,
-	DefineShortCuts,
-	DefineStorage,
-	Derived,
-	Event_,
-	For,
-	Let,
-	Lifecycle,
-	List,
-	OnViewPort,
-	Ping,
-	ShortCut,
-	WorkerMainThread,
-	WorkerThread,
-	_,
-};
+export { $, Animation, App, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };
