@@ -10,6 +10,7 @@ import { Ping } from './Ping.mjs';
 /**
  * @description
  * - helper class to track connected/disconnected/attributeChanged of an element;
+ * - all global `signal` with dom relector that need to be available for `parent scope` should be prefixed with `g-`;
  */
 export class Lifecycle {
 	/**
@@ -73,6 +74,10 @@ export class Lifecycle {
 		this.takeRecords = mObs.takeRecords;
 		const registeredAttribute = this.IRM();
 		switch (registeredAttribute) {
+			/**
+			 * uses `switch case` over `guard clause` in case of source update that requires additional
+			 * check that are making it not possible for early returns
+			 */
 			case 'whole':
 				this.$ = new $(async (first) => {
 					const mutationList = mLet.value;
@@ -131,13 +136,10 @@ export class Lifecycle {
 			const validAttributeName = functions.VAS(attributeName);
 			const elements = documentScope.querySelectorAll(`[${validAttributeName}]`);
 			for (let i = 0; i < elements.length; i++) {
-				const element = elements[i];
-				if (!(element instanceof HTMLElement)) {
-					continue;
-				}
-				await this.ANH(element, attributeName);
+				await this.ANH(elements[i], attributeName);
 			}
 		}
+		await this.callCB();
 	};
 	/**
 	 * elementConnectedRefed
@@ -146,13 +148,36 @@ export class Lifecycle {
 	 */
 	elementCMRefed = [];
 	/**
+	 * checkValidScoping
+	 * @param {documentScope} node
+	 * @returns {boolean}
+	 */
+	CVS = (node) => {
+		const documentScope = this.CDS;
+		while (node) {
+			if (!Lifecycle.ID.has(node)) {
+				node = node.parentElement;
+				continue;
+			}
+			if (node !== documentScope) {
+				return false;
+			}
+			return true;
+		}
+		return true;
+	};
+	/**
 	 * addedNodeHanlder
 	 * @private
 	 * @param {Node} addedNode
 	 * @param {string} attributeName
 	 */
 	ANH = async (addedNode, attributeName) => {
-		if (!(addedNode instanceof HTMLElement) || !addedNode.hasAttribute(attributeName)) {
+		if (
+			!((addedNode instanceof HTMLElement) /** to eliminate repeatition on ANH call */) ||
+			!addedNode.hasAttribute(attributeName /** primary criteria */) ||
+			(!attributeName.startsWith(helper.G) && !this.CVS(addedNode))
+		) {
 			return;
 		}
 		this.AL[attributeName]({
@@ -173,7 +198,6 @@ export class Lifecycle {
 				Lifecycle.setACCB(addedNode, attributeChangedCallback);
 			},
 		});
-		await this.callCB();
 	};
 	/**
 	 * callConnectedCallback

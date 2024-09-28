@@ -52,17 +52,10 @@ export class helper {
 	 */
 	static FCA = `hf_ss-child-`;
 	/**
-	 * ForAttributePrefix
+	 * globalSignalPrefix
 	 * @readonly
 	 */
-	static FA = `for-`;
-	/**
-	 * childDerivedBinder
-	 * use parent `attributeName`
-	 * - example: `c-parentAttributeName-childAttributeName`
-	 * @readonly
-	 */
-	static CDB = `c-`;
+	static G = `g-`;
 	/**
 	 * @param {Object} class_
 	 */
