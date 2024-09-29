@@ -11,21 +11,15 @@ export class helper {
      */
     static D: number | false;
     /**
-     * attribute helper for binded
-     */
-    /**
+     * signal with value as target
      * @readonly
      */
-    static readonly V: "hf_ss-binded_value";
-    /**
-     * @readonly
-     */
-    static readonly LC: "hf_ss-binded_lifecycle";
+    static readonly V: "hf_ss-b-a-val";
     /**
      * storage identifier
      * @readonly
      */
-    static readonly SI: "hf_ss-binded_storage";
+    static readonly SI: "hf_ss-b-store";
     /**
      * disconnected callback identifier
      */
@@ -46,22 +40,36 @@ export class helper {
      * ForChildAttributePrefix
      * @readonly
      */
-    static readonly FCA: "hf_ss-child-";
+    static readonly FCA: "hf_ss-fc-";
     /**
-     * ForAttributePrefix
+     * globalSignalPrefix
      * @readonly
      */
-    static readonly FA: "for-";
-    /**
-     * childDerivedBinder
-     * use parent `attributeName`
-     * - example: `c-parentAttributeName-childAttributeName`
-     * @readonly
-     */
-    static readonly CDB: "c-";
+    static readonly G: "g-";
     /**
      * @param {Object} class_
      */
     static warningSingleton: (class_: any) => void;
+    /**
+     * @private
+     */
+    private static generateUniqueString;
+    /**
+     * @type {string|null}
+     */
+    static attr: string | null;
+    /**
+     * @type {import('./documentScope.type.mjs').documentScope}
+     */
+    static currentDocumentScope: import("./documentScope.type.mjs").documentScope;
+    /**
+     * @private
+     * @type {string}
+     */
+    private static attrPrefix;
+    /**
+     * @return {string|null}
+     */
+    static attributeIndexGenerator: () => string | null;
 }
 import { queueFIFO } from './queueFIFO.mjs';

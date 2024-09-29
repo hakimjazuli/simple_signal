@@ -1,4 +1,4 @@
-export type documentScope = ShadowRoot | Document;
+export type documentScope = HTMLElement | Element | ShadowRoot | Document;
 export type attributeChangedLifecycle = (options: {
     attributeName: string;
     newValue: string;
@@ -23,6 +23,7 @@ export type onViewPortHandler = {
 import { $ } from './src/$.mjs';
 import { Animation } from './src/Animation.mjs';
 import { App } from './src/App.mjs';
+import { Component } from './src/Component.mjs';
 import { DefineQRouter } from './src/DefineQRouter.mjs';
 import { DefineShortCuts } from './src/DefineShortCuts.mjs';
 import { DefineStorage } from './src/DefineStorage.mjs';
@@ -38,4 +39,4 @@ import { ShortCut } from './src/ShortCut.mjs';
 import { WorkerMainThread } from './src/WorkerMainThread.mjs';
 import { WorkerThread } from './src/WorkerThread.mjs';
 import { _ } from './src/_.mjs';
-export { $, Animation, App, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };
+export { $, Animation, App, Component, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };

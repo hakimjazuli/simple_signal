@@ -1,6 +1,8 @@
 /**
  * @description
- * `eventListener` helper to create `autoqueued` callback;
+ * use this instead of normal `eventListener` declaration for:
+ * - creating `autoqueued` `listener`;
+ * - `autoScope` `_` static methods, inside `Component` scope;
  * ```js
  * // @ts-check
  * someObject.addEventListener('click', Event_.listener( (event) => {
@@ -10,9 +12,9 @@
  */
 export class Event_ {
     /**
-     * @param {(event:Event)=>Promise<any>} asyncCallback
+     * @param {(event:Event)=>Promise<any>} scopedCallback
      * @returns {(event:Event)=>void}
-     * - `autoqueued` callback
+     * - `autoqueued` & `autoScoped` callback
      */
-    static listener: (asyncCallback: (event: Event) => Promise<any>) => (event: Event) => void;
+    static listener: (scopedCallback: (event: Event) => Promise<any>) => (event: Event) => void;
 }

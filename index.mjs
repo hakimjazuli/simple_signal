@@ -39,6 +39,7 @@
 import { $ } from './src/$.mjs';
 import { Animation } from './src/Animation.mjs';
 import { App } from './src/App.mjs';
+import { Component } from './src/Component.mjs';
 import { DefineQRouter } from './src/DefineQRouter.mjs';
 import { DefineShortCuts } from './src/DefineShortCuts.mjs';
 import { DefineStorage } from './src/DefineStorage.mjs';
@@ -60,7 +61,7 @@ import { _ } from './src/_.mjs';
  * type helper for `documentScope`
  */
 /**
- * @typedef {ShadowRoot|Document} documentScope
+ * @typedef {HTMLElement|Element|ShadowRoot|Document} documentScope
  */
 /**
  * @description
@@ -90,4 +91,4 @@ import { _ } from './src/_.mjs';
  * @property {(options:onViewPortHandlerDisconnector)=>Promise<void>} onViewPortHandler.onDisconnected
  */
 
-export { $, Animation, App, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };
+export { $, Animation, App, Component, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };

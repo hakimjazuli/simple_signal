@@ -36,6 +36,8 @@ import {
 
 - [App](#app)
 
+- [Component](#component)
+
 - [DefineQRouter](#defineqrouter)
 
 - [DefineShortCuts](#defineshortcuts)
@@ -99,6 +101,15 @@ collections of static methods helper for animation;static method prefixed with 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
 
+<h2 id="component">Component</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+component creation helper using class initiation;behaviour:- it rendered directly to real DOM;> - library like `bootstrap` `css` and it's `js` parts can select your `elements` for it's functionality;> - you have to manually scoping your style by```jshtml`<style>	[${thisInstance.attr}]{		...nestedCSSRules	}</style>````> also you might need to explicitly use ">" `directChildOf` selector, as when you try to render `childComponent`> it could also be accidentally selected;- render method:> you put returned value of `thisInstance.componentAttribute` on an html element, which> it will be rendered as it's `innerHTML` at the `onConnected` event, then> it will used `MutationObserver` to look for changes;
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
 <h2 id="defineqrouter">DefineQRouter</h2>
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
@@ -148,7 +159,7 @@ type helper for `documentScope`
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-`eventListener` helper to create `autoqueued` callback;```js// @ts-checksomeObject.addEventListener('click', Event_.listener( (event) => {// code}))```
+use this instead of normal `eventListener` declaration for:- creating `autoqueued` `listener`;- `autoScope` `_` static methods, inside `Component` scope;```js// @ts-checksomeObject.addEventListener('click', Event_.listener( (event) => {// code}))```
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -157,7 +168,7 @@ type helper for `documentScope`
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-- assign element to loop through ['List'](#list) as data to render child element using class instantiation;- naming html attribute:> - forAttributeName use `for-` as prefix in html;> - keys form `List` can reflect to DOM by prefixing with `c-${forAttributeNameNoForPrefix}-`- loped childElement:> - must have `HTMLElement` as first children;> - only first children will be used to loop through `List`, all other children will be deleted from the dom on `onConnected` event of parentElement;
+- assign element to loop through ['List'](#list) as data to render child element using class instantiation;- loped childElement:> - must have `HTMLElement` as first children;> - only first children will be used to loop through `List`, all other children will be deleted from the dom before `onConnected` event of parentElement;
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -175,7 +186,7 @@ type helper for `documentScope`
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-- helper class to track connected/disconnected/attributeChanged of an element;- problem with `documentScoping`:> - since most of what's happening is on the `window.document`,>   all of the `attributeName` will be globalized,>   although we also provide `console.error` when that thing happens and listed colided `attributeName` (including with `Let` and it's children),>   unless you use this library for `shadowRoot`ed scope you need to deal with it.
+- helper class to track connected/disconnected/attributeChanged of an element;- all global `signal` with dom relector that need to be available for `parent scope` should be prefixed with `g-`;
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -256,6 +267,6 @@ helper class to define web worker thread;```jsnew WorkerThread({	onMessage: (
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-- syntax sugar for `signal` based reactifity stored in static Method of class `_`,> - `_.let`: for [new Let](#let);> - `_.let_`: for [Let.dataOnly](#let);> - `_.derived`: for [new Derived](#derived);> - `_.derived_`: for [Derived.dataOnly](#derived);> - `_.$`: for [new $](#$);> - `_.list`: for [new List](#list);- it also shortened by at least 2characters, and since most of our APIs are a class,  `treeshaking` will not uglify the method/property of the class, having it shortedned like this is a plus,  especially if you don't plan on gzipping the file;
+- scoping helper for `signal` based reactifity stored in static Method of class `_`,> - `_.let`: autoscoped [new Let](#let);> - `_.let_`: for [Let.dataOnly](#let);> - `_.derived`: autoscoped [new Derived](#derived);> - `_.derived_`: for [Derived.dataOnly](#derived);> - `_.$`: for [new $](#$);> - `_.list`: for [new List](#list);- it also shortened by 2characters, and since most of our APIs are a class,  `treeshaking` will not uglify the method/property of the class, having it shortedned like this is a plus,  especially if you don't plan on gzipping the file;- if you use our `Component` class, use this class static method, instead of their respective class, for `autoscoping`,> which then you can use it's `attr` returned value to mark the element```js// on Component scopeonConnected(async()=>{	const data = _.let('test');	html`<div ${data.attr}="innerText"></div>`})```
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>

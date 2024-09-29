@@ -1,10 +1,13 @@
 // @ts-check
 
-import { Ping } from './Ping.mjs';
+import { Component } from './Component.mjs';
+import { helper } from './helper.mjs';
 
 /**
  * @description
- * `eventListener` helper to create `autoqueued` callback;
+ * use this instead of normal `eventListener` declaration for:
+ * - creating `autoqueued` `listener`;
+ * - `autoScope` `_` static methods, inside `Component` scope;
  * ```js
  * // @ts-check
  * someObject.addEventListener('click', Event_.listener( (event) => {
@@ -14,13 +17,21 @@ import { Ping } from './Ping.mjs';
  */
 export class Event_ {
 	/**
-	 * @param {(event:Event)=>Promise<any>} asyncCallback
+	 * @param {(event:Event)=>Promise<any>} scopedCallback
 	 * @returns {(event:Event)=>void}
-	 * - `autoqueued` callback
+	 * - `autoqueued` & `autoScoped` callback
 	 */
-	static listener = (asyncCallback) => {
+	static listener = (scopedCallback) => {
+		const documentScope = helper.currentDocumentScope;
+		/**
+		 * @param {Event} event
+		 */
 		return (event) => {
-			new Ping(true, async () => await asyncCallback(event));
+			Component.manualScope({
+				documentScope,
+				runCheckAtFirst: true,
+				scopedCallback: async () => await scopedCallback(event),
+			});
 		};
 	};
 }

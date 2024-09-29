@@ -62,6 +62,11 @@ export class Lifecycle {
 	 */
 	$;
 	/**
+	 * @private
+	 * @type {attributeLifecyclesHandler}
+	 */
+	AL;
+	/**
 	 * @param {attributeLifecyclesHandler} attributeLifecyclesHandler
 	 * @param {documentScope} documentScope
 	 */
@@ -149,6 +154,7 @@ export class Lifecycle {
 	elementCMRefed = [];
 	/**
 	 * checkValidScoping
+	 * @private
 	 * @param {documentScope} node
 	 * @returns {boolean}
 	 */
@@ -322,7 +328,9 @@ export class Lifecycle {
 				disconnectedCallbacks.push(...disconnectCallback);
 			}
 		}
-		await handlePromiseAll(disconnectedCallbacks);
+		if (disconnectedCallbacks.length) {
+			await handlePromiseAll(disconnectedCallbacks);
+		}
 	};
 	/**
 	 * find deeply nested registered Disconecceted callbacks

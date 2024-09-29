@@ -1,34 +1,30 @@
 /**
  * @description
  * - assign element to loop through ['List'](#list) as data to render child element using class instantiation;
- * - naming html attribute:
- * > - forAttributeName use `for-` as prefix in html;
- * > - keys form `List` can reflect to DOM by prefixing with `c-${forAttributeNameNoForPrefix}-`
  * - loped childElement:
  * > - must have `HTMLElement` as first children;
- * > - only first children will be used to loop through `List`, all other children will be deleted from the dom on `onConnected` event of parentElement;
+ * > - only first children will be used to loop through `List`, all other children will be deleted from the dom before `onConnected` event of parentElement;
  */
 export class For {
     /**
      * @typedef {import('./lifecycleHandler.type.mjs').lifecycleHandler} lifecycleHandler
      * @typedef {import('./List.mjs').ListValue_} ListValue
      * @typedef {Object} childLifeCycleCallback
-     * @property {(arg0:{childElement:HTMLElement,ForController:For,childAttrPrefix:string})=>Promise<void>} childLifeCycleCallback.onConnected
+     * @property {(arg0:{childElement:HTMLElement,ForController:For})=>Promise<void>} childLifeCycleCallback.onConnected
      * @property {(arg0:{childElement:HTMLElement,ForController:For})=>Promise<void>} childLifeCycleCallback.onDisconnected
      * @property {(arg0:{childElement:HTMLElement,ForController:For,attributeName:string, newValue:string})=>Promise<void>} childLifeCycleCallback.onAttributeChanged
      */
     /**
      * @param {import('./List.mjs').List} listInstance
-     * @param {string} forAttributeName
+     * @param {string} attributeName
      * - parent attributeName
      * @param {childLifeCycleCallback} childLifeCycleCallback
      * @param {import('./documentScope.type.mjs').documentScope} documentScope
      */
-    constructor(listInstance: import("./List.mjs").List<any, any, any>, forAttributeName: string, childLifeCycleCallback: {
+    constructor(listInstance: import("./List.mjs").List<any, any, any>, attributeName: string, childLifeCycleCallback: {
         onConnected: (arg0: {
             childElement: HTMLElement;
             ForController: For;
-            childAttrPrefix: string;
         }) => Promise<void>;
         onDisconnected: (arg0: {
             childElement: HTMLElement;
