@@ -4,7 +4,7 @@
  * behaviour:
  * - it rendered directly to real DOM;
  * > - library like `bootstrap` `css` and it's `js` parts can select your `elements` for it's functionality;
- * > - you have to manually scoping your style by
+ * > - you have to manually scope your style by
  * ```js
  * html`<style>
  *		[${thisInstance.attr}]{
