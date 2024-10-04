@@ -1,92 +1,94 @@
 /**
  * @description
  * - helper class to create list that satisfy
- * `Array<Record<string, Let<string>>>`
+ * `Array<Record<string, string>>`
  * ```js
  * const listExample = new List([
  *      {key1: new Let("test"), ...keys},
- *      {key1: _.let("test2"), ...keys},
  *      {key1: _.let_("test3"), ...keys},
  * ])
  * ```
  * - usefull for `loops`;
  */
 /**
- * @typedef {Record<string, Let<string>>} ListValue_
+ * @typedef {Record<string, string>} ListArg
+ * @typedef {Record<string, Let<string>>} ListValue
  * @typedef {{type:'push'|'unshift'|'slice'|'splice'|'swap'|'modify'|'shift'|'',args:any[]}} mutationType
  */
 /**
- * @template {ListValue_} ListValue
- * @template {keyof ListKeys} ListKeys
- * @template {ListValue[]} ListArray
- * @extends {Let<ListArray>}
+ * @template {ListArg} List_
  */
-export class List<ListValue extends ListValue_, ListKeys extends keyof ListKeys, ListArray extends ListValue[]> extends Let<ListArray> {
+export class List<List_ extends ListArg> {
     /**
-     * @param {ListArray} value
+     * @private
+     * @param {ListArg} data
+     * @returns {ListValue}
      */
-    constructor(value: ListArray);
+    private static convertSingle;
+    /**
+     * @private
+     * @param {ListArg[]} list
+     * @returns {ListValue[]}
+     */
+    private static convert;
+    /**
+     * @param {List_[]} value
+     */
+    constructor(value: List_[]);
+    /**
+     * proxy instance
+     * @type {Let<ListValue[]>}
+     */
+    proxyInstance: Let<ListValue[]>;
     /**
      * @type {Let<mutationType>}
      */
     mutation: Let<mutationType>;
     /**
-     * Appends new elements to the end of an array, and returns the new length of the array.
-     * @param {...ListValue} listValue
-     * - New elements to add to the array.
-     * @returns {number}
+     * Appends new data to the end;
+     * @param {...List_} listValue
      */
-    push: (...listValue: ListValue[]) => number;
+    push: (...listValue: List_[]) => void;
     /**
-     * Removes the first element from an array and returns it. If the array is empty, undefined is returned and the array is not modified.
-     * @returns {ListValue|undefined}
+     * Removes the first data;
      */
-    shift: () => ListValue | undefined;
+    shift: () => void;
     /**
-     * Inserts new elements at the start of an array, and returns the new length of the array.
-     * @param  {...ListValue} listValue
-     * - Elements to insert at the start of the array.
-     * @returns
+     * Inserts new data at the start;
+     * @param  {...List_} listValue
      */
-    unshift: (...listValue: ListValue[]) => number;
+    unshift: (...listValue: List_[]) => void;
     /**
      * removeEffectFromChild
      * @private
      * @param {number} index
-     * @param {ListArray} listData
      * @returns {void}
      */
     private REC;
     /**
-     * For both start and end, a negative index can be used to indicate an offset from the end of the array. For example, -2 refers to the second to last element of the array.
+     * For both start and end, a negative index can be used to indicate an offset from the end of the data. For example, -2 refers to the second to last element of the data.
      * @param {number} [start]
-     * The beginning index of the specified portion of the array. If start is undefined, then the slice begins at index 0.
+     * The beginning index of the specified portion of the data. If start is undefined, then the slice begins at index 0.
      * @param {number} [end]
-     * The end index of the specified portion of the array. This is exclusive of the element at the index 'end'. If end is undefined, then the slice extends to the end of the array.
-     * @returns {ListValue[]}
-     * copy of a section of an array.
+     * The end index of the specified portion of the data. This is exclusive of the element at the index 'end'. If end is undefined, then the slice extends to the end of the data.
      */
-    slice: (start?: number, end?: number) => ListValue[];
+    slice: (start?: number, end?: number) => void;
     /**
      * Replace whole `List` value with new array.
-     * @param {...ListValue} [newList]
+     * @param {List_[]} newList
      * - new array in place of the deleted array.
-     * @returns {ListValue[]}
-     * - An array containing the elements that were deleted.
      */
-    replace: (...newList?: ListValue[]) => ListValue[];
+    replace: (newList: List_[]) => void;
     /**
-     * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+     * Removes elements from an data and, if necessary, inserts new elements in their place;
      * @param {number} start
-     * - The zero-based location in the array from which to start removing elements.
+     * - The zero-based location in the data from which to start removing elements.
      * @param {number} deleteCount
      * -The number of elements to remove.
-     * @param {...ListValue} [insertNew]
-     * - new array in place of the deleted array.
-     * @returns {ListValue[]}
-     * - An array containing the elements that were deleted.
+     * @param {...List_} insertNew
+     * - new data in place of the deleted data.
      */
-    splice: (start: number, deleteCount: number, ...insertNew?: ListValue[]) => ListValue[];
+    splice: (start: number, deleteCount: number, ...insertNew: List_[]) => ListValue[];
     /**
      * @param {number} indexA
      * @param {number} indexB
@@ -95,12 +97,13 @@ export class List<ListValue extends ListValue_, ListKeys extends keyof ListKeys,
     swap: (indexA: number, indexB: number) => void;
     /**
      * @param {number} index
-     * @param {ListValue} listValue
+     * @param {Partial<List_>} listValue
      * @returns {void}
      */
-    modify: (index: number, listValue: ListValue) => void;
+    modify: (index: number, listValue: Partial<List_>) => void;
 }
-export type ListValue_ = Record<string, Let<string>>;
+export type ListArg = Record<string, string>;
+export type ListValue = Record<string, Let<string>>;
 export type mutationType = {
     type: "push" | "unshift" | "slice" | "splice" | "swap" | "modify" | "shift" | "";
     args: any[];

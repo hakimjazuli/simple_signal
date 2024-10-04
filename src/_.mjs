@@ -64,9 +64,9 @@ export class _ {
 	static $ = (asyncCallback) => new $(asyncCallback);
 	/**
 	 * scoping helper for `List`
-	 * @template {Record<string, Let<string>>} ListValue
+	 * @template {Record<string, string>} ListArg
 	 * @template {keyof ListKeys} ListKeys
-	 * @param {ListValue[]} listArray
+	 * @param {ListArg[]} listArray
 	 */
 	static list = (listArray) => new List(listArray);
 	// static use = (lifecycle, element)=> {}

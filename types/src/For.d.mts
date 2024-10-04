@@ -8,7 +8,7 @@
 export class For {
     /**
      * @typedef {import('./lifecycleHandler.type.mjs').lifecycleHandler} lifecycleHandler
-     * @typedef {import('./List.mjs').ListValue_} ListValue
+     * @typedef {import('./List.mjs').ListArg} ListArg
      * @typedef {Object} childLifeCycleCallback
      * @property {(arg0:{childElement:HTMLElement,ForController:For})=>Promise<void>} childLifeCycleCallback.onConnected
      * @property {(arg0:{childElement:HTMLElement,ForController:For})=>Promise<void>} childLifeCycleCallback.onDisconnected
@@ -21,7 +21,7 @@ export class For {
      * @param {childLifeCycleCallback} childLifeCycleCallback
      * @param {import('./documentScope.type.mjs').documentScope} documentScope
      */
-    constructor(listInstance: import("./List.mjs").List<any, any, any>, attributeName: string, childLifeCycleCallback: {
+    constructor(listInstance: import("./List.mjs").List<any>, attributeName: string, childLifeCycleCallback: {
         onConnected: (arg0: {
             childElement: HTMLElement;
             ForController: For;
@@ -37,7 +37,7 @@ export class For {
             newValue: string;
         }) => Promise<void>;
     }, documentScope?: import("./documentScope.type.mjs").documentScope);
-    listInstance: import("./List.mjs").List<any, any, any>;
+    listInstance: import("./List.mjs").List<any>;
     /**
      * @type {string}
      */
@@ -77,20 +77,20 @@ export class For {
     /**
      * handle append/prepend
      * @private
-     * @param {(ListValue)[]} listValue
+     * @param {(ListArg)[]} listValue
      * @param {'append'|'prepend'} mode
      */
     private pend;
     /**
      * handlePush
      * @private
-     * @param {(ListValue)[]} listValue
+     * @param {(ListArg)[]} listValue
      */
     private HP;
     /**
      * handleUnshift
      * @private
-     * @param {(ListValue)[]} listValue
+     * @param {(ListArg)[]} listValue
      */
     private HU;
     /**
@@ -105,11 +105,10 @@ export class For {
      * @private
      * @param {number} start
      * @param {number} end
-     * @param {(ListValue)[]} listValue
      */
     private HSP;
     /**
-     * handleSplice
+     * handleSwap
      * @private
      * @param {number} indexA
      * @param {number} indexB
@@ -119,7 +118,7 @@ export class For {
      * handleModify
      * @private
      * @param {number} index
-     * @param {ListValue} listValue
+     * @param {import('./List.mjs').ListValue} listValue
      * @returns {void}
      */
     private HM;

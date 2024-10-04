@@ -54,11 +54,11 @@ export class _ {
     static $: (asyncCallback: (isAtInitialization: boolean) => Promise<void>) => $;
     /**
      * scoping helper for `List`
-     * @template {Record<string, Let<string>>} ListValue
+     * @template {Record<string, string>} ListArg
      * @template {keyof ListKeys} ListKeys
-     * @param {ListValue[]} listArray
+     * @param {ListArg[]} listArray
      */
-    static list: <ListValue extends Record<string, Let<string>>, ListKeys extends keyof ListKeys>(listArray: ListValue[]) => List<import("./List.mjs").ListValue_, string | number | symbol, ListValue[]>;
+    static list: <ListArg extends Record<string, string>, ListKeys extends keyof ListKeys>(listArray: ListArg[]) => List<ListArg>;
 }
 import { Let } from './Let.mjs';
 import { Derived } from './Derived.mjs';
