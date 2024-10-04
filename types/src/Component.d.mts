@@ -6,6 +6,7 @@
  * > - library like `bootstrap` `css` and it's `js` parts can select your `elements` for it's functionality;
  * > - you have to manually scope your style by
  * ```js
+ * // on Component scope
  * html`<style>
  *		[${thisInstance.attr}]{
  *			...nestedCSSRules
@@ -26,9 +27,6 @@
 export class Component<DefaultProps extends {
     [PropName: string]: string;
 }, PropName extends keyof DefaultProps> {
-    /**
-     * @typedef {import('./lifecycleHandler.type.mjs').lifecycleHandler} lifecycleHandler
-     */
     /**
      * @typedef {Object} manualScopeOptions
      * @property {import('./documentScope.type.mjs').documentScope} documentScope
@@ -61,13 +59,13 @@ export class Component<DefaultProps extends {
     }) => Ping["ping"];
     /**
      * @typedef {Object} onConnectedOptions
+     * @property {Record<PropName, Let<string>>} reactiveProps
      * @property {string} attr
      * @property {HTMLElement} element
      * @property {(strings:TemplateStringsArray,...values:string[])=>void} html
      * - template literal to create `innerHTML` of the component;
      * @property {(onDC:()=>Promise<void>)=>void} onDisconnected
      * @property {Lifecycle} componentLifecycle
-     * @property {(onAC:(options:{attributeName:PropName, newValue:string})=>Promise<void>)=>void} onAttributeChanged
      * @param {Object} options
      * @param {(options:onConnectedOptions)=>Promise<void>} [options.onConnected]
      * @param {DefaultProps} [options.props]
@@ -76,6 +74,7 @@ export class Component<DefaultProps extends {
      */
     constructor({ onConnected: onConnectedCallback, props, attributeName, documentScope, }: {
         onConnected?: (options: {
+            reactiveProps: Record<PropName, Let<string>>;
             attr: string;
             element: HTMLElement;
             /**
@@ -84,21 +83,17 @@ export class Component<DefaultProps extends {
             html: (strings: TemplateStringsArray, ...values: string[]) => void;
             onDisconnected: (onDC: () => Promise<void>) => void;
             componentLifecycle: Lifecycle;
-            onAttributeChanged: (onAC: (options: {
-                attributeName: PropName;
-                newValue: string;
-            }) => Promise<void>) => void;
         }) => Promise<void>;
         props?: DefaultProps;
         attributeName?: string;
         documentScope?: import("./documentScope.type.mjs").documentScope;
     });
-    attr: string;
     /**
      * @param {Partial<DefaultProps>} props__
      * @returns {string}
      */
-    componentAttribute: (props__: Partial<DefaultProps>) => string;
+    attr: (props__?: Partial<DefaultProps>) => string;
 }
 import { Ping } from './Ping.mjs';
+import { Let } from './Let.mjs';
 import { Lifecycle } from './Lifecycle.mjs';

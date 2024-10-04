@@ -68,6 +68,10 @@ export class helper {
      */
     private static attrPrefix;
     /**
+     * @type {string}
+     */
+    static slotPrefix: string;
+    /**
      * @return {string|null}
      */
     static attributeIndexGenerator: () => string | null;

@@ -15,7 +15,7 @@ import { Lifecycle } from './Lifecycle.mjs';
 export class For {
 	/**
 	 * @typedef {import('./lifecycleHandler.type.mjs').lifecycleHandler} lifecycleHandler
-	 * @typedef {import('./List.mjs').ListValue_} ListValue
+	 * @typedef {import('./List.mjs').ListArg} ListArg
 	 * @typedef {Object} childLifeCycleCallback
 	 * @property {(arg0:{childElement:HTMLElement,ForController:For})=>Promise<void>} childLifeCycleCallback.onConnected
 	 * @property {(arg0:{childElement:HTMLElement,ForController:For})=>Promise<void>} childLifeCycleCallback.onDisconnected
@@ -64,14 +64,14 @@ export class For {
 				parentElement: this.parentElement,
 				childElement: this.childElement,
 				message: 'no `childElement` in the `parentElement`',
-				solution: 'create `HTMLElement` as children[0] on `parentElement`',
+				solution: 'create `HTMLElement` as children[0] of `parentElement`',
 			});
 			return;
 		}
 		/**
-		 * @type {ListValue[]}
+		 * @type {import('./List.mjs').ListValue[]}
 		 */
-		const listValue = this.listInstance.value;
+		const listValue = this.listInstance.proxyInstance.value;
 		this.childElement.setAttribute(`${helper.FCA}${this.attr}`, '');
 		parentElement.innerHTML = '';
 		this.CL(childLifeCycleCallback, onParentDisconnected);
@@ -113,9 +113,9 @@ export class For {
 						});
 						const index = this.CI(childElement);
 						/**
-						 * @type {ListValue}
+						 * @type {import('./List.mjs').ListValue}
 						 */
-						const data = this.listInstance.value[index];
+						const data = this.listInstance.proxyInstance.value[index];
 						/**
 						 * @type {{[dataName:string]:Derived<string>}}
 						 */
@@ -189,8 +189,8 @@ export class For {
 				break;
 			case 'splice':
 				{
-					const [start, end, listValue] = mutationValue.args;
-					this.HSP(start, end, listValue);
+					const [start, end] = mutationValue.args;
+					this.HSP(start, end);
 				}
 				break;
 			case 'swap':
@@ -206,13 +206,14 @@ export class For {
 				}
 				break;
 			case 'shift':
+				this.HSF();
 				break;
 		}
 	};
 	/**
 	 * handle append/prepend
 	 * @private
-	 * @param {(ListValue)[]} listValue
+	 * @param {(ListArg)[]} listValue
 	 * @param {'append'|'prepend'} mode
 	 */
 	pend = (listValue, mode) => {
@@ -251,7 +252,7 @@ export class For {
 	/**
 	 * handlePush
 	 * @private
-	 * @param {(ListValue)[]} listValue
+	 * @param {(ListArg)[]} listValue
 	 */
 	HP = (listValue) => {
 		this.pend(listValue, 'append');
@@ -259,7 +260,7 @@ export class For {
 	/**
 	 * handleUnshift
 	 * @private
-	 * @param {(ListValue)[]} listValue
+	 * @param {(ListArg)[]} listValue
 	 */
 	HU = (listValue) => {
 		this.pend(listValue, 'prepend');
@@ -271,7 +272,7 @@ export class For {
 	 * @param {number} end
 	 */
 	HSL = (start, end) => {
-		for (let i = start; i === end; i++) {
+		for (let i = start; i < end; i++) {
 			this.parentElement.children[i].remove();
 		}
 	};
@@ -280,24 +281,23 @@ export class For {
 	 * @private
 	 * @param {number} start
 	 * @param {number} end
-	 * @param {(ListValue)[]} listValue
 	 */
-	HSP = (start, end, listValue) => {
-		for (let i = start; i === end; i++) {
-			const data = listValue[i];
-			if (data) {
-				const childElement_ = this.childElement.cloneNode(true);
-				if (!(childElement_ instanceof HTMLElement)) {
-					continue;
-				}
-				this.parentElement.replaceChild(childElement_, this.parentElement.children[i]);
-				continue;
+	HSP = (start, end) => {
+		this.HSL(start, end);
+		const parentElement = this.parentElement;
+		const children = parentElement.children;
+		for (let j = start; j < children.length; j++) {
+			const child = children[j];
+			if (child) {
+				parentElement.insertBefore(this.childElement.cloneNode(true), child);
+			} else {
+				const childElement_ = this.childElement.cloneNode();
+				this.parentElement.append(childElement_);
 			}
-			this.parentElement.children[i].remove();
 		}
 	};
 	/**
-	 * handleSplice
+	 * handleSwap
 	 * @private
 	 * @param {number} indexA
 	 * @param {number} indexB
@@ -323,16 +323,13 @@ export class For {
 	 * handleModify
 	 * @private
 	 * @param {number} index
-	 * @param {ListValue} listValue
+	 * @param {import('./List.mjs').ListValue} listValue
 	 * @returns {void}
 	 */
 	HM = (index, listValue) => {
 		const childElement_ = this.parentElement.children[index];
 		for (const attr in listValue) {
 			const value = listValue[attr].value;
-			if (childElement_.getAttribute(attr) === value) {
-				continue;
-			}
 			childElement_.setAttribute(attr, value);
 		}
 	};

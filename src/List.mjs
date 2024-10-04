@@ -5,149 +5,168 @@ import { Let } from './Let.mjs';
 /**
  * @description
  * - helper class to create list that satisfy
- * `Array<Record<string, Let<string>>>`
+ * `Array<Record<string, string>>`
  * ```js
  * const listExample = new List([
  *      {key1: new Let("test"), ...keys},
- *      {key1: _.let("test2"), ...keys},
  *      {key1: _.let_("test3"), ...keys},
  * ])
  * ```
  * - usefull for `loops`;
  */
 /**
- * @typedef {Record<string, Let<string>>} ListValue_
+ * @typedef {Record<string, string>} ListArg
+ * @typedef {Record<string, Let<string>>} ListValue
  * @typedef {{type:'push'|'unshift'|'slice'|'splice'|'swap'|'modify'|'shift'|'',args:any[]}} mutationType
  */
 /**
- * @template {ListValue_} ListValue
- * @template {keyof ListKeys} ListKeys
- * @template {ListValue[]} ListArray
- * @extends {Let<ListArray>}
+ * @template {ListArg} List_
  */
-export class List extends Let {
+export class List {
 	/**
-	 * @param {ListArray} value
+	 * proxy instance
+	 * @type {Let<ListValue[]>}
+	 */
+	proxyInstance;
+	/**
+	 * @private
+	 * @param {ListArg} data
+	 * @returns {ListValue}
+	 */
+	static convertSingle = (data) => {
+		/**
+		 * @type {ListValue}
+		 */
+		const dataValue = {};
+		for (const key in data) {
+			dataValue[key] = new Let(data[key]);
+		}
+		return dataValue;
+	};
+	/**
+	 * @private
+	 * @param {ListArg[]} list
+	 * @returns {ListValue[]}
+	 */
+	static convert = (list) => {
+		/**
+		 * @type {ListValue[]}
+		 */
+		const listValue = [];
+		for (let i = 0; i < list.length; i++) {
+			listValue.push(List.convertSingle(list[i]));
+		}
+		return listValue;
+	};
+	/**
+	 * @param {List_[]} value
 	 */
 	constructor(value) {
-		super(value);
+		this.proxyInstance = new Let(List.convert(value));
 	}
 	/**
 	 * @type {Let<mutationType>}
 	 */
 	mutation = new Let({ type: '', args: [] });
 	/**
-	 * Appends new elements to the end of an array, and returns the new length of the array.
-	 * @param {...ListValue} listValue
-	 * - New elements to add to the array.
-	 * @returns {number}
+	 * Appends new data to the end;
+	 * @param {...List_} listValue
 	 */
 	push = (...listValue) => {
-		const newLength = this.value.push(...listValue);
-		this.call$();
+		this.proxyInstance.value.push(...List.convert(listValue));
+		this.proxyInstance.call$();
 		this.mutation.value = {
 			type: 'push',
 			args: [listValue],
 		};
-		return newLength;
 	};
 	/**
-	 * Removes the first element from an array and returns it. If the array is empty, undefined is returned and the array is not modified.
-	 * @returns {ListValue|undefined}
+	 * Removes the first data;
 	 */
 	shift = () => {
-		const firstList = this.value.shift();
-		this.call$;
+		this.proxyInstance.value.shift();
+		this.proxyInstance.call$;
 		this.mutation.value = {
 			type: 'shift',
 			args: [],
 		};
-		return firstList;
 	};
 	/**
-	 * Inserts new elements at the start of an array, and returns the new length of the array.
-	 * @param  {...ListValue} listValue
-	 * - Elements to insert at the start of the array.
-	 * @returns
+	 * Inserts new data at the start;
+	 * @param  {...List_} listValue
 	 */
 	unshift = (...listValue) => {
-		const newLength = this.value.unshift(...listValue);
-		this.call$();
+		this.proxyInstance.value.unshift(...List.convert(listValue));
+		this.proxyInstance.call$();
 		this.mutation.value = {
 			type: 'unshift',
 			args: [listValue],
 		};
-		return newLength;
 	};
 	/**
 	 * removeEffectFromChild
 	 * @private
 	 * @param {number} index
-	 * @param {ListArray} listData
 	 * @returns {void}
 	 */
-	REC = (index, listData) => {
-		const data = listData[index];
+	REC = (index) => {
+		const data = this.proxyInstance.value[index];
 		for (const key in data) {
 			data[key].unRef();
-			data[key] = null;
 			delete data[key];
 		}
 	};
 	/**
-	 * For both start and end, a negative index can be used to indicate an offset from the end of the array. For example, -2 refers to the second to last element of the array.
+	 * For both start and end, a negative index can be used to indicate an offset from the end of the data. For example, -2 refers to the second to last element of the data.
 	 * @param {number} [start]
-	 * The beginning index of the specified portion of the array. If start is undefined, then the slice begins at index 0.
+	 * The beginning index of the specified portion of the data. If start is undefined, then the slice begins at index 0.
 	 * @param {number} [end]
-	 * The end index of the specified portion of the array. This is exclusive of the element at the index 'end'. If end is undefined, then the slice extends to the end of the array.
-	 * @returns {ListValue[]}
-	 * copy of a section of an array.
+	 * The end index of the specified portion of the data. This is exclusive of the element at the index 'end'. If end is undefined, then the slice extends to the end of the data.
 	 */
 	slice = (start = undefined, end = undefined) => {
-		const newArray = this.value.slice(start, end);
-		this.call$();
-		const datas = this.value;
+		this.proxyInstance.value.slice(start, end);
+		start = start ?? 0;
+		end = end ?? this.proxyInstance.value.length;
+		this.proxyInstance.call$();
 		for (let i = start; i < end; i++) {
-			this.REC(i, datas);
+			this.REC(i);
 		}
 		this.mutation.value = {
 			type: 'slice',
 			args: [start, end],
 		};
-		return newArray;
 	};
 	/**
 	 * Replace whole `List` value with new array.
-	 * @param {...ListValue} [newList]
+	 * @param {List_[]} newList
 	 * - new array in place of the deleted array.
-	 * @returns {ListValue[]}
-	 * - An array containing the elements that were deleted.
 	 */
-	replace = (...newList) => {
-		return this.splice(0, this.value.length, ...newList);
+	replace = (newList) => {
+		this.splice(0, this.proxyInstance.value.length, ...newList);
 	};
 	/**
-	 * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+	 * Removes elements from an data and, if necessary, inserts new elements in their place;
 	 * @param {number} start
-	 * - The zero-based location in the array from which to start removing elements.
+	 * - The zero-based location in the data from which to start removing elements.
 	 * @param {number} deleteCount
 	 * -The number of elements to remove.
-	 * @param {...ListValue} [insertNew]
-	 * - new array in place of the deleted array.
-	 * @returns {ListValue[]}
-	 * - An array containing the elements that were deleted.
+	 * @param {...List_} insertNew
+	 * - new data in place of the deleted data.
 	 */
 	splice = (start, deleteCount, ...insertNew) => {
-		const deletedArray = this.value.splice(start, deleteCount, ...insertNew);
-		this.call$();
 		const end = start + deleteCount;
-		const datas = this.value;
 		for (let i = start; i < end; i++) {
-			this.REC(i, datas);
+			this.REC(i);
 		}
+		const deletedArray = this.proxyInstance.value.splice(
+			start,
+			deleteCount,
+			...List.convert(insertNew)
+		);
+		this.proxyInstance.call$();
 		this.mutation.value = {
 			type: 'splice',
-			args: [start, deleteCount, insertNew],
+			args: [start, deleteCount],
 		};
 		return deletedArray;
 	};
@@ -157,8 +176,11 @@ export class List extends Let {
 	 * @returns {void}
 	 */
 	swap = (indexA, indexB) => {
-		[this.value[indexA], this.value[indexB]] = [this.value[indexB], this.value[indexA]];
-		this.call$();
+		[this.proxyInstance.value[indexA], this.proxyInstance.value[indexB]] = [
+			this.proxyInstance.value[indexB],
+			this.proxyInstance.value[indexA],
+		];
+		this.proxyInstance.call$();
 		this.mutation.value = {
 			type: 'swap',
 			args: [indexA, indexB],
@@ -166,12 +188,12 @@ export class List extends Let {
 	};
 	/**
 	 * @param {number} index
-	 * @param {ListValue} listValue
+	 * @param {Partial<List_>} listValue
 	 * @returns {void}
 	 */
 	modify = (index, listValue) => {
-		this.value[index] = listValue;
-		this.call$();
+		this.proxyInstance.value[index] = List.convertSingle(listValue);
+		this.proxyInstance.call$();
 		this.mutation.value = {
 			type: 'modify',
 			args: [index, listValue],

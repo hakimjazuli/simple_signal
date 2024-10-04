@@ -81,6 +81,10 @@ export class helper {
 	 */
 	static attrPrefix = 'hf_ss-a-';
 	/**
+	 * @type {string}
+	 */
+	static slotPrefix = 'hf_ss-slot-';
+	/**
 	 * @return {string|null}
 	 */
 	static attributeIndexGenerator = () => {

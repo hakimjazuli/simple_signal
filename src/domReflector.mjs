@@ -13,16 +13,7 @@ import { helper } from './helper.mjs';
 export const domReflector = (val, attributeName, element, letObject) => {
 	const targets = functions.splitX(element.getAttribute(attributeName) ?? '', ';');
 	for (let j = 0; j < targets.length; j++) {
-		const pTarget = targets[j];
-		let target;
-		switch (pTarget) {
-			case 'if':
-				target = 'innerHTML';
-				break;
-			default:
-				target = pTarget;
-				break;
-		}
+		const target = targets[j];
 		try {
 			if (!(target in element)) {
 				throw '';

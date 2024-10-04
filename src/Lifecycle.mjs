@@ -138,8 +138,8 @@ export class Lifecycle {
 		const attributeLifecyclesHandler = this.AL;
 		const documentScope = this.CDS;
 		for (const attributeName in attributeLifecyclesHandler) {
-			const validAttributeName = functions.VAS(attributeName);
-			const elements = documentScope.querySelectorAll(`[${validAttributeName}]`);
+			const validAttributeSelector = functions.VAS(attributeName);
+			const elements = documentScope.querySelectorAll(`[${validAttributeSelector}]`);
 			for (let i = 0; i < elements.length; i++) {
 				await this.ANH(elements[i], attributeName);
 			}

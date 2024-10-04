@@ -1,6 +1,8 @@
 // @ts-check
 
+import { _ } from './_.mjs';
 import { helper } from './helper.mjs';
+import { Let } from './Let.mjs';
 import { Lifecycle } from './Lifecycle.mjs';
 import { Ping } from './Ping.mjs';
 
@@ -12,6 +14,7 @@ import { Ping } from './Ping.mjs';
  * > - library like `bootstrap` `css` and it's `js` parts can select your `elements` for it's functionality;
  * > - you have to manually scope your style by
  * ```js
+ * // on Component scope
  * html`<style>
  *		[${thisInstance.attr}]{
  *			...nestedCSSRules
@@ -30,9 +33,6 @@ import { Ping } from './Ping.mjs';
  * @template {keyof DefaultProps} PropName
  */
 export class Component {
-	/**
-	 * @typedef {import('./lifecycleHandler.type.mjs').lifecycleHandler} lifecycleHandler
-	 */
 	/**
 	 * @typedef {Object} manualScopeOptions
 	 * @property {import('./documentScope.type.mjs').documentScope} documentScope
@@ -72,13 +72,13 @@ export class Component {
 	};
 	/**
 	 * @typedef {Object} onConnectedOptions
+	 * @property {Record<PropName, Let<string>>} reactiveProps
 	 * @property {string} attr
 	 * @property {HTMLElement} element
 	 * @property {(strings:TemplateStringsArray,...values:string[])=>void} html
 	 * - template literal to create `innerHTML` of the component;
 	 * @property {(onDC:()=>Promise<void>)=>void} onDisconnected
 	 * @property {Lifecycle} componentLifecycle
-	 * @property {(onAC:(options:{attributeName:PropName, newValue:string})=>Promise<void>)=>void} onAttributeChanged
 	 * @param {Object} options
 	 * @param {(options:onConnectedOptions)=>Promise<void>} [options.onConnected]
 	 * @param {DefaultProps} [options.props]
@@ -114,10 +114,25 @@ export class Component {
 								documentScope: element,
 								runCheckAtFirst: true,
 								scopedCallback: async () => {
+									/**
+									 * @type {onConnectedOptions["reactiveProps"]}
+									 */
+									// @ts-ignore
+									const reactiveProps = {};
+									for (const propName in props) {
+										const value =
+											element.getAttribute(propName) ??
+											props[propName.toString()];
+										reactiveProps[propName.toString()] = new Let(
+											value,
+											propName,
+											element
+										);
+									}
 									let onDC = undefined;
-									let onAC = undefined;
 									let renderHTML = undefined;
 									await onConnectedCallback({
+										reactiveProps,
 										attr: attributeName,
 										element,
 										html: (strings, ...values) => {
@@ -132,31 +147,17 @@ export class Component {
 												element.innerHTML = result.join('');
 											};
 										},
-										onDisconnected: (onDisconnected) => {
-											onDC = onDisconnected;
+										onDisconnected: (onDCed) => {
+											onDC = onDCed;
 										},
 										componentLifecycle,
-										onAttributeChanged: (onAttributeChanged) => {
-											onAC = onAttributeChanged;
-										},
 									});
-									if (onAC) {
-										onAttributeChanged(async ({ attributeName, newValue }) => {
-											/**
-											 * uses function block instead of directly assign;
-											 * for a placeholder of additional logic, like autoscoping;
-											 */
-											if (!(attributeName in props)) {
-												return;
-											}
-											Component.manualScope({
-												documentScope: element,
-												runCheckAtFirst: true,
-												scopedCallback: async () =>
-													await onAC({ attributeName, newValue }),
-											});
-										});
-									}
+									onAttributeChanged(async ({ attributeName, newValue }) => {
+										if (!(attributeName in props)) {
+											return;
+										}
+										reactiveProps[attributeName].value = newValue;
+									});
 									if (onDC) {
 										onDisconnected(async () => {
 											Component.manualScope({
@@ -179,10 +180,10 @@ export class Component {
 			documentScope
 		);
 		/**
-		 * @param {Partial<DefaultProps>} props__
+		 * @param {Partial<DefaultProps>} [props__]
 		 * @returns {string}
 		 */
-		this.componentAttribute = (props__) => {
+		this.attr = (props__) => {
 			const props___ = Object.assign(props, props__);
 			let props_ = [];
 			for (const propName in props___) {
@@ -195,5 +196,5 @@ export class Component {
 	 * @param {Partial<DefaultProps>} props__
 	 * @returns {string}
 	 */
-	componentAttribute;
+	attr;
 }
