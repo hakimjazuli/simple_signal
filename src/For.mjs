@@ -37,12 +37,12 @@ export class For {
 				[attributeName]: async ({ element, onConnected, onDisconnected }) => {
 					onConnected(async () => {
 						const effect = new $(async () => {
-							await this.HML(listInstance.mutation.value);
+							await this.handleMutationList(listInstance.mutation.value);
 						});
 						onDisconnected(async () => {
 							listInstance.mutation.remove$(effect);
 						});
-						this.PC(element, childLifeCycleCallback, onDisconnected);
+						this.onParentConnected(element, childLifeCycleCallback, onDisconnected);
 					});
 				},
 			},
@@ -50,13 +50,12 @@ export class For {
 		);
 	}
 	/**
-	 * onParentConnected
 	 * @private
 	 * @param {HTMLElement} parentElement
 	 * @param {childLifeCycleCallback} childLifeCycleCallback
 	 * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
 	 */
-	PC = (parentElement, childLifeCycleCallback, onParentDisconnected) => {
+	onParentConnected = (parentElement, childLifeCycleCallback, onParentDisconnected) => {
 		this.parentElement = parentElement;
 		this.childElement = parentElement.children[0];
 		if (!this.childElement) {
@@ -72,9 +71,9 @@ export class For {
 		 * @type {import('./List.mjs').ListValue[]}
 		 */
 		const listValue = this.listInstance.proxyInstance.value;
-		this.childElement.setAttribute(`${helper.FCA}${this.attr}`, '');
+		this.childElement.setAttribute(`${helper.ForChildAttributePrefix}${this.attr}`, '');
 		parentElement.innerHTML = '';
-		this.CL(childLifeCycleCallback, onParentDisconnected);
+		this.childLifecycle(childLifeCycleCallback, onParentDisconnected);
 		for (let i = 0; i < listValue.length; i++) {
 			const childElement_ = this.childElement.cloneNode(true);
 			if (!(childElement_ instanceof HTMLElement)) {
@@ -84,15 +83,14 @@ export class For {
 		}
 	};
 	/**
-	 * childLifecycle
 	 * @private
 	 * @param {childLifeCycleCallback} childLifeCycleCallback
 	 * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
 	 */
-	CL = (childLifeCycleCallback, onParentDisconnected) => {
+	childLifecycle = (childLifeCycleCallback, onParentDisconnected) => {
 		const childLifecycle = new Lifecycle(
 			{
-				[`${helper.FCA}${this.attr}`]: async ({
+				[`${helper.ForChildAttributePrefix}${this.attr}`]: async ({
 					element: childElement,
 					onConnected,
 					onDisconnected,
@@ -111,7 +109,7 @@ export class For {
 							childElement,
 							ForController: this,
 						});
-						const index = this.CI(childElement);
+						const index = this.getChildElementIndex(childElement);
 						/**
 						 * @type {import('./List.mjs').ListValue}
 						 */
@@ -148,12 +146,11 @@ export class For {
 		});
 	};
 	/**
-	 * getChildElementIndex
 	 * @private
 	 * @param {HTMLElement} childElement
 	 * @returns {number}
 	 */
-	CI(childElement) {
+	getChildElementIndex(childElement) {
 		const parentElement = this.parentElement;
 		const children = Array.from(parentElement.children);
 		return children.indexOf(childElement);
@@ -163,12 +160,11 @@ export class For {
 	 */
 	attr;
 	/**
-	 * handleMutationList
 	 * @private
 	 * @param {import('./List.mjs').mutationType} mutationValue
 	 * @returns {Promise<void>}
 	 */
-	HML = async (mutationValue) => {
+	handleMutationList = async (mutationValue) => {
 		switch (mutationValue.type) {
 			case '':
 				/**
@@ -176,37 +172,37 @@ export class For {
 				 */
 				return;
 			case 'push':
-				this.HP(mutationValue.args);
+				this.handlePush(mutationValue.args);
 				break;
 			case 'unshift':
-				this.HU(mutationValue.args);
+				this.handleUnshift(mutationValue.args);
 				break;
 			case 'slice':
 				{
 					const [start, end] = mutationValue.args;
-					this.HSL(start, end);
+					this.handleSlice(start, end);
 				}
 				break;
 			case 'splice':
 				{
 					const [start, end] = mutationValue.args;
-					this.HSP(start, end);
+					this.handleSplice(start, end);
 				}
 				break;
 			case 'swap':
 				{
 					const [indexA, indexB] = mutationValue.args;
-					this.HSW(indexA, indexB);
+					this.handleSwap(indexA, indexB);
 				}
 				break;
 			case 'modify':
 				{
 					const [index, listValue] = mutationValue.args;
-					this.HM(index, listValue);
+					this.handleModify(index, listValue);
 				}
 				break;
 			case 'shift':
-				this.HSF();
+				this.handleShift();
 				break;
 		}
 	};
@@ -250,40 +246,36 @@ export class For {
 		}
 	};
 	/**
-	 * handlePush
 	 * @private
 	 * @param {(ListArg)[]} listValue
 	 */
-	HP = (listValue) => {
+	handlePush = (listValue) => {
 		this.pend(listValue, 'append');
 	};
 	/**
-	 * handleUnshift
 	 * @private
 	 * @param {(ListArg)[]} listValue
 	 */
-	HU = (listValue) => {
+	handleUnshift = (listValue) => {
 		this.pend(listValue, 'prepend');
 	};
 	/**
-	 * handleSlice
 	 * @private
 	 * @param {number} start
 	 * @param {number} end
 	 */
-	HSL = (start, end) => {
+	handleSlice = (start, end) => {
 		for (let i = start; i < end; i++) {
 			this.parentElement.children[i].remove();
 		}
 	};
 	/**
-	 * handleSplice
 	 * @private
 	 * @param {number} start
 	 * @param {number} end
 	 */
-	HSP = (start, end) => {
-		this.HSL(start, end);
+	handleSplice = (start, end) => {
+		this.handleSlice(start, end);
 		const parentElement = this.parentElement;
 		const children = parentElement.children;
 		for (let j = start; j < children.length; j++) {
@@ -297,12 +289,11 @@ export class For {
 		}
 	};
 	/**
-	 * handleSwap
 	 * @private
 	 * @param {number} indexA
 	 * @param {number} indexB
 	 */
-	HSW = (indexA, indexB) => {
+	handleSwap = (indexA, indexB) => {
 		const parentElement = this.parentElement;
 		const childelement_ = parentElement.children;
 		if (
@@ -320,13 +311,12 @@ export class For {
 		}
 	};
 	/**
-	 * handleModify
 	 * @private
 	 * @param {number} index
 	 * @param {import('./List.mjs').ListValue} listValue
 	 * @returns {void}
 	 */
-	HM = (index, listValue) => {
+	handleModify = (index, listValue) => {
 		const childElement_ = this.parentElement.children[index];
 		for (const attr in listValue) {
 			const value = listValue[attr].value;
@@ -334,11 +324,10 @@ export class For {
 		}
 	};
 	/**
-	 * handleShift
 	 * @private
 	 * @returns {void}
 	 */
-	HSF = () => {
+	handleShift = () => {
 		this.parentElement.children[0].remove();
 	};
 }

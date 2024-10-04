@@ -43,7 +43,7 @@ export class Let {
 	 * @return {void}
 	 */
 	removeAll$ = () => {
-		this.S = [];
+		this.subscription = [];
 	};
 	/**
 	 * remove effect
@@ -51,34 +51,32 @@ export class Let {
 	 * @return {void}
 	 */
 	remove$ = ($) => {
-		this.S = this.S.filter((S) => $.E !== S);
+		this.subscription = this.subscription.filter((S) => $.effect !== S);
 	};
 	/**
 	 * destroy all props
 	 */
 	unRef = () => {
 		this.removeAll$();
-		this.V_ = null;
+		this.value_ = null;
 		this.attr = null;
 	};
 	/**
-	 * subscription
 	 * @private
 	 * @type {((isAtInitialization:boolean)=>Promise<void>)[]}
 	 */
-	S = [];
+	subscription = [];
 	/**
-	 * value placeholder
 	 * @private
 	 * @type {V}
 	 */
-	V_;
+	value_;
 	call$ = () => {
-		if (!this.S.length) {
+		if (!this.subscription.length) {
 			return;
 		}
 		new Ping(true, async () => {
-			await handlePromiseAll(this.S, false);
+			await handlePromiseAll(this.subscription, false);
 		});
 	};
 	/**
@@ -87,7 +85,7 @@ export class Let {
 	 * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
 	 */
 	constructor(value, attributeName = undefined, documentScope = undefined) {
-		this.V_ = value;
+		this.value_ = value;
 		if (attributeName) {
 			this.attr = attributeName;
 			documentScope = documentScope ?? document;
@@ -119,19 +117,19 @@ export class Let {
 	 * @returns {V}
 	 */
 	get value() {
-		if (helper.S && !this.S.some((f) => f === helper.S)) {
-			this.S.push(helper.S);
+		if (helper.subscriber && !this.subscription.some((f) => f === helper.subscriber)) {
+			this.subscription.push(helper.subscriber);
 		}
-		return this.V_;
+		return this.value_;
 	}
 	/**
 	 * @param {V} newValue
 	 */
 	set value(newValue) {
-		if (this.V_ === newValue) {
+		if (this.value_ === newValue) {
 			return;
 		}
-		this.V_ = newValue;
+		this.value_ = newValue;
 		this.call$();
 	}
 }

@@ -24,9 +24,9 @@ export const domReflector = (val, attributeName, element, letObject) => {
 				'value' in element &&
 				element.parentNode &&
 				element instanceof HTMLInputElement &&
-				!element.hasAttribute(helper.V)
+				!element.hasAttribute(helper.val)
 			) {
-				element.setAttribute(helper.V, '');
+				element.setAttribute(helper.val, '');
 				element.oninput = () => {
 					letObject.value = element.value;
 				};

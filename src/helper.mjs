@@ -7,49 +7,32 @@ export class helper {
 	 * subscriber
 	 * @type {null|((isAtInitialization:boolean)=>Promise<void>)}
 	 */
-	static S = null;
-	static QH = new queueFIFO();
+	static subscriber = null;
+	static queueHandler = new queueFIFO();
 	/**
-	 * debounce
 	 * @type {number|false}
 	 */
-	static D = false;
+	static debounce = false;
 	/**
-	 * signal with value as target
 	 * @readonly
 	 */
-	static V = 'hf_ss-b-a-val';
+	static val = 'hf_ss-b-a-val';
 	/**
-	 * storage identifier
 	 * @readonly
 	 */
-	static SI = 'hf_ss-b-store';
+	static storageIdentifier = 'hf_ss-b-store';
+	static DCCBIdentifier = 'hf_ss-b-dc';
+	static ACCBIdentifier = 'hf_ss-b-ac';
+	static onViewCBIdentifier = `hf_ss-ov`;
+	static onExitViewCBIdentifier = `hf_ss-oxv`;
 	/**
-	 * disconnected callback identifier
-	 */
-	static DCCBI = 'hf_ss-b-dc';
-	/**
-	 * attribute change callback identifier
-	 */
-	static ACCBI = 'hf_ss-b-ac';
-	/**
-	 * onViewCallbackIdentifier
-	 */
-	static VCBI = `hf_ss-ov`;
-	/**
-	 * onExitViewCallbackIdentifier
-	 */
-	static XVCBI = `hf_ss-oxv`;
-	/**
-	 * ForChildAttributePrefix
 	 * @readonly
 	 */
-	static FCA = `hf_ss-fc-`;
+	static ForChildAttributePrefix = `hf_ss-fc-`;
 	/**
-	 * globalSignalPrefix
 	 * @readonly
 	 */
-	static G = `g-`;
+	static globalSignalPrefix = `g-`;
 	/**
 	 * @param {Object} class_
 	 */

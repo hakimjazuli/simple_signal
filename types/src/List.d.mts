@@ -64,7 +64,7 @@ export class List<List_ extends ListArg> {
      * @param {number} index
      * @returns {void}
      */
-    private REC;
+    private removeEffectFromChild;
     /**
      * For both start and end, a negative index can be used to indicate an offset from the end of the data. For example, -2 refers to the second to last element of the data.
      * @param {number} [start]

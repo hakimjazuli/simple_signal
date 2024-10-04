@@ -1,14 +1,13 @@
 export class functions {
     /**
-     * timeout
      * @param {number} ms
      */
-    static T: (ms: number) => Promise<any>;
+    static timeout: (ms: number) => Promise<any>;
     /**
      * is_async
      * @param {CallableFunction} callback
      */
-    static IA: (callback: CallableFunction) => boolean;
+    static isAsync: (callback: CallableFunction) => boolean;
     /**
      * split with escape string `\`
      * @param {string} string
@@ -16,9 +15,8 @@ export class functions {
      */
     static splitX: (string: string, delimiter: string) => string[];
     /**
-     * validAttributeNameSelector
      * @param {string} attributeName
      * @returns {string}
      */
-    static VAS: (attributeName: string) => string;
+    static validAttributeNameSelector: (attributeName: string) => string;
 }

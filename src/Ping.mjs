@@ -14,13 +14,13 @@ export class Ping {
 	 * @private
 	 * @type {(isAtInitisalization:boolean)=>Promise<void>}
 	 */
-	AC;
+	asyncCallback;
 	/**
 	 * @param {boolean} callsAtFirst
 	 * @param {(isAtInitisalization:boolean)=>Promise<void>} asyncCallbackWhenPinged
 	 */
 	constructor(callsAtFirst, asyncCallbackWhenPinged) {
-		this.AC = asyncCallbackWhenPinged;
+		this.asyncCallback = asyncCallbackWhenPinged;
 		if (callsAtFirst) {
 			this.ping(true);
 		}
@@ -29,10 +29,10 @@ export class Ping {
 	 * @param {boolean} first
 	 */
 	ping = (first = false) => {
-		helper.QH.A(
+		helper.queueHandler.assign(
 			new queueObjectFIFO(async () => {
-				await this.AC(first);
-			}, helper.D)
+				await this.asyncCallback(first);
+			}, helper.debounce)
 		);
 	};
 }

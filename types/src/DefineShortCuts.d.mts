@@ -23,6 +23,6 @@ export class DefineShortCuts<namedShortCut extends {
     /**
      * @type {Record.<ShortCutName, import("./ShortCut.mjs").ShortCut>}
      */
-    SC: Record<ShortCutName, import("./ShortCut.mjs").ShortCut>;
+    shortCut: Record<ShortCutName, import("./ShortCut.mjs").ShortCut>;
 }
 import { ShortCut } from './ShortCut.mjs';

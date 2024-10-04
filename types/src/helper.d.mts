@@ -3,49 +3,32 @@ export class helper {
      * subscriber
      * @type {null|((isAtInitialization:boolean)=>Promise<void>)}
      */
-    static S: null | ((isAtInitialization: boolean) => Promise<void>);
-    static QH: queueFIFO;
+    static subscriber: null | ((isAtInitialization: boolean) => Promise<void>);
+    static queueHandler: queueFIFO;
     /**
-     * debounce
      * @type {number|false}
      */
-    static D: number | false;
+    static debounce: number | false;
     /**
-     * signal with value as target
      * @readonly
      */
-    static readonly V: "hf_ss-b-a-val";
+    static readonly val: "hf_ss-b-a-val";
     /**
-     * storage identifier
      * @readonly
      */
-    static readonly SI: "hf_ss-b-store";
+    static readonly storageIdentifier: "hf_ss-b-store";
+    static DCCBIdentifier: string;
+    static ACCBIdentifier: string;
+    static onViewCBIdentifier: string;
+    static onExitViewCBIdentifier: string;
     /**
-     * disconnected callback identifier
-     */
-    static DCCBI: string;
-    /**
-     * attribute change callback identifier
-     */
-    static ACCBI: string;
-    /**
-     * onViewCallbackIdentifier
-     */
-    static VCBI: string;
-    /**
-     * onExitViewCallbackIdentifier
-     */
-    static XVCBI: string;
-    /**
-     * ForChildAttributePrefix
      * @readonly
      */
-    static readonly FCA: "hf_ss-fc-";
+    static readonly ForChildAttributePrefix: "hf_ss-fc-";
     /**
-     * globalSignalPrefix
      * @readonly
      */
-    static readonly G: "g-";
+    static readonly globalSignalPrefix: "g-";
     /**
      * @param {Object} class_
      */

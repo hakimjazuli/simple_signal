@@ -27,7 +27,7 @@ import { Ping } from './Ping.mjs';
  * ```
  */
 export class $ {
-	E;
+	effect;
 	/**
 	 * @private
 	 */
@@ -36,12 +36,12 @@ export class $ {
 	 * @param {(isAtInitialization:boolean)=>Promise<void>} asyncCallback
 	 */
 	constructor(asyncCallback) {
-		this.E = asyncCallback;
+		this.effect = asyncCallback;
 		new Ping(true, async () => {
-			helper.S = asyncCallback;
+			helper.subscriber = asyncCallback;
 			await asyncCallback(this.first);
 			this.first = false;
-			helper.S = null;
+			helper.subscriber = null;
 		});
 	}
 }

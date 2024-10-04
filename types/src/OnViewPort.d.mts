@@ -18,11 +18,10 @@ export class OnViewPort {
         [attributeName: string]: import("./onViewPortHandler.type.mjs").onViewPortHandler;
     }, documentScope?: import("./documentScope.type.mjs").documentScope);
     /**
-     * lifecycle observer
      * @private
      * @type {Lifecycle}
      */
-    private LO;
+    private lifecycleObserver;
     /**
      * @private
      * @type {onViewPortatributesHandler}
@@ -31,7 +30,7 @@ export class OnViewPort {
     /**
      * @private
      */
-    private O;
+    private observer;
     /**
      * @returns {IntersectionObserverEntry[]}
      * @see https://developer.mozilla.org/docs/Web/API/IntersectionObserver/takeRecords
@@ -50,16 +49,14 @@ export class OnViewPort {
      */
     unobserve: (element: Element | HTMLElement) => void;
     /**
-     * disconnectedTypeParam
      * @private
      * @param {HTMLElement|Element} element
      * @return {import('./onViewPortHandler.type.mjs').onViewPortHandlerDisconnector}
      */
-    private DCP;
+    private disconnectedTypeParam;
     /**
-     * handleEntry
      * @private
      * @param {IntersectionObserverEntry} entry
      */
-    private HE;
+    private handleEntry;
 }

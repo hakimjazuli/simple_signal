@@ -29,13 +29,13 @@ export class DefineShortCuts {
 		}
 		DefineShortCuts.__ = this;
 		// @ts-ignore
-		this.SC = {};
+		this.shortCut = {};
 		for (const namedShorCut in shortcutList) {
-			this.SC[namedShorCut.toString()] = shortcutList[namedShorCut];
+			this.shortCut[namedShorCut.toString()] = shortcutList[namedShorCut];
 		}
 	}
 	/**
 	 * @type {Record.<ShortCutName, import("./ShortCut.mjs").ShortCut>}
 	 */
-	SC;
+	shortCut;
 }

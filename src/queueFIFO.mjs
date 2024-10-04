@@ -7,50 +7,44 @@ export class queueFIFO {
 	 * @typedef {import('./queueObjectFIFO.mjs').queueObjectFIFO} queueObjectFIFO
 	 */
 	/**
-	 * queue
 	 * @private
-	 * @type {queueObjectFIFO['D'][]}
+	 * @type {queueObjectFIFO['details'][]}
 	 */
-	Q = [];
+	queue = [];
 	/**
-	 * is_running
 	 * @private
 	 * @type {boolean}
 	 */
-	IR = false;
+	isRunning = false;
 	/**
-	 * assign
-	 * @public
 	 * @param {queueObjectFIFO} _queue
 	 */
-	A = (_queue) => {
-		this.P(_queue);
-		if (!this.IR) {
-			this.R();
+	assign = (_queue) => {
+		this.push(_queue);
+		if (!this.isRunning) {
+			this.run();
 		}
 	};
 	/**
-	 * push
 	 * @private
 	 * @param {queueObjectFIFO} _queue
 	 */
-	P = (_queue) => {
-		this.Q.push(_queue.D);
+	push = (_queue) => {
+		this.queue.push(_queue.details);
 	};
 	/**
-	 * run
 	 * @private
 	 */
-	R = async () => {
-		this.IR = true;
-		while (this.Q.length !== 0) {
-			for (let i = 0; i < this.Q.length; i++) {
-				const [callback, debounce_ms] = this.Q[i];
-				this.Q.shift();
+	run = async () => {
+		this.isRunning = true;
+		while (this.queue.length !== 0) {
+			for (let i = 0; i < this.queue.length; i++) {
+				const [callback, debounce_ms] = this.queue[i];
+				this.queue.shift();
 				if (debounce_ms) {
-					await functions.T(debounce_ms);
+					await functions.timeout(debounce_ms);
 				}
-				if (functions.IA(callback)) {
+				if (functions.isAsync(callback)) {
 					await callback();
 					break;
 				}
@@ -58,6 +52,6 @@ export class queueFIFO {
 				break;
 			}
 		}
-		this.IR = false;
+		this.isRunning = false;
 	};
 }

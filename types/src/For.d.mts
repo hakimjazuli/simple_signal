@@ -44,36 +44,32 @@ export class For {
     attr: string;
     DS: import("./documentScope.type.mjs").documentScope;
     /**
-     * onParentConnected
      * @private
      * @param {HTMLElement} parentElement
      * @param {childLifeCycleCallback} childLifeCycleCallback
      * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
      */
-    private PC;
+    private onParentConnected;
     parentElement: HTMLElement;
     childElement: Element;
     /**
-     * childLifecycle
      * @private
      * @param {childLifeCycleCallback} childLifeCycleCallback
      * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
      */
-    private CL;
+    private childLifecycle;
     /**
-     * getChildElementIndex
      * @private
      * @param {HTMLElement} childElement
      * @returns {number}
      */
-    private CI;
+    private getChildElementIndex;
     /**
-     * handleMutationList
      * @private
      * @param {import('./List.mjs').mutationType} mutationValue
      * @returns {Promise<void>}
      */
-    private HML;
+    private handleMutationList;
     /**
      * handle append/prepend
      * @private
@@ -82,50 +78,43 @@ export class For {
      */
     private pend;
     /**
-     * handlePush
      * @private
      * @param {(ListArg)[]} listValue
      */
-    private HP;
+    private handlePush;
     /**
-     * handleUnshift
      * @private
      * @param {(ListArg)[]} listValue
      */
-    private HU;
+    private handleUnshift;
     /**
-     * handleSlice
      * @private
      * @param {number} start
      * @param {number} end
      */
-    private HSL;
+    private handleSlice;
     /**
-     * handleSplice
      * @private
      * @param {number} start
      * @param {number} end
      */
-    private HSP;
+    private handleSplice;
     /**
-     * handleSwap
      * @private
      * @param {number} indexA
      * @param {number} indexB
      */
-    private HSW;
+    private handleSwap;
     /**
-     * handleModify
      * @private
      * @param {number} index
      * @param {import('./List.mjs').ListValue} listValue
      * @returns {void}
      */
-    private HM;
+    private handleModify;
     /**
-     * handleShift
      * @private
      * @returns {void}
      */
-    private HSF;
+    private handleShift;
 }

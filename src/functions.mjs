@@ -2,15 +2,14 @@
 
 export class functions {
 	/**
-	 * timeout
 	 * @param {number} ms
 	 */
-	static T = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+	static timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 	/**
 	 * is_async
 	 * @param {CallableFunction} callback
 	 */
-	static IA = (callback) => callback.constructor.name === 'AsyncFunction';
+	static isAsync = (callback) => callback.constructor.name === 'AsyncFunction';
 	/**
 	 * split with escape string `\`
 	 * @param {string} string
@@ -38,9 +37,9 @@ export class functions {
 		return result;
 	};
 	/**
-	 * validAttributeNameSelector
 	 * @param {string} attributeName
 	 * @returns {string}
 	 */
-	static VAS = (attributeName) => attributeName.toLowerCase().replaceAll(':', '\\:');
+	static validAttributeNameSelector = (attributeName) =>
+		attributeName.toLowerCase().replaceAll(':', '\\:');
 }

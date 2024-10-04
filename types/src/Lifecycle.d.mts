@@ -44,13 +44,12 @@ export class Lifecycle {
      */
     private static getACCB;
     /**
-     * find deeply nested registered Disconecceted callbacks
      * @private
      * @param {HTMLElement|Element} node
      * @param {(Node)[]} found
      * @returns {(Node)[]}
      */
-    private static FDNDCR;
+    private static findDeepNested;
     /**
      * @param {attributeLifecyclesHandler} attributeLifecyclesHandler
      * @param {documentScope} documentScope
@@ -63,7 +62,7 @@ export class Lifecycle {
      * @private
      * @type {documentScope}
      */
-    private CDS;
+    private currentDocumentScope;
     disconnect: () => void;
     /**
      * @type {() => MutationRecord[]}
@@ -73,61 +72,54 @@ export class Lifecycle {
      * @private
      * @type {import('./Let.mjs').Let<MutationRecord[]>}
      */
-    private mLet;
+    private mutationSignal;
     /**
      * @private
      * @type {MutationObserver}
      */
-    private mObs;
+    private mutationObserver;
     /**
      * @private
      * @type {$}
      */
-    private $;
+    private effect;
     /**
      * @private
      * @type {attributeLifecyclesHandler}
      */
-    private AL;
+    private attributeLifecyclesHandler;
     /**
-     * isRegisteredMap
      * @private
      * @return {"partial"|"whole"|string}
      */
-    private IRM;
+    private isRegisteredMap;
     /**
-     * initiator
      * @private
      * @returns {Promise<void>}
      */
-    private I;
+    private initiator;
     /**
-     * elementConnectedRefed
      * @private
      * @type {(()=>Promise<void>)[]}
      */
     private elementCMRefed;
     /**
-     * checkValidScoping
      * @private
      * @param {documentScope} node
      * @returns {boolean}
      */
-    private CVS;
+    private checkValidScoping;
     /**
-     * addedNodeHanlder
      * @private
      * @param {Node} addedNode
      * @param {string} attributeName
      */
-    private ANH;
+    private addedNodeHandler;
     /**
-     * callConnectedCallback
      * @private
      */
-    private callCB;
+    private callConnectedCallback;
     /**
-     * call attributeConnectedCallback
      * @private
      * @param {HTMLElement|Element} element
      * @param {string} attributeName
@@ -137,11 +129,10 @@ export class Lifecycle {
      * @private
      * @param {MutationRecord[]} mutationList
      */
-    private CE;
+    private mutationHandler;
     /**
-     * check mutation disconnected
      * @private
      * @param {HTMLElement}removedNode
      */
-    private CMDC;
+    private mutationDCHandler;
 }

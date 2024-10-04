@@ -3,32 +3,26 @@ export class queueFIFO {
      * @typedef {import('./queueObjectFIFO.mjs').queueObjectFIFO} queueObjectFIFO
      */
     /**
-     * queue
      * @private
-     * @type {queueObjectFIFO['D'][]}
+     * @type {queueObjectFIFO['details'][]}
      */
-    private Q;
+    private queue;
     /**
-     * is_running
      * @private
      * @type {boolean}
      */
-    private IR;
+    private isRunning;
     /**
-     * assign
-     * @public
      * @param {queueObjectFIFO} _queue
      */
-    public A: (_queue: import("./queueObjectFIFO.mjs").queueObjectFIFO) => void;
+    assign: (_queue: import("./queueObjectFIFO.mjs").queueObjectFIFO) => void;
     /**
-     * push
      * @private
      * @param {queueObjectFIFO} _queue
      */
-    private P;
+    private push;
     /**
-     * run
      * @private
      */
-    private R;
+    private run;
 }

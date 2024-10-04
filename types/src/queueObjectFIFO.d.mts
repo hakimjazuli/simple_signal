@@ -9,5 +9,5 @@ export class queueObjectFIFO {
      * details
      * @type {[callback:()=>(any|Promise<any>),debounce:(number|false)]}
      */
-    D: [callback: () => (any | Promise<any>), debounce: (number | false)];
+    details: [callback: () => (any | Promise<any>), debounce: (number | false)];
 }

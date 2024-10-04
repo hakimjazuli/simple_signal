@@ -14,7 +14,7 @@ export class Ping {
      * @private
      * @type {(isAtInitisalization:boolean)=>Promise<void>}
      */
-    private AC;
+    private asyncCallback;
     /**
      * @param {boolean} first
      */

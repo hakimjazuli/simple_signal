@@ -109,7 +109,7 @@ export class List {
 	 * @param {number} index
 	 * @returns {void}
 	 */
-	REC = (index) => {
+	removeEffectFromChild = (index) => {
 		const data = this.proxyInstance.value[index];
 		for (const key in data) {
 			data[key].unRef();
@@ -129,7 +129,7 @@ export class List {
 		end = end ?? this.proxyInstance.value.length;
 		this.proxyInstance.call$();
 		for (let i = start; i < end; i++) {
-			this.REC(i);
+			this.removeEffectFromChild(i);
 		}
 		this.mutation.value = {
 			type: 'slice',
@@ -156,7 +156,7 @@ export class List {
 	splice = (start, deleteCount, ...insertNew) => {
 		const end = start + deleteCount;
 		for (let i = start; i < end; i++) {
-			this.REC(i);
+			this.removeEffectFromChild(i);
 		}
 		const deletedArray = this.proxyInstance.value.splice(
 			start,

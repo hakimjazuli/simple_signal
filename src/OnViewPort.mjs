@@ -11,11 +11,10 @@ import { Ping } from './Ping.mjs';
 
 export class OnViewPort {
 	/**
-	 * lifecycle observer
 	 * @private
 	 * @type {Lifecycle}
 	 */
-	LO;
+	lifecycleObserver;
 	/**
 	 * @private
 	 * @type {onViewPortatributesHandler}
@@ -49,25 +48,28 @@ export class OnViewPort {
 				onDisconnected,
 			}) => {
 				onConnected(async () => {
-					element[helper.VCBI] = attributeHandler[attributeName].onViewPort;
-					element[helper.XVCBI] = attributeHandler[attributeName].onExitingViewPort;
-					this.O.observe(element);
+					element[helper.onViewCBIdentifier] = attributeHandler[attributeName].onViewPort;
+					element[helper.onExitViewCBIdentifier] =
+						attributeHandler[attributeName].onExitingViewPort;
+					this.observer.observe(element);
 				});
 				onDisconnected(async () => {
-					await attributeHandler[attributeName].onDisconnected(this.DCP(element));
+					await attributeHandler[attributeName].onDisconnected(
+						this.disconnectedTypeParam(element)
+					);
 				});
 			};
 		}
-		this.LO = new Lifecycle(intersectionLifecycle, documentScope);
+		this.lifecycleObserver = new Lifecycle(intersectionLifecycle, documentScope);
 	}
 	/**
 	 * @private
 	 */
-	O = new IntersectionObserver(
+	observer = new IntersectionObserver(
 		(entries) => {
 			new Ping(true, async () => {
 				for (let i = 0; i < entries.length; i++) {
-					await this.HE(entries[i]);
+					await this.handleEntry(entries[i]);
 				}
 			});
 		},
@@ -77,44 +79,49 @@ export class OnViewPort {
 	 * @returns {IntersectionObserverEntry[]}
 	 * @see https://developer.mozilla.org/docs/Web/API/IntersectionObserver/takeRecords
 	 */
-	takeRecords = () => this.O.takeRecords();
+	takeRecords = () => this.observer.takeRecords();
 	/**
 	 * @returns {void}
 	 * @see https://developer.mozilla.org/docs/Web/API/IntersectionObserver/disconnect
 	 */
-	disconnect = () => this.O.disconnect();
-	root = this.O.root;
-	rootMargin = this.O.rootMargin;
+	disconnect = () => this.observer.disconnect();
+	root = this.observer.root;
+	rootMargin = this.observer.rootMargin;
 	/**
 	 * @param {Element|HTMLElement} element
 	 * @returns
 	 */
-	unobserve = (element) => this.O.unobserve(element);
+	unobserve = (element) => this.observer.unobserve(element);
 	/**
-	 * disconnectedTypeParam
 	 * @private
 	 * @param {HTMLElement|Element} element
 	 * @return {import('./onViewPortHandler.type.mjs').onViewPortHandlerDisconnector}
 	 */
-	DCP = (element) => {
+	disconnectedTypeParam = (element) => {
 		return {
 			element,
 			onViewPortObserver: this,
-			lifecycleObserver: this.LO,
+			lifecycleObserver: this.lifecycleObserver,
 		};
 	};
 	/**
-	 * handleEntry
 	 * @private
 	 * @param {IntersectionObserverEntry} entry
 	 */
-	HE = async (entry) => {
+	handleEntry = async (entry) => {
 		const element = entry.target;
-		if (entry.isIntersecting && helper.VCBI in element && !element.hasAttribute(helper.XVCBI)) {
-			element.setAttribute(helper.XVCBI, '');
-			await element[helper.VCBI](this.DCP(element));
-		} else if (element.hasAttribute(helper.XVCBI) && helper.XVCBI in element) {
-			element[helper.XVCBI](this.DCP(element));
+		if (
+			entry.isIntersecting &&
+			helper.onViewCBIdentifier in element &&
+			!element.hasAttribute(helper.onExitViewCBIdentifier)
+		) {
+			element.setAttribute(helper.onExitViewCBIdentifier, '');
+			await element[helper.onViewCBIdentifier](this.disconnectedTypeParam(element));
+		} else if (
+			element.hasAttribute(helper.onExitViewCBIdentifier) &&
+			helper.onExitViewCBIdentifier in element
+		) {
+			element[helper.onExitViewCBIdentifier](this.disconnectedTypeParam(element));
 		}
 	};
 }

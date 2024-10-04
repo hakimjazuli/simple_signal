@@ -63,7 +63,7 @@ export class DefineStorage {
 	 * @returns {string}
 	 */
 	static nameSpace = (name) => {
-		return `${helper.SI}-${name}`;
+		return `${helper.storageIdentifier}-${name}`;
 	};
 	/**
 	 * @param {Record<LocalKey,Let<string>>} local
@@ -101,7 +101,7 @@ export class DefineStorage {
 	refreshLocal = () => {
 		const localKeys = Object.keys(localStorage);
 		for (const key of localKeys) {
-			if (!key.startsWith(helper.SI)) {
+			if (!key.startsWith(helper.storageIdentifier)) {
 				continue;
 			}
 			localStorage.removeItem(key);
@@ -111,7 +111,7 @@ export class DefineStorage {
 	refreshSession = () => {
 		const sessionKeys = Object.keys(sessionStorage);
 		for (const key of sessionKeys) {
-			if (!key.startsWith(helper.SI)) {
+			if (!key.startsWith(helper.storageIdentifier)) {
 				continue;
 			}
 			sessionStorage.removeItem(key);
@@ -131,14 +131,14 @@ export class DefineStorage {
 		const sessionKeys = Object.keys(sessionStorage);
 		const sessionCompare = Object.keys(this.data.value.session);
 		for (const key of sessionKeys) {
-			if (key.startsWith(helper.SI) && !sessionCompare.includes(key)) {
+			if (key.startsWith(helper.storageIdentifier) && !sessionCompare.includes(key)) {
 				sessionStorage.removeItem(key);
 			}
 		}
 		const localKeys = Object.keys(localStorage);
 		const localComapare = Object.keys(this.data.value.local);
 		for (const key of localKeys) {
-			if (key.startsWith(helper.SI) && !localComapare.includes(key)) {
+			if (key.startsWith(helper.storageIdentifier) && !localComapare.includes(key)) {
 				localStorage.removeItem(key);
 			}
 		}

@@ -40,11 +40,10 @@ export class Let<V> {
      */
     removeAll$: () => void;
     /**
-     * subscription
      * @private
      * @type {((isAtInitialization:boolean)=>Promise<void>)[]}
      */
-    private S;
+    private subscription;
     /**
      * remove effect
      * @param {$} $
@@ -56,11 +55,10 @@ export class Let<V> {
      */
     unRef: () => void;
     /**
-     * value placeholder
      * @private
      * @type {V}
      */
-    private V_;
+    private value_;
     /**
      * @type {undefined|string}
      */
