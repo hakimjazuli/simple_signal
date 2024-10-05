@@ -168,7 +168,7 @@ export class For {
 		switch (mutationValue.type) {
 			case '':
 				/**
-				 * initial auto subscribe
+				 * do nothing at initial auto subscribe
 				 */
 				return;
 			case 'push':

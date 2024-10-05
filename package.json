@@ -8,9 +8,7 @@
 	"module": "index.mjs",
 	"scripts": {
 		"dev": "concurrently \"bun ./dev/index.mjs\" \"bun tsc --watch\"",
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"prepublish": "bun unlink && npm unlink @html_first/simple_signal",
-		"postpublish": "bun link && npm link"
+		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
 		"type": "git",
