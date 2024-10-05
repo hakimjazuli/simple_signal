@@ -18,21 +18,17 @@ export class CRUD {
 	 * @param {asyncCallback} [options.delete_]
 	 */
 	constructor({ signal, read, create = undefined, update = undefined, delete_ = undefined }) {
-		let modifier;
 		if (signal instanceof List) {
-			modifier = async () => {
+			this.read = new Ping(false, async () => {
 				signal.replace(await read());
-			};
+			}).ping;
 		} else if (signal instanceof Let) {
-			modifier = async () => {
+			this.read = new Ping(false, async () => {
 				signal.value = await read();
-			};
+			}).ping;
 		} else {
 			return;
 		}
-		this.read = new Ping(false, async () => {
-			await modifier();
-		}).ping;
 		const mapped = {
 			create: create,
 			update: update,
@@ -44,7 +40,7 @@ export class CRUD {
 					const source = mapped[name];
 					await source.asyncCallback();
 					if (source.refreshSignal) {
-						await modifier();
+						this.read();
 					}
 				}).ping;
 			} else {
