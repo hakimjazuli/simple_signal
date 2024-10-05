@@ -45,7 +45,9 @@ export class CRUD {
 				}).ping;
 			} else {
 				this[name] = () => {
-					console.warn({ message: `this CRUD.intstance has no ${name} method defined` });
+					console.warn({
+						message: `this CRUD.intstance has no defined "${name}" method`,
+					});
 				};
 			}
 		}
@@ -55,15 +57,15 @@ export class CRUD {
 	 */
 	read;
 	/**
-	 * @type {()=>void}
+	 * @type {Ping["ping"]}
 	 */
 	create;
 	/**
-	 * @type {()=>void}
+	 * @type {Ping["ping"]}
 	 */
 	update;
 	/**
-	 * @type {()=>void}
+	 * @type {Ping["ping"]}
 	 */
 	delete;
 }

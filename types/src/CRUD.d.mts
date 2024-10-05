@@ -32,17 +32,17 @@ export class CRUD<V> {
      */
     read: Ping["ping"];
     /**
-     * @type {()=>void}
+     * @type {Ping["ping"]}
      */
-    create: () => void;
+    create: Ping["ping"];
     /**
-     * @type {()=>void}
+     * @type {Ping["ping"]}
      */
-    update: () => void;
+    update: Ping["ping"];
     /**
-     * @type {()=>void}
+     * @type {Ping["ping"]}
      */
-    delete: () => void;
+    delete: Ping["ping"];
 }
 import { Ping } from './Ping.mjs';
 import { Let } from './Let.mjs';
