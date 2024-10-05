@@ -1,6 +1,6 @@
 // @ts-check
 
-import { functions } from './functions.mjs';
+import { helper } from './helper.mjs';
 
 export class queueFIFO {
 	/**
@@ -42,9 +42,9 @@ export class queueFIFO {
 				const [callback, debounce_ms] = this.queue[i];
 				this.queue.shift();
 				if (debounce_ms) {
-					await functions.timeout(debounce_ms);
+					await helper.timeout(debounce_ms);
 				}
-				if (functions.isAsync(callback)) {
+				if (helper.isAsync(callback)) {
 					await callback();
 					break;
 				}

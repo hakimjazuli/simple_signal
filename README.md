@@ -141,7 +141,7 @@ create named storage (`localStorage` or `sessionStorage`) through class instanti
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
--`signal` based reactivity, wich value are derived from reacting to [`Let<T>.value`](#let) effects that are called in the `asyncCallback` this class instantiation;```js// @ts-checkconst letSingle = new Let(1);const doubleExample = new Derived(async()=>{	const value = letSingle.value; // autoscubscribed to `letSingle` value changes;return value * 2; // returned value are to be derivedValue});```- `dataOnly`:```jsconst dataOnlyExample = Derived.dataOnly(asyncCallback);```> - this will automatically opt you out from `domReflector`;- make sure to check `argument` documentation in your `IDE` `typehint`;
+- this class is extended from `Let` [`Let`](#let)-`signal` based reactivity, wich value are derived from reacting to [`Let<T>.value`](#let) effects that are called in the `asyncCallback` this class instantiation;```js// @ts-checkconst letSingle = new Let(1);const doubleExample = new Derived(async()=>{	const value = letSingle.value; // autoscubscribed to `letSingle` value changes;return value * 2; // returned value are to be derivedValue});```- `dataOnly`:```jsconst dataOnlyExample = Derived.dataOnly(asyncCallback);```> - this will automatically opt you out from `domReflector`;- make sure to check `argument` documentation in your `IDE` `typehint`;
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -177,7 +177,7 @@ use this instead of normal `eventListener` declaration for:- creating `autoqueu
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-`signal` based reactivity;assigning newValue to Let insance:```jsconst letSingle = new Let(1, ...args);letSingle.value++; // 2;letSingle.value = 3 // 3;````dataOnly`:```jsconst dataOnlyExample = Let.dataOnly(args0);```- this will automatically opt you out from `domReflector`make sure to check `argument` documentation in your `IDE` `typehint`;- `methods`:> - `call$`: manually triggers `effects` subscribed to `thisInstance`;> - `remove$`: unubscribe `thisInstance` from specific `effect`;> - `removeAll$`: unubscribe `thisInstance` from all of its `effects`;
+`signal` based reactivity;assigning newValue to Let insance:```jsconst letSingle = new Let(1, ...args);letSingle.value++; // 2;letSingle.value = 3 // 3;````dataOnly`:```jsconst dataOnlyExample = Let.dataOnly(args0);```- `methods`:> - `call$`: manually triggers `effects` subscribed to `thisInstance`;> - `remove$`: unubscribe `thisInstance` from specific `effect`;> - `removeAll$`: unubscribe `thisInstance` from all of its `effects`;
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -204,7 +204,7 @@ type helper for `lifecycleHandler` & `attributeChangedLifecycle`
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-- helper class to create list that satisfy`Array<Record<string, string>>````jsconst listExample = new List([     {key1: new Let("test"), ...keys},     {key1: _.let_("test3"), ...keys},])```- usefull for `loops`;
+- helper class to create list that satisfy`Array<Record<string, string>>````jsconst listExample = new List([     {key1: "test", ...keys},     {key1: "test3", ...keys},])```- usefull for `loops`;
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
@@ -267,6 +267,6 @@ helper class to define web worker thread;```jsnew WorkerThread({	onMessage: (
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-- scoping helper for `signal` based reactifity stored in static Method of class `_`,> - `_.let`: autoscoped [new Let](#let);> - `_.let_`: for [Let.dataOnly](#let);> - `_.derived`: autoscoped [new Derived](#derived);> - `_.derived_`: for [Derived.dataOnly](#derived);> - `_.$`: for [new $](#$);> - `_.list`: for [new List](#list);- it also shortened by 2characters, and since most of our APIs are a class,  `treeshaking` will not uglify the method/property of the class, having it shortedned like this is a plus,  especially if you don't plan on gzipping the file;- if you use our `Component` class, use this class static method, instead of their respective class, for `autoscoping`,> which then you can use it's `attr` returned value to mark the element```js// on Component scopeonConnected(async()=>{	const data = _.let('test');	html`<div ${data.attr}="innerText"></div>`})```
+- scoping helper for `signal` based reactifity stored in static Method of class `_`;- if you use our `Component` class, use this class static method, instead of their respective class, for `autoscoping`,> which then you can use it's `attr` returned value to mark the element```js// on Component scopeonConnected(async()=>{	const data = _.let('test');	html`<div ${data.attr}="innerText"></div>`})```
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>

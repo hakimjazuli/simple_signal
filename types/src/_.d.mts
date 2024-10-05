@@ -1,15 +1,6 @@
 /**
  * @description
- * - scoping helper for `signal` based reactifity stored in static Method of class `_`,
- * > - `_.let`: autoscoped [new Let](#let);
- * > - `_.let_`: for [Let.dataOnly](#let);
- * > - `_.derived`: autoscoped [new Derived](#derived);
- * > - `_.derived_`: for [Derived.dataOnly](#derived);
- * > - `_.$`: for [new $](#$);
- * > - `_.list`: for [new List](#list);
- * - it also shortened by 2characters, and since most of our APIs are a class,
- *   `treeshaking` will not uglify the method/property of the class, having it shortedned like this is a plus,
- *   especially if you don't plan on gzipping the file;
+ * - scoping helper for `signal` based reactifity stored in static Method of class `_`;
  * - if you use our `Component` class, use this class static method, instead of their respective class, for `autoscoping`,
  * > which then you can use it's `attr` returned value to mark the element
  * ```js
@@ -22,31 +13,47 @@
  */
 export class _ {
     /**
+     * syntax sugar for `Let`
+     * @template V
+     * @param {V} value
+     * @param {string} [attributeName]
+     * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
+     */
+    static let: <V>(value: V, attributeName?: string, documentScope?: import("./documentScope.type.mjs").documentScope) => Let<V>;
+    /**
      * scoping helper for `Let`
      * @template V
      * @param {V} value
      */
-    static let: <V>(value: V) => Let<V>;
+    static let_: <V>(value: V) => Let<V>;
     /**
-     *syntax sugar for `Let.dataOnly`
+     * syntax sugar for `Let.dataOnly`
      * @template D
      * @param {D} data
      * @returns {Let<D>}
      */
-    static let_: <D>(data: D) => Let<D>;
+    static letD: <D>(data: D) => Let<D>;
+    /**
+     * scoping helper for `Derived`
+     * @template  V
+     * @param {()=>Promise<V>} asyncCallback
+     * @param {string} [attributeName]
+     * @param {import('./documentScope.type.mjs').documentScope} [documentScope]
+     */
+    static derived: <V>(asyncCallback: () => Promise<V>, attributeName?: string, documentScope?: import("./documentScope.type.mjs").documentScope) => Derived<V>;
     /**
      * scoping helper for `Derived`
      * @template V
      * @param {()=>Promise<V>} asyncCallback
      */
-    static derived: <V>(asyncCallback: () => Promise<V>) => Derived<V>;
+    static derived_: <V>(asyncCallback: () => Promise<V>) => Derived<V>;
     /**
      * syntax sugar for `Derived.dataOnly`
      * @template V
      * @param {()=>Promise<V>} asyncCallback
      * @returns {Derived<V>}
      */
-    static derived_: <V>(asyncCallback: () => Promise<V>) => Derived<V>;
+    static derivedD: <V>(asyncCallback: () => Promise<V>) => Derived<V>;
     /**
      * scoping helper for `$`
      * @param {(isAtInitialization:boolean)=>Promise<void>} asyncCallback

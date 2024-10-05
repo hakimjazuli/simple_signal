@@ -11,8 +11,6 @@
  * ```js
  * const dataOnlyExample = Let.dataOnly(args0);
  * ```
- * - this will automatically opt you out from `domReflector`
- * make sure to check `argument` documentation in your `IDE` `typehint`;
  * - `methods`:
  * > - `call$`: manually triggers `effects` subscribed to `thisInstance`;
  * > - `remove$`: unubscribe `thisInstance` from specific `effect`;
@@ -22,6 +20,15 @@
  * @template V
  */
 export class Let<V> {
+    /**
+     * @privateb
+     * @param {any} val
+     * @param {string} attributeName
+     * @param {HTMLElement} element
+     * @param {import('./Let.mjs').Let} letObject
+     * @returns {void}
+     */
+    static domReflector: (val: any, attributeName: string, element: HTMLElement, letObject: Let<any>) => void;
     /**
      * @template V
      * @param {V} data

@@ -4,8 +4,8 @@
  * `Array<Record<string, string>>`
  * ```js
  * const listExample = new List([
- *      {key1: new Let("test"), ...keys},
- *      {key1: _.let_("test3"), ...keys},
+ *      {key1: "test", ...keys},
+ *      {key1: "test3", ...keys},
  * ])
  * ```
  * - usefull for `loops`;

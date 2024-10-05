@@ -1,7 +1,6 @@
 // @ts-check
 
 import { $ } from './$.mjs';
-import { functions } from './functions.mjs';
 import { handlePromiseAll } from './handlePromiseAll.mjs';
 import { helper } from './helper.mjs';
 import { mutaitonObserver } from './mutaitonObserver.mjs';
@@ -136,7 +135,7 @@ export class Lifecycle {
 		const attributeLifecyclesHandler = this.attributeLifecyclesHandler;
 		const documentScope = this.currentDocumentScope;
 		for (const attributeName in attributeLifecyclesHandler) {
-			const validAttributeSelector = functions.validAttributeNameSelector(attributeName);
+			const validAttributeSelector = helper.validAttributeNameSelector(attributeName);
 			const elements = documentScope.querySelectorAll(`[${validAttributeSelector}]`);
 			for (let i = 0; i < elements.length; i++) {
 				await this.addedNodeHandler(elements[i], attributeName);

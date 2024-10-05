@@ -5,8 +5,6 @@ import { handlePromiseAll } from './handlePromiseAll.mjs';
 import { helper } from './helper.mjs';
 import { Lifecycle } from './Lifecycle.mjs';
 import { Ping } from './Ping.mjs';
-import { domReflector } from './domReflector.mjs';
-import { functions } from './functions.mjs';
 
 /**
  * @description
@@ -21,8 +19,6 @@ import { functions } from './functions.mjs';
  * ```js
  * const dataOnlyExample = Let.dataOnly(args0);
  * ```
- * - this will automatically opt you out from `domReflector`
- * make sure to check `argument` documentation in your `IDE` `typehint`;
  * - `methods`:
  * > - `call$`: manually triggers `effects` subscribed to `thisInstance`;
  * > - `remove$`: unubscribe `thisInstance` from specific `effect`;
@@ -32,6 +28,49 @@ import { functions } from './functions.mjs';
  * @template V
  */
 export class Let {
+	/**
+	 * @privateb
+	 * @param {any} val
+	 * @param {string} attributeName
+	 * @param {HTMLElement} element
+	 * @param {import('./Let.mjs').Let} letObject
+	 * @returns {void}
+	 */
+	static domReflector = (val, attributeName, element, letObject) => {
+		const targets = helper.splitX(element.getAttribute(attributeName) ?? '', ';');
+		for (let j = 0; j < targets.length; j++) {
+			const target = targets[j];
+			try {
+				if (!(target in element)) {
+					throw '';
+				}
+				element[target] = val;
+				if (
+					target === 'value' &&
+					'value' in element &&
+					element.parentNode &&
+					element instanceof HTMLInputElement &&
+					!element.hasAttribute(helper.val)
+				) {
+					element.setAttribute(helper.val, '');
+					element.oninput = () => {
+						letObject.value = element.value;
+					};
+				}
+			} catch (error) {
+				val = JSON.stringify(val).replace(/^"(.*)"$/, '$1');
+				if (target == '') {
+					console.warn({
+						element,
+						attributeName,
+						message: "doesn't have target",
+					});
+					return;
+				}
+				element.setAttribute(target, val);
+			}
+		}
+	};
 	/**
 	 * @template V
 	 * @param {V} data
@@ -94,7 +133,7 @@ export class Let {
 					[attributeName]: async ({ element, onConnected, onDisconnected }) => {
 						onConnected(async () => {
 							const effect = new $(async () => {
-								domReflector(this.value, attributeName, element, this);
+								Let.domReflector(this.value, attributeName, element, this);
 							});
 							onDisconnected(async () => {
 								this.remove$(effect);
