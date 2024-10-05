@@ -29,7 +29,7 @@ import { Ping } from './Ping.mjs';
  */
 export class Let {
 	/**
-	 * @privateb
+	 * @private
 	 * @param {any} val
 	 * @param {string} attributeName
 	 * @param {HTMLElement} element

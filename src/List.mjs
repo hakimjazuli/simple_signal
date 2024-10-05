@@ -22,12 +22,7 @@ import { Let } from './Let.mjs';
 /**
  * @template {ListArg} List_
  */
-export class List {
-	/**
-	 * proxy instance
-	 * @type {Let<ListValue[]>}
-	 */
-	proxyInstance;
+export class List extends Let {
 	/**
 	 * @private
 	 * @param {ListArg} data
@@ -62,7 +57,7 @@ export class List {
 	 * @param {List_[]} value
 	 */
 	constructor(value) {
-		this.proxyInstance = new Let(List.convert(value));
+		super(List.convert(value));
 	}
 	/**
 	 * @type {Let<mutationType>}
@@ -73,8 +68,8 @@ export class List {
 	 * @param {...List_} listValue
 	 */
 	push = (...listValue) => {
-		this.proxyInstance.value.push(...List.convert(listValue));
-		this.proxyInstance.call$();
+		this.value.push(...List.convert(listValue));
+		this.call$();
 		this.mutation.value = {
 			type: 'push',
 			args: [listValue],
@@ -84,8 +79,8 @@ export class List {
 	 * Removes the first data;
 	 */
 	shift = () => {
-		this.proxyInstance.value.shift();
-		this.proxyInstance.call$;
+		this.value.shift();
+		this.call$;
 		this.mutation.value = {
 			type: 'shift',
 			args: [],
@@ -96,8 +91,8 @@ export class List {
 	 * @param  {...List_} listValue
 	 */
 	unshift = (...listValue) => {
-		this.proxyInstance.value.unshift(...List.convert(listValue));
-		this.proxyInstance.call$();
+		this.value.unshift(...List.convert(listValue));
+		this.call$();
 		this.mutation.value = {
 			type: 'unshift',
 			args: [listValue],
@@ -110,7 +105,7 @@ export class List {
 	 * @returns {void}
 	 */
 	removeEffectFromChild = (index) => {
-		const data = this.proxyInstance.value[index];
+		const data = this.value[index];
 		for (const key in data) {
 			data[key].unRef();
 			delete data[key];
@@ -124,10 +119,10 @@ export class List {
 	 * The end index of the specified portion of the data. This is exclusive of the element at the index 'end'. If end is undefined, then the slice extends to the end of the data.
 	 */
 	slice = (start = undefined, end = undefined) => {
-		this.proxyInstance.value.slice(start, end);
+		this.value.slice(start, end);
 		start = start ?? 0;
-		end = end ?? this.proxyInstance.value.length;
-		this.proxyInstance.call$();
+		end = end ?? this.value.length;
+		this.call$();
 		for (let i = start; i < end; i++) {
 			this.removeEffectFromChild(i);
 		}
@@ -142,7 +137,7 @@ export class List {
 	 * - new array in place of the deleted array.
 	 */
 	replace = (newList) => {
-		this.splice(0, this.proxyInstance.value.length, ...newList);
+		this.splice(0, this.value.length, ...newList);
 	};
 	/**
 	 * Removes elements from an data and, if necessary, inserts new elements in their place;
@@ -158,12 +153,8 @@ export class List {
 		for (let i = start; i < end; i++) {
 			this.removeEffectFromChild(i);
 		}
-		const deletedArray = this.proxyInstance.value.splice(
-			start,
-			deleteCount,
-			...List.convert(insertNew)
-		);
-		this.proxyInstance.call$();
+		const deletedArray = this.value.splice(start, deleteCount, ...List.convert(insertNew));
+		this.call$();
 		this.mutation.value = {
 			type: 'splice',
 			args: [start, deleteCount],
@@ -176,11 +167,8 @@ export class List {
 	 * @returns {void}
 	 */
 	swap = (indexA, indexB) => {
-		[this.proxyInstance.value[indexA], this.proxyInstance.value[indexB]] = [
-			this.proxyInstance.value[indexB],
-			this.proxyInstance.value[indexA],
-		];
-		this.proxyInstance.call$();
+		[this.value[indexA], this.value[indexB]] = [this.value[indexB], this.value[indexA]];
+		this.call$();
 		this.mutation.value = {
 			type: 'swap',
 			args: [indexA, indexB],
@@ -192,8 +180,8 @@ export class List {
 	 * @returns {void}
 	 */
 	modify = (index, listValue) => {
-		this.proxyInstance.value[index] = List.convertSingle(listValue);
-		this.proxyInstance.call$();
+		this.value[index] = List.convertSingle(listValue);
+		this.call$();
 		this.mutation.value = {
 			type: 'modify',
 			args: [index, listValue],

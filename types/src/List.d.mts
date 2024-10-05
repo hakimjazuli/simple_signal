@@ -18,7 +18,7 @@
 /**
  * @template {ListArg} List_
  */
-export class List<List_ extends ListArg> {
+export class List<List_ extends ListArg> extends Let<any> {
     /**
      * @private
      * @param {ListArg} data
@@ -35,11 +35,6 @@ export class List<List_ extends ListArg> {
      * @param {List_[]} value
      */
     constructor(value: List_[]);
-    /**
-     * proxy instance
-     * @type {Let<ListValue[]>}
-     */
-    proxyInstance: Let<ListValue[]>;
     /**
      * @type {Let<mutationType>}
      */
@@ -88,7 +83,7 @@ export class List<List_ extends ListArg> {
      * @param {...List_} insertNew
      * - new data in place of the deleted data.
      */
-    splice: (start: number, deleteCount: number, ...insertNew: List_[]) => ListValue[];
+    splice: (start: number, deleteCount: number, ...insertNew: List_[]) => any;
     /**
      * @param {number} indexA
      * @param {number} indexB

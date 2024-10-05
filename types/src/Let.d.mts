@@ -21,14 +21,14 @@
  */
 export class Let<V> {
     /**
-     * @privateb
+     * @private
      * @param {any} val
      * @param {string} attributeName
      * @param {HTMLElement} element
      * @param {import('./Let.mjs').Let} letObject
      * @returns {void}
      */
-    static domReflector: (val: any, attributeName: string, element: HTMLElement, letObject: Let<any>) => void;
+    private static domReflector;
     /**
      * @template V
      * @param {V} data

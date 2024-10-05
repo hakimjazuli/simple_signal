@@ -70,7 +70,7 @@ export class For {
 		/**
 		 * @type {import('./List.mjs').ListValue[]}
 		 */
-		const listValue = this.listInstance.proxyInstance.value;
+		const listValue = this.listInstance.value;
 		this.childElement.setAttribute(`${helper.ForChildAttributePrefix}${this.attr}`, '');
 		parentElement.innerHTML = '';
 		this.childLifecycle(childLifeCycleCallback, onParentDisconnected);
@@ -113,7 +113,7 @@ export class For {
 						/**
 						 * @type {import('./List.mjs').ListValue}
 						 */
-						const data = this.listInstance.proxyInstance.value[index];
+						const data = this.listInstance.value[index];
 						/**
 						 * @type {{[dataName:string]:Derived<string>}}
 						 */
