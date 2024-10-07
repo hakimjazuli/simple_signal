@@ -35,7 +35,7 @@ export class CRUD {
 			delete: delete_,
 		};
 		for (const name in mapped) {
-			if (mapped[name].source) {
+			if (mapped[name]) {
 				this[name] = new Ping(false, async () => {
 					const source = mapped[name];
 					await source.asyncCallback();
