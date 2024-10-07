@@ -29,6 +29,9 @@ export class CRUD {
 		} else {
 			return;
 		}
+		/**
+		 * @type {Record<string, asyncCallback>}
+		 */
 		const mapped = {
 			create: create,
 			update: update,
