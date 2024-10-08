@@ -90,8 +90,9 @@ export class UsePageTemplate {
 				}
 				UsePageTemplate.chachedTemplate[path][templateName_] = templateElement;
 			}
-			if (UsePageTemplate.chachedTemplate[path]?.[templateName]) {
-				return UsePageTemplate.chachedTemplate[path][templateName];
+			const retElement = UsePageTemplate.chachedTemplate[path]?.[templateName];
+			if (retElement) {
+				return retElement;
 			}
 			throw new Error(
 				`couldn't find '[${targetAttribute}="${templateName}"]' in the ${path}`
