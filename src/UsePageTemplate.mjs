@@ -82,6 +82,7 @@ export class UsePageTemplate {
 			const doc = parser.parseFromString(htmlString, 'text/html');
 			UsePageTemplate.chachedTemplate[path] = {};
 			const templates = doc.querySelectorAll(`[${targetAttribute}]`);
+			let retElement;
 			for (let i = 0; i < templates.length; i++) {
 				const templateElement = templates[i];
 				const templateName_ = templateElement.getAttribute(targetAttribute);
@@ -89,8 +90,10 @@ export class UsePageTemplate {
 					continue;
 				}
 				UsePageTemplate.chachedTemplate[path][templateName_] = templateElement;
+				if (templateName_ === templateName) {
+					retElement = templateElement;
+				}
 			}
-			const retElement = UsePageTemplate.chachedTemplate[path]?.[templateName];
 			if (retElement) {
 				return retElement;
 			}
