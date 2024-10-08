@@ -1,7 +1,6 @@
 // @ts-check
 
 import { $ } from './$.mjs';
-import { handlePromiseAll } from './handlePromiseAll.mjs';
 import { helper } from './helper.mjs';
 import { mutaitonObserver } from './mutaitonObserver.mjs';
 import { Ping } from './Ping.mjs';
@@ -207,7 +206,7 @@ export class Lifecycle {
 		/**
 		 * already `autoQueued` using `$` in `this.$`
 		 */
-		await handlePromiseAll(this.elementCMRefed);
+		await helper.handlePromiseAll(this.elementCMRefed);
 	};
 	/**
 	 * @private
@@ -321,7 +320,7 @@ export class Lifecycle {
 			}
 		}
 		if (disconnectedCallbacks.length) {
-			await handlePromiseAll(disconnectedCallbacks);
+			await helper.handlePromiseAll(disconnectedCallbacks);
 		}
 	};
 	/**

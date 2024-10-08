@@ -79,5 +79,10 @@ export class helper {
      * @returns {string}
      */
     static validAttributeNameSelector: (attributeName: string) => string;
+    /**
+     * @param {((...args:any)=>Promise<any>)[]} asyncArrayFunctions
+     * @param {any[]} args
+     */
+    static handlePromiseAll: (asyncArrayFunctions: ((...args: any) => Promise<any>)[], ...args: any[]) => Promise<void>;
 }
 import { queueFIFO } from './queueFIFO.mjs';

@@ -1,7 +1,6 @@
 // @ts-check
 
 import { $ } from './$.mjs';
-import { handlePromiseAll } from './handlePromiseAll.mjs';
 import { helper } from './helper.mjs';
 import { Lifecycle } from './Lifecycle.mjs';
 import { Ping } from './Ping.mjs';
@@ -115,7 +114,7 @@ export class Let {
 			return;
 		}
 		new Ping(true, async () => {
-			await handlePromiseAll(this.subscription, false);
+			await helper.handlePromiseAll(this.subscription, false);
 		});
 	};
 	/**

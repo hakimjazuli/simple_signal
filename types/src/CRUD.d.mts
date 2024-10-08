@@ -1,4 +1,11 @@
 /**
+ * @description
+ * CRUD wrapper class;
+ * - `signal` will be updated from returned value of `read`;
+ * - `read` will be called after calling `thisInstance`.`create`/`update`/`delete_`,
+ *    that have `true` `refreshSignal`;
+ *
+/**
  * @template V
  */
 export class CRUD<V> {
