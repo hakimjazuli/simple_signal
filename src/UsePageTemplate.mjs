@@ -90,7 +90,12 @@ export class UsePageTemplate {
 				}
 				UsePageTemplate.chachedTemplate[path][templateName_] = templateElement;
 			}
-			return UsePageTemplate.chachedTemplate[path][templateName];
+			if (UsePageTemplate.chachedTemplate[path]?.[templateName]) {
+				return UsePageTemplate.chachedTemplate[path][templateName];
+			}
+			throw new Error(
+				`couldn't find '[${targetAttribute}="${templateName}"]' in the ${path}`
+			);
 		} catch (error) {
 			console.error('Error fetching and parsing HTML:', error);
 		}
