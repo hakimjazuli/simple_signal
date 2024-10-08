@@ -111,6 +111,7 @@ export class helper {
 		result.push(current);
 		return result;
 	};
+	static separator = ';';
 	/**
 	 * @param {string} attributeName
 	 * @returns {string}

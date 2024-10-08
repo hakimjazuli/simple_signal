@@ -73,6 +73,7 @@ export class helper {
      * @param {string} delimiter
      */
     static splitX: (string: string, delimiter: string) => string[];
+    static separator: string;
     /**
      * @param {string} attributeName
      * @returns {string}

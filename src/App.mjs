@@ -22,6 +22,7 @@ export class App {
 	 * @param {import('./DefineShortCuts.mjs').DefineShortCuts} [options.definedShortcuts]
 	 * @param {import('./DefineQRouter.mjs').DefineQRouter} [options.definedQRouter]
 	 * @param {import('./DefineStorage.mjs').DefineStorage} [options.definedStorage]
+	 * @param {import('./UsePageTemplate.mjs').UsePageTemplate} [options.usePageTemplate]
 	 */
 	constructor({
 		lifecycles,
@@ -30,6 +31,7 @@ export class App {
 		definedShortcuts,
 		definedQRouter,
 		definedStorage,
+		usePageTemplate,
 	}) {
 		if (App.__ instanceof App) {
 			helper.warningSingleton(App);

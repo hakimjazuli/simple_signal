@@ -53,6 +53,7 @@ import { List } from './src/List.mjs';
 import { OnViewPort } from './src/OnViewPort.mjs';
 import { Ping } from './src/Ping.mjs';
 import { ShortCut } from './src/ShortCut.mjs';
+import { UsePageTemplate } from './src/UsePageTemplate.mjs';
 import { WorkerMainThread } from './src/WorkerMainThread.mjs';
 import { WorkerThread } from './src/WorkerThread.mjs';
 import { _ } from './src/_.mjs';
@@ -92,4 +93,4 @@ import { _ } from './src/_.mjs';
  * @property {(options:onViewPortHandlerDisconnector)=>Promise<void>} onViewPortHandler.onDisconnected
  */
 
-export { $, Animation, App, Component, CRUD, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, WorkerMainThread, WorkerThread, _ };
+export { $, Animation, App, Component, CRUD, DefineQRouter, DefineShortCuts, DefineStorage, Derived, Event_, For, Let, Lifecycle, List, OnViewPort, Ping, ShortCut, UsePageTemplate, WorkerMainThread, WorkerThread, _ };

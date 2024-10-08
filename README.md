@@ -68,6 +68,8 @@ import {
 
 - [ShortCut](#shortcut)
 
+- [UsePageTemplate](#usepagetemplate)
+
 - [WorkerMainThread](#workermainthread)
 
 - [WorkerThread](#workerthread)
@@ -241,6 +243,15 @@ trigger based callback integrated to the internal library  queue handler;can be
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
 - helper class to create `ShortCut` through class instantiation;- call `thisInstance.ping` to manually trigger action
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+
+<h2 id="usepagetemplate">UsePageTemplate</h2>
+
+*) <sub>[go to exported list](#exported-api-and-type-list)</sub>
+
+- instantiate this class to opt in page templating, by saving html template string on a html document page;```html// main page<div ${templateName}="${path};${selector}"></div>``````html// template document<div ${targetAttribute}="${selector}"></div>```- how it works:> - the class itself register a `Lifecycle` for `templateName`,    which then upon connected, it will fetch the `path` then selects `targetAttribute`="`selector`"    as template that then replace main page element with selected element from template;> - fetched page will be then be cached, along with any `[targetAttribute]` on that page
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 

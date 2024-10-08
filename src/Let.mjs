@@ -37,7 +37,7 @@ export class Let {
 	 * @returns {void}
 	 */
 	static domReflector = (val, attributeName, element, letObject) => {
-		const targets = helper.splitX(element.getAttribute(attributeName) ?? '', ';');
+		const targets = helper.splitX(element.getAttribute(attributeName) ?? '', helper.separator);
 		for (let j = 0; j < targets.length; j++) {
 			const target = targets[j];
 			try {
