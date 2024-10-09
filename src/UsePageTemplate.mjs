@@ -91,8 +91,7 @@ export class UsePageTemplate {
 			return fromCache;
 		}
 		try {
-			path = `${targetPrefix}${path}${targetSuffix}`;
-			const response = await fetch(path);
+			const response = await fetch(`${targetPrefix}${path}${targetSuffix}`);
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
