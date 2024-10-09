@@ -18,8 +18,8 @@ export class CRUD {
 	/**
 	 * @typedef {{asyncCallback:()=>Promise<void>,refreshSignal:boolean}} asyncCallback
 	 * @param {Object} options
-	 * @param {Let<V>|List} options.signal
-	 * @param {()=>Promise<any>} options.read
+	 * @param {Let<V>} options.signal
+	 * @param {()=>Promise<V>} options.read
 	 * @param {asyncCallback} [options.create]
 	 * @param {asyncCallback} [options.update]
 	 * @param {asyncCallback} [options.delete_]
@@ -27,6 +27,7 @@ export class CRUD {
 	constructor({ signal, read, create = undefined, update = undefined, delete_ = undefined }) {
 		if (signal instanceof List) {
 			this.read = new Ping(false, async () => {
+				// @ts-ignore
 				signal.replace(await read());
 			}).ping;
 		} else if (signal instanceof Let) {

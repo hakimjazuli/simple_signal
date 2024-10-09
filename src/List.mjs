@@ -21,6 +21,7 @@ import { Let } from './Let.mjs';
  */
 /**
  * @template {ListArg} List_
+ * @extends {Let<ListArg[]>}
  */
 export class List extends Let {
 	/**
@@ -57,6 +58,7 @@ export class List extends Let {
 	 * @param {List_[]} value
 	 */
 	constructor(value) {
+		// @ts-ignore
 		super(List.convert(value));
 	}
 	/**
@@ -68,6 +70,7 @@ export class List extends Let {
 	 * @param {...List_} listValue
 	 */
 	push = (...listValue) => {
+		// @ts-ignore
 		this.value.push(...List.convert(listValue));
 		this.call$();
 		this.mutation.value = {
@@ -91,6 +94,7 @@ export class List extends Let {
 	 * @param  {...List_} listValue
 	 */
 	unshift = (...listValue) => {
+		// @ts-ignore
 		this.value.unshift(...List.convert(listValue));
 		this.call$();
 		this.mutation.value = {
@@ -107,6 +111,7 @@ export class List extends Let {
 	removeEffectFromChild = (index) => {
 		const data = this.value[index];
 		for (const key in data) {
+			// @ts-ignore
 			data[key].unRef();
 			delete data[key];
 		}
@@ -153,6 +158,7 @@ export class List extends Let {
 		for (let i = start; i < end; i++) {
 			this.removeEffectFromChild(i);
 		}
+		// @ts-ignore
 		const deletedArray = this.value.splice(start, deleteCount, ...List.convert(insertNew));
 		this.call$();
 		this.mutation.value = {
@@ -180,6 +186,7 @@ export class List extends Let {
 	 * @returns {void}
 	 */
 	modify = (index, listValue) => {
+		// @ts-ignore
 		this.value[index] = List.convertSingle(listValue);
 		this.call$();
 		this.mutation.value = {

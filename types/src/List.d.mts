@@ -17,8 +17,9 @@
  */
 /**
  * @template {ListArg} List_
+ * @extends {Let<ListArg[]>}
  */
-export class List<List_ extends ListArg> extends Let<any> {
+export class List<List_ extends ListArg> extends Let<ListArg[]> {
     /**
      * @private
      * @param {ListArg} data
@@ -83,7 +84,7 @@ export class List<List_ extends ListArg> extends Let<any> {
      * @param {...List_} insertNew
      * - new data in place of the deleted data.
      */
-    splice: (start: number, deleteCount: number, ...insertNew: List_[]) => any;
+    splice: (start: number, deleteCount: number, ...insertNew: List_[]) => ListArg[];
     /**
      * @param {number} indexA
      * @param {number} indexB
