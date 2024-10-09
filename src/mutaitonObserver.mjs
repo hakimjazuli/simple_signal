@@ -15,13 +15,13 @@ export class mutaitonObserver {
 	 * @private
 	 * @type {documentScopedReturn[]}
 	 */
-	static DSL = [];
+	static registeredDocumentScope = [];
 	/**
 	 * @param {documentScope} documentScope
 	 * @return {documentScopedReturn}
 	 */
 	static create = (documentScope) => {
-		const ret = mutaitonObserver.DSL.filter(
+		const ret = mutaitonObserver.registeredDocumentScope.filter(
 			([MutationObserver, MutationRecordSignal, documentScope_]) => {
 				return documentScope_ === documentScope;
 			}
@@ -46,7 +46,7 @@ export class mutaitonObserver {
 		 * @type {documentScopedReturn}
 		 */
 		const ret_ = [documentObserver, documentMutations_, documentScope];
-		mutaitonObserver.DSL.push(ret_);
+		mutaitonObserver.registeredDocumentScope.push(ret_);
 		return ret_;
 	};
 }

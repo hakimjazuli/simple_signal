@@ -11,7 +11,7 @@ export class mutaitonObserver {
      * @private
      * @type {documentScopedReturn[]}
      */
-    private static DSL;
+    private static registeredDocumentScope;
     /**
      * @param {documentScope} documentScope
      * @return {documentScopedReturn}
