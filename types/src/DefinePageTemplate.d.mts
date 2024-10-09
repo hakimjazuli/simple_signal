@@ -16,7 +16,7 @@
  *     as template that then replace main page element with selected element from template;
  * > - fetched page will be then be cached, along with any `[targetAttribute]` on that page
  */
-export class UsePageTemplate {
+export class DefinePageTemplate {
     /**
      * @private
      * @typedef {{[templateName:string]:HTMLElement}} templateSingle
@@ -27,23 +27,20 @@ export class UsePageTemplate {
      * @param {string} path
      * @param {string} targetAttribute
      * @param {string} templateName
-     * @param {string} targetPrefix
-     * @param {string} targetSuffix
      */
-    static getTemplate: (path: string, targetAttribute: string, templateName: string, targetPrefix: string, targetSuffix: string) => Promise<HTMLElement>;
+    static getTemplate: (path: string, targetAttribute: string, templateName: string) => Promise<HTMLElement>;
     /**
      * @param {Object} options
      * @param {string} options.callerAttribute
      * @param {string} options.targetAttribute
-     * @param {string} [options.targetPrefix]
-     * @param {string} [options.targetSuffix]
+     * @param {(path:string)=>string} [options.targetPathRule]
+     * - return processed path
      * @param {import('./documentScope.type.mjs').documentScope} [options.documentScope]
      */
-    constructor({ callerAttribute, targetAttribute, targetPrefix, targetSuffix, documentScope, }: {
+    constructor({ callerAttribute, targetAttribute, targetPathRule, documentScope, }: {
         callerAttribute: string;
         targetAttribute: string;
-        targetPrefix?: string;
-        targetSuffix?: string;
+        targetPathRule?: (path: string) => string;
         documentScope?: import("./documentScope.type.mjs").documentScope;
     });
 }

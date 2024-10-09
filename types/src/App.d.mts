@@ -18,15 +18,15 @@ export class App {
      * @param {import('./DefineShortCuts.mjs').DefineShortCuts} [options.definedShortcuts]
      * @param {import('./DefineQRouter.mjs').DefineQRouter} [options.definedQRouter]
      * @param {import('./DefineStorage.mjs').DefineStorage} [options.definedStorage]
-     * @param {import('./UsePageTemplate.mjs').UsePageTemplate} [options.usePageTemplate]
+     * @param {import('./DefinePageTemplate.mjs').DefinePageTemplate} [options.definePageTemplate]
      */
-    constructor({ lifecycles, forS, rootComponents, definedShortcuts, definedQRouter, definedStorage, usePageTemplate, }: {
+    constructor({ lifecycles, forS, rootComponents, definedShortcuts, definedQRouter, definedStorage, definePageTemplate, }: {
         rootComponents?: import("./Component.mjs").Component<any, any>;
         lifecycles?: (import("./Lifecycle.mjs").Lifecycle)[];
         forS?: (import("./For.mjs").For)[];
         definedShortcuts?: import("./DefineShortCuts.mjs").DefineShortCuts<any, any>;
         definedQRouter?: import("./DefineQRouter.mjs").DefineQRouter<any, any>;
         definedStorage?: import("./DefineStorage.mjs").DefineStorage<any, any, any, any>;
-        usePageTemplate?: import("./UsePageTemplate.mjs").UsePageTemplate;
+        definePageTemplate?: import("./DefinePageTemplate.mjs").DefinePageTemplate;
     });
 }
