@@ -1,6 +1,5 @@
 // @ts-check
 
-import { fetch } from 'bun';
 import { helper } from './helper.mjs';
 import { Lifecycle } from './Lifecycle.mjs';
 
