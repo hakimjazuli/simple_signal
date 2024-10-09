@@ -29,11 +29,20 @@ export class UsePageTemplate {
 	 */
 	static chachedTemplate = {};
 	/**
-	 * @param {string} callerAttribute
-	 * @param {string} targetAttribute
-	 * @param {import('./documentScope.type.mjs').documentScope} documentScope
+	 * @param {Object} options
+	 * @param {string} options.callerAttribute
+	 * @param {string} options.targetAttribute
+	 * @param {string} [options.targetPrefix]
+	 * @param {string} [options.targetSuffix]
+	 * @param {import('./documentScope.type.mjs').documentScope} [options.documentScope]
 	 */
-	constructor(callerAttribute, targetAttribute, documentScope = document) {
+	constructor({
+		callerAttribute,
+		targetAttribute,
+		targetPrefix = '',
+		targetSuffix = '',
+		documentScope = document,
+	}) {
 		new Lifecycle(
 			{
 				[callerAttribute]: async ({ element, onConnected }) => {
@@ -51,7 +60,9 @@ export class UsePageTemplate {
 						const template = await UsePageTemplate.getTemplate(
 							path,
 							targetAttribute,
-							templateName
+							templateName,
+							targetPrefix,
+							targetSuffix
 						);
 						const template_ = template.cloneNode(true);
 						element.replaceWith(template_);
@@ -65,13 +76,22 @@ export class UsePageTemplate {
 	 * @param {string} path
 	 * @param {string} targetAttribute
 	 * @param {string} templateName
+	 * @param {string} targetPrefix
+	 * @param {string} targetSuffix
 	 */
-	static getTemplate = async (path, targetAttribute, templateName) => {
+	static getTemplate = async (
+		path,
+		targetAttribute,
+		templateName,
+		targetPrefix,
+		targetSuffix
+	) => {
 		const fromCache = UsePageTemplate.chachedTemplate[path]?.[templateName];
 		if (fromCache) {
 			return fromCache;
 		}
 		try {
+			path = `${targetPrefix}${path}${targetSuffix}`;
 			const response = await fetch(path);
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);

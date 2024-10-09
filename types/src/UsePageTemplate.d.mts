@@ -27,12 +27,23 @@ export class UsePageTemplate {
      * @param {string} path
      * @param {string} targetAttribute
      * @param {string} templateName
+     * @param {string} targetPrefix
+     * @param {string} targetSuffix
      */
-    static getTemplate: (path: string, targetAttribute: string, templateName: string) => Promise<HTMLElement>;
+    static getTemplate: (path: string, targetAttribute: string, templateName: string, targetPrefix: string, targetSuffix: string) => Promise<HTMLElement>;
     /**
-     * @param {string} callerAttribute
-     * @param {string} targetAttribute
-     * @param {import('./documentScope.type.mjs').documentScope} documentScope
+     * @param {Object} options
+     * @param {string} options.callerAttribute
+     * @param {string} options.targetAttribute
+     * @param {string} [options.targetPrefix]
+     * @param {string} [options.targetSuffix]
+     * @param {import('./documentScope.type.mjs').documentScope} [options.documentScope]
      */
-    constructor(callerAttribute: string, targetAttribute: string, documentScope?: import("./documentScope.type.mjs").documentScope);
+    constructor({ callerAttribute, targetAttribute, targetPrefix, targetSuffix, documentScope, }: {
+        callerAttribute: string;
+        targetAttribute: string;
+        targetPrefix?: string;
+        targetSuffix?: string;
+        documentScope?: import("./documentScope.type.mjs").documentScope;
+    });
 }
