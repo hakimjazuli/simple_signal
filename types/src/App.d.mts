@@ -10,7 +10,7 @@ export class App {
     static __: App;
     /**
      * @param {Object} options
-     * @param {import('./Component.mjs').Component} [options.rootComponents] -
+     * @param {import('./Component.mjs').Component} [options.rootComponent] -
      * - for efficiency, only fill this option when you intent to use the library as sole `View` part of your stack;
      * - the inputed root component must manually fills attributeName option argument, to target root element on the real dom;
      * @param {(import("./Lifecycle.mjs").Lifecycle)[]} [options.lifecycles]
@@ -20,8 +20,8 @@ export class App {
      * @param {import('./DefineStorage.mjs').DefineStorage} [options.definedStorage]
      * @param {import('./DefinePageTemplate.mjs').DefinePageTemplate} [options.definePageTemplate]
      */
-    constructor({ lifecycles, forS, rootComponents, definedShortcuts, definedQRouter, definedStorage, definePageTemplate, }: {
-        rootComponents?: import("./Component.mjs").Component<any, any>;
+    constructor({ lifecycles, forS, rootComponent, definedShortcuts, definedQRouter, definedStorage, definePageTemplate, }: {
+        rootComponent?: import("./Component.mjs").Component<any, any>;
         lifecycles?: (import("./Lifecycle.mjs").Lifecycle)[];
         forS?: (import("./For.mjs").For)[];
         definedShortcuts?: import("./DefineShortCuts.mjs").DefineShortCuts<any, any>;

@@ -14,7 +14,7 @@ export class App {
 	static __;
 	/**
 	 * @param {Object} options
-	 * @param {import('./Component.mjs').Component} [options.rootComponents] -
+	 * @param {import('./Component.mjs').Component} [options.rootComponent] -
 	 * - for efficiency, only fill this option when you intent to use the library as sole `View` part of your stack;
 	 * - the inputed root component must manually fills attributeName option argument, to target root element on the real dom;
 	 * @param {(import("./Lifecycle.mjs").Lifecycle)[]} [options.lifecycles]
@@ -27,7 +27,7 @@ export class App {
 	constructor({
 		lifecycles,
 		forS,
-		rootComponents,
+		rootComponent,
 		definedShortcuts,
 		definedQRouter,
 		definedStorage,
