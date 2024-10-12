@@ -70,9 +70,8 @@ export class Component<DefaultProps extends {
      * @param {(options:onConnectedOptions)=>Promise<void>} [options.onConnected]
      * @param {DefaultProps} [options.props]
      * @param {string} [options.attributeName]
-     * @param {import('./documentScope.type.mjs').documentScope} [options.documentScope]
      */
-    constructor({ onConnected: onConnectedCallback, props, attributeName, documentScope, }: {
+    constructor({ onConnected: onConnectedCallback, props, attributeName, }: {
         onConnected?: (options: {
             reactiveProps: Record<PropName, Let<string>>;
             attr: string;
@@ -86,7 +85,6 @@ export class Component<DefaultProps extends {
         }) => Promise<void>;
         props?: DefaultProps;
         attributeName?: string;
-        documentScope?: import("./documentScope.type.mjs").documentScope;
     });
     /**
      * @param {Partial<DefaultProps>} props__

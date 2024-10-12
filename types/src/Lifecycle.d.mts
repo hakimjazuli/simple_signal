@@ -5,6 +5,11 @@
  */
 export class Lifecycle {
     /**
+     * @private
+     * @type {import('./lifecycleHandler.type.mjs').lifecycleHandler["onDisconnected"]} onParentDisconnected
+     */
+    private static currentOnParentDCCB;
+    /**
      * @typedef {{
      * [attributeName:string]:
      * (options:import('./lifecycleHandler.type.mjs').lifecycleHandler)=>void
@@ -58,7 +63,6 @@ export class Lifecycle {
         [attributeName: string]: (options: import("./lifecycleHandler.type.mjs").lifecycleHandler) => void;
     }, documentScope?: import("./documentScope.type.mjs").documentScope);
     /**
-     * currentDocumentScope
      * @private
      * @type {documentScope}
      */

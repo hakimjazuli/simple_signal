@@ -74,7 +74,7 @@ export class For {
 		const listValue = this.listInstance.value;
 		this.childElement.setAttribute(`${helper.ForChildAttributePrefix}${this.attr}`, '');
 		parentElement.innerHTML = '';
-		this.childLifecycle(childLifeCycleCallback, onParentDisconnected);
+		this.childLifecycle(childLifeCycleCallback);
 		for (let i = 0; i < listValue.length; i++) {
 			const childElement_ = this.childElement.cloneNode(true);
 			if (!(childElement_ instanceof HTMLElement)) {
@@ -86,10 +86,9 @@ export class For {
 	/**
 	 * @private
 	 * @param {childLifeCycleCallback} childLifeCycleCallback
-	 * @param {lifecycleHandler["onDisconnected"]} onParentDisconnected
 	 */
-	childLifecycle = (childLifeCycleCallback, onParentDisconnected) => {
-		const childLifecycle = new Lifecycle(
+	childLifecycle = (childLifeCycleCallback) => {
+		new Lifecycle(
 			{
 				[`${helper.ForChildAttributePrefix}${this.attr}`]: async ({
 					element: childElement,
@@ -143,9 +142,6 @@ export class For {
 			},
 			this.parentElement
 		);
-		onParentDisconnected(async () => {
-			childLifecycle.disconnect();
-		});
 	};
 	/**
 	 * @private

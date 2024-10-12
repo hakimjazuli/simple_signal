@@ -12,6 +12,11 @@ import { Ping } from './Ping.mjs';
  */
 export class Lifecycle {
 	/**
+	 * @private
+	 * @type {import('./lifecycleHandler.type.mjs').lifecycleHandler["onDisconnected"]} onParentDisconnected
+	 */
+	static currentOnParentDCCB = undefined;
+	/**
 	 * @typedef {{
 	 * [attributeName:string]:
 	 * (options:import('./lifecycleHandler.type.mjs').lifecycleHandler)=>void
@@ -25,7 +30,6 @@ export class Lifecycle {
 	 */
 	static ID = new Map();
 	/**
-	 * currentDocumentScope
 	 * @private
 	 * @type {documentScope}
 	 */
@@ -76,6 +80,12 @@ export class Lifecycle {
 		this.mutationSignal = mLet;
 		this.takeRecords = mObs.takeRecords;
 		const registeredAttribute = this.isRegisteredMap();
+		const onParentDisconnceted = Lifecycle.currentOnParentDCCB;
+		if (onParentDisconnceted) {
+			onParentDisconnceted(async () => {
+				this.disconnect();
+			});
+		}
 		switch (registeredAttribute) {
 			/**
 			 * uses `switch case` over `guard clause` in case of source update that requires additional
@@ -180,6 +190,12 @@ export class Lifecycle {
 		) {
 			return;
 		}
+		/**
+		 * @type {import('./lifecycleHandler.type.mjs').lifecycleHandler["onDisconnected"]}
+		 */
+		const currentOnParentDCCB = (disconnectedCallback) => {
+			Lifecycle.setDCCB(addedNode, disconnectedCallback);
+		};
 		this.attributeLifecyclesHandler[attributeName]({
 			element: addedNode,
 			lifecycleObserver: this,
@@ -187,13 +203,14 @@ export class Lifecycle {
 				const index = this.elementCMRefed.push(connectedCallback);
 				const currentIndex = index - 1;
 				this.elementCMRefed[currentIndex] = async () => {
+					const tempCurrentOnParentDCCB = Lifecycle.currentOnParentDCCB;
+					Lifecycle.currentOnParentDCCB = currentOnParentDCCB;
 					this.elementCMRefed.splice(currentIndex, 1);
 					await connectedCallback();
+					Lifecycle.currentOnParentDCCB = tempCurrentOnParentDCCB;
 				};
 			},
-			onDisconnected: (disconnectedCallback) => {
-				Lifecycle.setDCCB(addedNode, disconnectedCallback);
-			},
+			onDisconnected: currentOnParentDCCB,
 			onAttributeChanged: (attributeChangedCallback) => {
 				Lifecycle.setACCB(addedNode, attributeChangedCallback);
 			},

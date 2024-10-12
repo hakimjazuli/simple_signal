@@ -83,20 +83,12 @@ export class Component {
 	 * @param {(options:onConnectedOptions)=>Promise<void>} [options.onConnected]
 	 * @param {DefaultProps} [options.props]
 	 * @param {string} [options.attributeName]
-	 * @param {import('./documentScope.type.mjs').documentScope} [options.documentScope]
 	 */
 	constructor({
 		onConnected: onConnectedCallback,
 		// @ts-ignore
 		props = {},
-		/**
-		 * make it automatic
-		 */
 		attributeName = helper.attributeIndexGenerator(),
-		/**
-		 * make it automatic
-		 */
-		documentScope = document,
 	}) {
 		this.attr = attributeName;
 		new Lifecycle(
@@ -177,7 +169,7 @@ export class Component {
 					}
 				},
 			},
-			documentScope
+			helper.currentDocumentScope
 		);
 		/**
 		 * @param {Partial<DefaultProps>} [props__]
