@@ -40,7 +40,7 @@ export class DefinePageTemplate {
 		callerAttribute,
 		targetAttribute,
 		targetPathRule = (path) => path,
-		documentScope = document,
+		documentScope = helper.currentDocumentScope,
 	}) {
 		new Lifecycle(
 			{
@@ -82,7 +82,9 @@ export class DefinePageTemplate {
 		try {
 			const response = await fetch(path);
 			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
+				throw new Error(
+					`Error fetching and parsing HTML, HTTP error! status: ${response.status}`
+				);
 			}
 			const htmlString = await response.text();
 			const parser = new DOMParser();
@@ -108,7 +110,7 @@ export class DefinePageTemplate {
 				`couldn't find '[${targetAttribute}="${templateName}"]' in the ${path}`
 			);
 		} catch (error) {
-			console.error('Error fetching and parsing HTML:', error);
+			console.error(error);
 		}
 	};
 }
