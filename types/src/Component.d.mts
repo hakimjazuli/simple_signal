@@ -28,36 +28,6 @@ export class Component<DefaultProps extends {
     [PropName: string]: string;
 }, PropName extends keyof DefaultProps> {
     /**
-     * @typedef {Object} manualScopeOptions
-     * @property {import('./documentScope.type.mjs').documentScope} documentScope
-     * @property {()=>Promise<void>} scopedCallback
-     * @property {boolean} runCheckAtFirst
-     */
-    /**
-     * manual scoping for lib internal functionality
-     * @param {manualScopeOptions} options
-     * @returns {Ping["ping"]}
-     */
-    static manualScope: ({ documentScope, scopedCallback, runCheckAtFirst }: {
-        documentScope: import("./documentScope.type.mjs").documentScope;
-        scopedCallback: () => Promise<void>;
-        runCheckAtFirst: boolean;
-    }) => Ping["ping"];
-    /**
-     * @typedef {Object} autoScopeOptions
-     * @property {()=>Promise<void>} scopedCallback
-     * @property {boolean} runCheckAtFirst
-     */
-    /**
-     * use for handling out of scoped codeblock:
-     * @param {autoScopeOptions} options
-     * @return {Ping["ping"]}
-     */
-    static autoScope: ({ scopedCallback, runCheckAtFirst }: {
-        scopedCallback: () => Promise<void>;
-        runCheckAtFirst: boolean;
-    }) => Ping["ping"];
-    /**
      * @typedef {Object} onConnectedOptions
      * @property {Record<PropName, Let<string>>} reactiveProps
      * @property {string} attr
@@ -92,6 +62,5 @@ export class Component<DefaultProps extends {
      */
     attr: (props__?: Partial<DefaultProps>) => string;
 }
-import { Ping } from './Ping.mjs';
 import { Let } from './Let.mjs';
 import { Lifecycle } from './Lifecycle.mjs';

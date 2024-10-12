@@ -34,43 +34,6 @@ import { Ping } from './Ping.mjs';
  */
 export class Component {
 	/**
-	 * @typedef {Object} manualScopeOptions
-	 * @property {import('./documentScope.type.mjs').documentScope} documentScope
-	 * @property {()=>Promise<void>} scopedCallback
-	 * @property {boolean} runCheckAtFirst
-	 */
-	/**
-	 * manual scoping for lib internal functionality
-	 * @param {manualScopeOptions} options
-	 * @returns {Ping["ping"]}
-	 */
-	static manualScope = ({ documentScope, scopedCallback, runCheckAtFirst }) => {
-		return new Ping(runCheckAtFirst, async () => {
-			const currentScope = helper.currentDocumentScope;
-			helper.currentDocumentScope = documentScope;
-			await scopedCallback();
-			helper.currentDocumentScope = currentScope;
-		}).ping;
-	};
-	/**
-	 * @typedef {Object} autoScopeOptions
-	 * @property {()=>Promise<void>} scopedCallback
-	 * @property {boolean} runCheckAtFirst
-	 */
-	/**
-	 * use for handling out of scoped codeblock:
-	 * @param {autoScopeOptions} options
-	 * @return {Ping["ping"]}
-	 */
-	static autoScope = ({ scopedCallback, runCheckAtFirst }) => {
-		const documentScope = helper.currentDocumentScope;
-		return Component.manualScope({
-			documentScope,
-			scopedCallback,
-			runCheckAtFirst,
-		});
-	};
-	/**
 	 * @typedef {Object} onConnectedOptions
 	 * @property {Record<PropName, Let<string>>} reactiveProps
 	 * @property {string} attr
@@ -102,68 +65,44 @@ export class Component {
 				}) => {
 					if (onConnectedCallback) {
 						onConnected(async () => {
-							Component.manualScope({
-								documentScope: element,
-								runCheckAtFirst: true,
-								scopedCallback: async () => {
-									/**
-									 * @type {onConnectedOptions["reactiveProps"]}
-									 */
-									// @ts-ignore
-									const reactiveProps = {};
-									for (const propName in props) {
-										const value =
-											element.getAttribute(propName) ??
-											props[propName.toString()];
-										reactiveProps[propName.toString()] = new Let(
-											value,
-											propName,
-											element
-										);
-									}
-									let onDC = undefined;
-									let renderHTML = undefined;
-									await onConnectedCallback({
-										reactiveProps,
-										attr: attributeName,
-										element,
-										html: (strings, ...values) => {
-											const result = [];
-											for (let i = 0; i < strings.length; i++) {
-												result.push(strings[i]);
-												if (i < values.length) {
-													result.push(values[i]);
-												}
-											}
-											renderHTML = () => {
-												element.innerHTML = result.join('');
-											};
-										},
-										onDisconnected: (onDCed) => {
-											onDC = onDCed;
-										},
-										componentLifecycle,
-									});
-									onAttributeChanged(async ({ attributeName, newValue }) => {
-										if (!(attributeName in props)) {
-											return;
+							/**
+							 * @type {onConnectedOptions["reactiveProps"]}
+							 */
+							// @ts-ignore
+							const reactiveProps = {};
+							for (const propName in props) {
+								const value =
+									element.getAttribute(propName) ?? props[propName.toString()];
+								reactiveProps[propName.toString()] = new Let(
+									value,
+									propName,
+									element
+								);
+							}
+							await onConnectedCallback({
+								reactiveProps,
+								attr: attributeName,
+								element,
+								html: (strings, ...values) => {
+									const result = [];
+									for (let i = 0; i < strings.length; i++) {
+										result.push(strings[i]);
+										if (i < values.length) {
+											result.push(values[i]);
 										}
-										reactiveProps[attributeName].value = newValue;
-									});
-									if (onDC) {
-										onDisconnected(async () => {
-											Component.manualScope({
-												documentScope: element,
-												runCheckAtFirst: true,
-												scopedCallback: onDC,
-											});
-										});
 									}
-									if (renderHTML) {
-										// @ts-ignore
-										renderHTML();
-									}
+									element.innerHTML = result.join('');
 								},
+								onDisconnected: (onDCed) => {
+									onDisconnected(onDCed);
+								},
+								componentLifecycle,
+							});
+							onAttributeChanged(async ({ attributeName, newValue }) => {
+								if (!(attributeName in props)) {
+									return;
+								}
+								reactiveProps[attributeName].value = newValue;
 							});
 						});
 					}

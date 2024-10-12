@@ -1,7 +1,7 @@
 // @ts-check
 
-import { Component } from './Component.mjs';
 import { helper } from './helper.mjs';
+import { Lifecycle } from './Lifecycle.mjs';
 
 /**
  * @description
@@ -27,7 +27,7 @@ export class Event_ {
 		 * @param {Event} event
 		 */
 		return (event) => {
-			Component.manualScope({
+			Lifecycle.manualScope({
 				documentScope,
 				runCheckAtFirst: true,
 				scopedCallback: async () => await scopedCallback(event),
