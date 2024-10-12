@@ -30,7 +30,9 @@ export class Event_ {
 			Lifecycle.manualScope({
 				documentScope,
 				runCheckAtFirst: true,
-				scopedCallback: async () => await scopedCallback(event),
+				scopedCallback: async () => {
+					await scopedCallback(event);
+				},
 			});
 		};
 	};

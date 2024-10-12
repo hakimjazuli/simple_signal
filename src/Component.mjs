@@ -19,14 +19,16 @@ import { Ping } from './Ping.mjs';
  *		[${thisInstance.attr}]{
  *			...nestedCSSRules
  *		}
- * </style>`
+ * </style>
+ * ...
+ * `
  * ```
- * > also you might need to explicitly use ">" `directChildOf` selector, as when you try to render `childComponent`
- * > it could also be accidentally selected;
+ * > - also you might need to explicitly use ">" `directChildOf` selector, as when you try to render `childComponent`
+ * > - it could also be accidentally selected;
  * - render method:
- * > you put returned value of `thisInstance.componentAttribute` on an html element, which
- * > it will be rendered as it's `innerHTML` at the `onConnected` event, then
- * > it will used `MutationObserver` to look for changes;
+ * > - you put returned value of `thisInstance.attr` on an html element, which
+ * > - it will be rendered as it's `innerHTML` at the `onConnected` event, then
+ * > - it will used `MutationObserver` to look for changes;
  */
 /**
  * @template {{[PropName:string]:string}} DefaultProps

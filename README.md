@@ -109,7 +109,7 @@ collections of static methods helper for animation;static method prefixed with 
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
-component creation helper using class initiation;behaviour:- it rendered directly to real DOM;> - library like `bootstrap` `css` and it's `js` parts can select your `elements` for it's functionality;> - you have to manually scope your style by```js// on Component scopehtml`<style>	[${thisInstance.attr}]{		...nestedCSSRules	}</style>````> also you might need to explicitly use ">" `directChildOf` selector, as when you try to render `childComponent`> it could also be accidentally selected;- render method:> you put returned value of `thisInstance.componentAttribute` on an html element, which> it will be rendered as it's `innerHTML` at the `onConnected` event, then> it will used `MutationObserver` to look for changes;
+component creation helper using class initiation;behaviour:- it rendered directly to real DOM;> - library like `bootstrap` `css` and it's `js` parts can select your `elements` for it's functionality;> - you have to manually scope your style by```js// on Component scopehtml`<style>	[${thisInstance.attr}]{		...nestedCSSRules	}</style>...````> - also you might need to explicitly use ">" `directChildOf` selector, as when you try to render `childComponent`> - it could also be accidentally selected;- render method:> - you put returned value of `thisInstance.attr` on an html element, which> - it will be rendered as it's `innerHTML` at the `onConnected` event, then> - it will used `MutationObserver` to look for changes;
 
 *) <sub>[go to exported list](#exported-api-and-type-list)</sub>
 
