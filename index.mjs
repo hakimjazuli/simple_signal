@@ -6,6 +6,9 @@
  * @copyright
  * developed and published under MIT license,
  * @description
+ * ## NOTIFICATION
+ * - this library will be discontinued and moved as per `v3.0.0`;
+ * - use [virst](https://www.npmjs.com/package/virst) instead;
  * ## about @html_first/simple_signal v^3.x.x
  * `@html_first/simple_signal` is a collections of helper classes/functions to:
  * -   create `web app` that are based on `signal` paradigm;
